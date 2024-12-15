@@ -72,6 +72,10 @@ type Identifier struct {
   Value string
 }
 
+func (i *Identifier) expressionNode()      {}
+func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+
+func (i *Identifier) String() string { return i.Value }
 
 type ReturnStatement struct {
   Token 			token.Token
@@ -94,11 +98,6 @@ func (rs *ReturnStatement) String() string {
 
   return out.String()
 }
-
-func (i *Identifier) expressionNode()      {}
-func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
-
-func (i *Identifier) String() string { return i.Value }
 
 type ExpressionStatement struct {
   Token      token.Token
