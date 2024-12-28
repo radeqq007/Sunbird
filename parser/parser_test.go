@@ -67,7 +67,7 @@ func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
   return true
 }
 
-func testReturnStatement(t *testing.T) {
+func TestReturnStatement(t *testing.T) {
   input := `
 return 6;
 return 1.24;
