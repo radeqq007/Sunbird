@@ -2,8 +2,8 @@ package parser
 
 import (
 	"testing"
-	"vex-programming-language/ast"
-	"vex-programming-language/lexer"
+	"vex/ast"
+	"vex/lexer"
 )
 
 func TestVarStatement(t *testing.T) {

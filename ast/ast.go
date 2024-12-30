@@ -2,7 +2,7 @@ package ast
 
 import (
 	"bytes"
-	"vex-programming-language/token"
+	"vex/token"
 )
 
 type Node interface {

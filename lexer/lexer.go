@@ -1,6 +1,6 @@
 package lexer
 
-import "vex-programming-language/token"
+import "vex/token"
 
 type Lexer struct {
 	input        string

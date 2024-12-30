@@ -2,7 +2,7 @@ package ast
 
 import (
 	"testing"
-	"vex-programming-language/token"
+	"vex/token"
 )
 
 func TestString(t *testing.T) {

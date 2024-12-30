@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"vex-programming-language/repl"
+	"vex/repl"
 )
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"vex-programming-language/lexer"
-	"vex-programming-language/token"
+	"vex/lexer"
+	"vex/token"
 )
 
 const PROMPT = "$ "

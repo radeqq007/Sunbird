@@ -1,3 +1,3 @@
-module vex-programming-language
+module vex
 
 go 1.21.6

@@ -2,7 +2,7 @@ package lexer
 
 import (
 	"testing"
-	"vex-programming-language/token"
+	"vex/token"
 )
 
 func TestNextToken(t *testing.T) {
