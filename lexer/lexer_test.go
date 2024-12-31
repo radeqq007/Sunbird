@@ -9,7 +9,7 @@ func TestNextToken(t *testing.T) {
 	input := `var five = 5;
 	var ten = 10;
 
-var add = fn(x, y) {
+var add = func(x, y) {
   x + y;
 };
 
@@ -44,7 +44,7 @@ if (5 < 10) {
 			{token.VAR, "var"},
 			{token.IDENT, "add"},
 			{token.ASSIGN, "="},
-			{token.FUNCTION, "fn"},
+			{token.FUNCTION, "func"},
 			{token.LPAREN, "("},
 			{token.IDENT, "x"},
 			{token.COMMA, ","},
