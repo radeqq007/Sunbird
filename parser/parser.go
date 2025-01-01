@@ -41,7 +41,9 @@ func New(l *lexer.Lexer) *Parser {
   p.registerPrefix(token.IDENT, p.parseIdentifier)
   p.registerPrefix(token.INT, p.parseIntegerLiteral)
   p.registerPrefix(token.FLOAT, p.parseFloatLiteral)
-
+  p.registerPrefix(token.BANG, p.parsePrefixExpression)
+  p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+  
   // Read 2 tokens so curToken and peekToken are set
   p.nextToken()
   p.nextToken()
