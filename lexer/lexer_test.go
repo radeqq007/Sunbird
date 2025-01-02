@@ -15,7 +15,7 @@ var add = func(x, y) {
 
 var result = add(five, ten);
 !-/*5;
-5 < 10 > 5;
+5 <= 10 >= 5;
 
 if (5 < 10) {
 	return true;
@@ -74,9 +74,9 @@ if (5 < 10) {
 			{token.INT, "5"},
 			{token.SEMICOLON, ";"},
 			{token.INT, "5"},
-			{token.LT, "<"},
+			{token.LE, "<="},
 			{token.INT, "10"},
-			{token.GT, ">"},
+			{token.GE, ">="},
 			{token.INT, "5"},
 			{token.SEMICOLON, ";"},
 			{token.IF, "if"},
