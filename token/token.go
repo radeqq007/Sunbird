@@ -30,6 +30,9 @@ const (
 
 	LT = "<"
 	GT = ">"
+	
+	LE = "<="
+	GE = ">="
 
 	// Delimeter
 	COMMA     = ","
