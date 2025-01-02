@@ -26,13 +26,13 @@ type (
 const  (
   _ int = iota
   LOWEST
-  EQUALS      		 // ==
-  LESSGREATER 		 // > or <
-	LESSGREATEREQUAL // <= or >=
-	SUM         		 // +
-  PRODUCT     		 // *
-  PREFIX      		 // -X or !X
-  CALL        		 // foo()
+  EQUALS           // ==
+  LESSGREATER      // > or <
+  LESSGREATEREQUAL // <= or >=
+  SUM              // +
+  PRODUCT          // *
+  PREFIX           // -X or !X
+  CALL             // foo()
 )
 
 func New(l *lexer.Lexer) *Parser {
