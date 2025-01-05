@@ -34,12 +34,14 @@ func (l *Lexer) readIdentifier() string {
 }
 
 func (l *Lexer) readString() string {
-	l.readChar() // skip the "
+	startingQuote := l.ch 
+
+	l.readChar() // skip the starting quote
 
 	position := l.position
 
 
-	for l.ch != '"' && l.ch != '\'' {
+	for l.ch != startingQuote {
 		l.readChar()
 	}
 
