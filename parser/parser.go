@@ -27,8 +27,7 @@ const  (
   _ int = iota
   LOWEST
   EQUALS           // ==
-  LESSGREATER      // > or <
-  LESSGREATEREQUAL // <= or >=
+  LESSGREATER      // >, <, <= or >=
   SUM              // +
   PRODUCT          // *
   PREFIX           // -X or !X
@@ -264,8 +263,8 @@ var precedences = map[token.TokenType]int {
 	token.NOT_EQ: EQUALS,
 	token.LT: LESSGREATER,
 	token.GT: LESSGREATER,
-	token.LE: LESSGREATEREQUAL,
-	token.GE: LESSGREATEREQUAL,
+	token.LE: LESSGREATER,
+	token.GE: LESSGREATER,
 	token.PLUS: SUM,
 	token.MINUS: SUM,
 	token.SLASH: PRODUCT,
