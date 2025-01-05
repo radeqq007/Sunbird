@@ -28,6 +28,8 @@ if (5 < 10) {
 
 "hello world"
 'hi mom!'
+"I'm using ' inside double quote string"
+'this is a " inside single quote string'
 `
 
 	tests := []struct {
@@ -113,6 +115,8 @@ if (5 < 10) {
 			{token.SEMICOLON, ";"},
 			{token.STRING, "hello world"},
 			{token.STRING, "hi mom!"},
+			{token.STRING, "I'm using ' inside double quote string"},
+			{token.STRING, "this is a \" inside single quote string"},
 			{token.EOF, ""},
 		}
 	l := New(input)
