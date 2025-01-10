@@ -306,10 +306,10 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
   return true
 }
 
-func testFloatLiteral(t *testing.T, il ast.Expression, value float64) bool {
-  float, ok := il.(*ast.FloatLiteral)
+func testFloatLiteral(t *testing.T, fl ast.Expression, value float64) bool {
+  float, ok := fl.(*ast.FloatLiteral)
   if !ok {
-    t.Errorf("il not *ast.FloatLiteral. got=%T", il)
+    t.Errorf("il not *ast.FloatLiteral. got=%T", fl)
     return false
   }
 
