@@ -326,6 +326,26 @@ func testFloatLiteral(t *testing.T, il ast.Expression, value float64) bool {
   return true
 }
 
+func testStringLiteral(t *testing.T, sl ast.Expression, value string) bool {
+  str, ok := sl.(*ast.StringLiteral)
+  if !ok {
+    t.Errorf("il not *ast.StringLiteral. got=%T", sl)
+    return false
+  }
+
+  if str.Value != value {
+    t.Errorf("str.Value not %s. got=%s", value, str.Value)
+    return false
+  }
+
+  if str.TokenLiteral() != value {
+    t.Errorf("str.TokenLiteral not %s. got=%s", value, str.TokenLiteral())
+    return false
+  }
+
+  return true
+}
+
 func TestParsingInfixExpressions(t *testing.T) {
 	infixTests := []struct {
 		input			 string
