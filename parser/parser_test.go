@@ -379,6 +379,26 @@ func testStringLiteral(t *testing.T, sl ast.Expression, value string) bool {
   return true
 }
 
+func testBooleanLiteral(t *testing.T, bl ast.Expression, value bool) bool {
+  bo, ok := bl.(*ast.Boolean)
+  if !ok {
+    t.Errorf("il not *ast.Boolean. got=%T", bl)
+    return false
+  }
+
+  if bo.Value != value {
+    t.Errorf("bo.Value not %v. got=%v", value, bo.Value)
+    return false
+  }
+
+  if bo.TokenLiteral() != fmt.Sprintf("%t", value) {
+    t.Errorf("bo.TokenLiteral not %t. got=%s", value, bo.TokenLiteral())
+    return false
+  }
+
+  return true
+}
+
 func TestParsingInfixExpressions(t *testing.T) {
 	infixTests := []struct {
 		input			 string
@@ -515,8 +535,11 @@ func testLiteralExpression(
       if _, ok := exp.(*ast.Identifier); ok {
         return testIdentifier(t, exp, v)
       }
-
       return testStringLiteral(t, exp, v)
+    
+    case bool:
+      return testBooleanLiteral(t, exp, v)
+
     }
 
     t.Errorf("type of exp not handled. got=%T", exp)
