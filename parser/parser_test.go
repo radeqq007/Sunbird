@@ -419,6 +419,7 @@ func TestParsingInfixExpressions(t *testing.T) {
     {"true == true", true, "==", true},
     {"true != false", true, "!=", false},
     {"false == false", false, "==", false},
+    {"\"hello\" + \"world\"", "hello", "+", "world"},
 	}
 	
 	for _, tt := range infixTests {
