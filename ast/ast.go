@@ -163,12 +163,12 @@ func (ie *IfExpression) String() string {
 }
 
 type BlockStatement struct {
-	token 		 token.Token
+	Token 		 token.Token
 	Statements []Statement
 }
 
 func (bs *BlockStatement) statementNode()       {}
-func (bs *BlockStatement) TokenLiteral() string { return bs.token.Literal }
+func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
 func (bs *BlockStatement) String() string {
 	var out bytes.Buffer
 
