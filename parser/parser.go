@@ -222,6 +222,7 @@ func (p *Parser) parseGroupedExpression() ast.Expression {
 func (p *Parser) parseIfExpression() ast.Expression {
 	expression := &ast.IfExpression{ Token: p.curToken }
 
+  p.nextToken()
 
 	expression.Condition = p.parseExpression(LOWEST)
 
