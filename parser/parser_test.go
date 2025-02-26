@@ -758,7 +758,7 @@ func TestIfElseExpression(t *testing.T) {
 //   }
 // }
 
-func testFunctionLiteralParsing(t *testing.T) {
+func TestFunctionLiteralParsing(t *testing.T) {
   input := "func (x, y) { x + y; }"
 
   l := lexer.New(input)
