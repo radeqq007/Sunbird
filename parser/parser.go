@@ -235,9 +235,9 @@ func (p *Parser) parseIfExpression() ast.Expression {
   if p.peekTokenIs(token.ELSE) {
     p.nextToken()
 
-    if p.peekTokenIs(token.IF) {
-      // TODO: hadle else ifs
-    }
+    // TODO: hadle else ifs
+    //if p.peekTokenIs(token.IF) {
+    //}
 
     if !p.expectPeek(token.LBRACE) {
       return nil
