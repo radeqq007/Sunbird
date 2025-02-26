@@ -239,7 +239,7 @@ func (p *Parser) parseIfExpression() ast.Expression {
       // TODO: hadle else ifs
     }
 
-    if !p.peekTokenIs(token.LBRACE) {
+    if !p.expectPeek(token.LBRACE) {
       return nil
     }
 
