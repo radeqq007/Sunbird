@@ -12,6 +12,9 @@ func Eval(node ast.Node) object.Object {
 
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression)
+
+	case *ast.IntegerLiteral:
+		return &object.Integer{Value: node.Value}	
 	}
 	
 	return nil
