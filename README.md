@@ -1,7 +1,7 @@
 <p align="center">
-<img src="https://github.com/user-attachments/assets/dddabacf-6f95-47b3-8d97-fa0d18dd44ba" height="200"/>
+<img width="250" alt="Sunbird" src="https://github.com/user-attachments/assets/9dd22bc5-f6fd-4ef2-9f29-d19c9192c1fb" />
 </p>
 
-# The vex programming language
+# The Sunbird programming language
 
-Vex is a simple, interpreted, dynamically typed language.
+Sunbird is a simple, interpreted, dynamically typed language.
