@@ -1,8 +1,8 @@
 package ast
 
 import (
+	"sunbird/token"
 	"testing"
-	"vex/token"
 )
 
 func TestString(t *testing.T) {

@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"vex/ast"
-	"vex/object"
+	"sunbird/ast"
+	"sunbird/object"
 )
 
 var (

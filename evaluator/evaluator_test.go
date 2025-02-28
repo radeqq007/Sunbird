@@ -1,10 +1,10 @@
 package evaluator
 
 import (
+	"sunbird/lexer"
+	"sunbird/object"
+	"sunbird/parser"
 	"testing"
-	"vex/lexer"
-	"vex/object"
-	"vex/parser"
 )
 
 func TestEvalIntegerExpression(t *testing.T) {

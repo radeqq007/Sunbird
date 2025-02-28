@@ -2,9 +2,9 @@ package parser
 
 import (
 	"fmt"
+	"sunbird/ast"
+	"sunbird/lexer"
 	"testing"
-	"vex/ast"
-	"vex/lexer"
 )
 
 func TestVarStatement(t *testing.T) {

@@ -1,8 +1,8 @@
 package lexer
 
 import (
+	"sunbird/token"
 	"testing"
-	"vex/token"
 )
 
 func TestNextToken(t *testing.T) {

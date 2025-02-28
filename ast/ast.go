@@ -3,7 +3,7 @@ package ast
 import (
 	"bytes"
 	"strings"
-	"vex/token"
+	"sunbird/token"
 )
 
 type Node interface {

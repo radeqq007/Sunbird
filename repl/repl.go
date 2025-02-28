@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"vex/evaluator"
-	"vex/lexer"
-	"vex/parser"
+	"sunbird/evaluator"
+	"sunbird/lexer"
+	"sunbird/parser"
 )
 
 const PROMPT = "$ "

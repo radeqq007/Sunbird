@@ -3,9 +3,9 @@ package parser
 import (
 	"fmt"
 	"strconv"
-	"vex/ast"
-	"vex/lexer"
-	"vex/token"
+	"sunbird/ast"
+	"sunbird/lexer"
+	"sunbird/token"
 )
 
 type Parser struct {

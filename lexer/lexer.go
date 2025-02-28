@@ -1,6 +1,6 @@
 package lexer
 
-import "vex/token"
+import "sunbird/token"
 
 type Lexer struct {
 	input        string
