@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"math"
 	"sunbird/lexer"
 	"sunbird/object"
 	"sunbird/parser"
@@ -35,6 +36,28 @@ func TestEvalIntegerExpression(t *testing.T) {
   }
 }
 
+func TestEvalFloatExpression(t *testing.T) {
+  tests := []struct {
+    input    string
+    expected float64
+  } {
+    {"5.2", 5.2},
+    {"10.52", 10.52},
+    {"-10.24", -10.24},
+    {"-5.0", -5.0},
+    {"5.5 + 5.5 + 5.5 + 5.5 - 12", 10.0},
+    {"2.2 * 2.2 * 2", 9.68},
+    {"5.0 * 2 + 10.2", 20.2},
+    {"5 + 2.5 * 10", 30.0},
+    {"3.2 * 3.5 - 2", 9.2},
+  }
+
+  for _, tt := range tests {
+    evaluated := testEval(tt.input)
+    testFloatObject(t, evaluated, tt.expected)
+  }
+}
+
 func testEval(input string) object.Object {
   l := lexer.New(input)
   p := parser.New(l)
@@ -57,6 +80,25 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
   }
 
   return true
+}
+
+// I have to do it that way cause result.Value == expected doesn't work
+const floatTolerance = 1e-9
+
+func testFloatObject(t *testing.T, obj object.Object, expected float64) bool {
+result, ok := obj.(*object.Float)
+
+if !ok {
+  t.Errorf("object is not Float. got=%T (%+v)", obj, obj)
+  return false
+}
+
+if math.Abs(result.Value-expected) > floatTolerance {
+  t.Errorf("object has wrong value. got=%f, want=%f", result.Value, expected)
+  return false
+}
+
+return true
 }
 
 func TestEvalBooleanExpression(t *testing.T) {
