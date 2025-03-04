@@ -1,12 +1,16 @@
 package lexer
 
-import "sunbird/token"
+import (
+	"sunbird/token"
+)
 
 type Lexer struct {
 	input        string
 	position     int  // Current position in input
 	readPosition int  // Current reading position
 	ch           byte // Current char under examination
+	line				 int
+	col 				 int
 }
 
 func New(input string) *Lexer {
