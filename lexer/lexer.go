@@ -25,6 +25,14 @@ func (l *Lexer) readChar() {
 	} else {
 		l.ch = l.input[l.readPosition]
 	}
+
+	if l.ch == '\n' {
+		l.line++
+		l.col = 1
+	} else {
+		l.col++
+	}
+
 	l.position = l.readPosition
 	l.readPosition += 1
 }
