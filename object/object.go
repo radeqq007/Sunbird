@@ -54,7 +54,9 @@ func (rv *ReturnValue) Inspect() string { return rv.Value.Inspect() }
 
 type Error struct {
 	Message string
+	Line    int
+	Col     int
 }
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
-func (e *Error) Inspect() string { return "ERROR: " + e.Message }
+func (e *Error) Inspect() string { return fmt.Sprintf("ERROR at line %v, column %v: %s", e.Line, e.Col, e.Message) }
