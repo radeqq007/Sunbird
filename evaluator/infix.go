@@ -12,6 +12,10 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() == object.FLOAT_OBJ || right.Type() == object.FLOAT_OBJ:
 		return evalFloatInfixExpression(operator, left, right)
 
+
+	case left.Type() != right.Type():
+		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
+		
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 
