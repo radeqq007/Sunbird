@@ -19,7 +19,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 		return nativeBoolToBooleanObject(left != right)
 
 	default:
-		return NULL
+		return  newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
 }
 
