@@ -12,9 +12,9 @@ const (
 	EOF     = "EOF" // End of file
 
 	// Identifiers + literals
-	IDENT = "IDENT"
-	FLOAT = "FLOAT"
-	INT   = "INT"
+	IDENT  = "IDENT"
+	FLOAT  = "FLOAT"
+	INT    = "INT"
 	STRING = "STRING"
 	// Operators
 	ASSIGN   = "="
@@ -30,7 +30,7 @@ const (
 
 	LT = "<"
 	GT = ">"
-	
+
 	LE = "<="
 	GE = ">="
 
@@ -54,7 +54,7 @@ const (
 )
 
 var keywords = map[string]TokenType{
-	"func":     FUNCTION,
+	"func":   FUNCTION,
 	"var":    VAR,
 	"true":   TRUE,
 	"false":  FALSE,
