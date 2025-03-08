@@ -85,6 +85,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			if len(args) == 1 && isError(args[0]) {
 				return args[0]
 			}
+			return applyFunction(function, args)		
 			
 	}
 	return nil
