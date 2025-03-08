@@ -10,6 +10,7 @@ import (
 type ObjectType string
 
 const (
+	STRING_OBJ = "STRING"
 	INTEGER_OBJ = "INTEGER"
 	FLOAT_OBJ = "FLOAT"
 	BOOLEAN_OBJ = "BOOLEAN"
@@ -23,6 +24,13 @@ type Object interface {
 	Type() ObjectType
 	Inspect() string
 }
+
+type String struct {
+	Value string
+}
+
+func (s *String) Inspect() string { return s.Value }
+func (s *String) Type() ObjectType { return STRING_OBJ }
 
 type Integer struct {
 	Value int64
