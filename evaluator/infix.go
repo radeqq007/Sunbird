@@ -7,7 +7,8 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 
-	// TODO: handle string here
+	case left.Type() == object.STRING_OBJ || right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
 
 	case left.Type() == object.FLOAT_OBJ || right.Type() == object.FLOAT_OBJ:
 		return evalFloatInfixExpression(operator, left, right)
@@ -88,4 +89,15 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 	default:
 		return NULL
 	}
+}
+
+func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
+	if operator != "+" {
+		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+	}
+
+	leftVal := left.Inspect()
+	rightVal := right.Inspect()
+
+	return &object.String{Value: leftVal + rightVal}
 }
