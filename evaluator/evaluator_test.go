@@ -327,11 +327,11 @@ func TestFunctionApplication(t *testing.T) {
     input string
     expected int64
   }{
-    {"let identity = func(x) { x; }; identity(5);", 5},
-    {"let identity = func(x) { return x; }; identity(5);", 5},
-    {"let double = func(x) { x * 2; }; double(5);", 10},
-    {"let add = func(x, y) { x + y; }; add(5, 5);", 10},
-    {"let add = func(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+    {"var identity = func(x) { x; }; identity(5);", 5},
+    {"var identity = func(x) { return x; }; identity(5);", 5},
+    {"var double = func(x) { x * 2; }; double(5);", 10},
+    {"var add = func(x, y) { x + y; }; add(5, 5);", 10},
+    {"var add = func(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
     {"func(x) { x; }(5)", 5},
   }
   
