@@ -14,7 +14,7 @@ var add = func(x, y) {
 };
 
 var result = add(five, ten);
-!-/*5;
+!-/ *5;
 5 <= 10 >= 5;
 2.2 > 0;
 if (5 < 10) {
