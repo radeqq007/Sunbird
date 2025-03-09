@@ -30,6 +30,8 @@ if (5 < 10) {
 'hi mom!'
 "I'm using ' inside double quote string"
 'this is a " inside single quote string'
+
+[1, 2];
 `
 
 	tests := []struct {
@@ -117,6 +119,12 @@ if (5 < 10) {
 			{token.STRING, "hi mom!"},
 			{token.STRING, "I'm using ' inside double quote string"},
 			{token.STRING, "this is a \" inside single quote string"},
+			{token.LBRACKET, "["},
+			{token.INT, "1"},
+			{token.COMMA, ","},
+			{token.INT, "2"},
+			{token.RBRACKET, "]"},
+			{token.SEMICOLON, ";"},
 			{token.EOF, ""},
 		}
 	l := New(input)
