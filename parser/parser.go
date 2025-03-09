@@ -30,6 +30,7 @@ const  (
   PRODUCT          // *
   PREFIX           // -X or !X
   CALL             // foo()
+  INDEX            // arr[x]
 )
 
 func New(l *lexer.Lexer) *Parser {
@@ -61,7 +62,7 @@ func New(l *lexer.Lexer) *Parser {
   p.registerInfix(token.LE, p.parseInfixExpression)
   p.registerInfix(token.GE, p.parseInfixExpression)
   p.registerInfix(token.LPAREN, p.parseCallExpression)
-
+  p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 
   // Read 2 tokens so curToken and peekToken are set
   p.nextToken()
