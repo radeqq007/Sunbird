@@ -65,6 +65,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.ReturnValue{Value: val}
 	
 	case *ast.VarStatement:
+		if _, ok := env.Get(node.Name.Value); ok {
+			return newError("Identifier '%s' has already been declared.", node.Name.Value)
+		}
+		
 		val := Eval(node.Value, env)
 		if isError(val) {
 			return val
