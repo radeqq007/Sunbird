@@ -900,4 +900,6 @@ func TestParsingArrayLiterals(t *testing.T) {
   }
 
   testIntegerLiteral(t, array.Elements[0], 1)
+  testInfixExpression(t, array.Elements[1], 2, "*", 2)
+  testInfixExpression(t, array.Elements[2], 3, "+", 3)
 }
