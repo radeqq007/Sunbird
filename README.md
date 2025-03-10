@@ -3,5 +3,6 @@
 </p>
 
 # The Sunbird programming language
+[![Tests](https://github.com/Sunbird-Lang/Sunbird/actions/workflows/tests.yml/badge.svg)](https://github.com/Sunbird-Lang/Sunbird/actions/workflows/tests.yml)
 
 Sunbird is a simple, interpreted, dynamically typed language.
