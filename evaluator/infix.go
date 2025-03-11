@@ -43,11 +43,7 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
 		return nativeBoolToBooleanObject(leftVal > rightVal)
-	case "==":
-		return nativeBoolToBooleanObject(leftVal == rightVal)
-	case "!=":
-		return nativeBoolToBooleanObject(leftVal != rightVal)
-			
+
 	case "||":
 		// TODO: Update isTruthy() to handle this
 		return nativeBoolToBooleanObject(leftVal != 0 || rightVal != 0)
@@ -89,10 +85,6 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
 		return nativeBoolToBooleanObject(leftVal > rightVal)
-	case "==":
-		return nativeBoolToBooleanObject(leftVal == rightVal)
-	case "!=":
-		return nativeBoolToBooleanObject(leftVal != rightVal)
 			
 	case "||":
 		// TODO: Update isTruthy() to handle this
@@ -114,14 +106,6 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 
 	leftVal := left.Inspect()
 	rightVal := right.Inspect()
-
-	if operator == "==" {
-		return nativeBoolToBooleanObject(leftVal == rightVal)
-	}
-
-	if operator == "!=" {
-		return nativeBoolToBooleanObject(leftVal != rightVal)
-	}
 
 	if operator == "&&" {
 		return nativeBoolToBooleanObject(leftVal != "" && rightVal != "")
