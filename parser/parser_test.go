@@ -68,6 +68,44 @@ func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
   return true
 }
 
+func TestAssignStatement(t *testing.T) {
+  input := "x = 4;"
+
+  l := lexer.New(input)
+  p := New(l)
+  
+  program := p.ParseProgram()
+  checkParserErrors(t, p)
+
+  if len(program.Statements) != 1 {
+    t.Fatalf("program.Statements does not contain 1 statement. got=%d", len(program.Statements))
+  }
+  
+  stmt := program.Statements[0]
+
+  assignStmt, ok := stmt.(*ast.AssignStatement)
+  if !ok {
+    t.Errorf("stmt not *ast.AssignStmt. got=%T", stmt)
+  }
+
+  if assignStmt.TokenLiteral() != "x" {
+      t.Errorf("returnStmt.TokenLiteral not 'x', got %q", assignStmt.TokenLiteral())
+  }
+
+  if assignStmt.Name.Value != "x" {
+    t.Errorf("varStmt.Name.Value not '%s'. got=%s", "x", assignStmt.Name.Value)
+  }
+  
+  if assignStmt.Name.TokenLiteral() != "x" {
+    t.Errorf("assignStmt.Name not '%s'. got=%s", "x", assignStmt.Name)
+  }
+
+  if assignStmt.Value.String() != "4" {
+    t.Errorf("assignStmt.Value.String not '%s'. got=%s", "4", assignStmt.Value.String())
+  }
+
+}
+
 func TestReturnStatement(t *testing.T) {
   input := `
 return 6;
