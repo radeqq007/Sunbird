@@ -13,6 +13,12 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 
+	case token.IDENT:
+		if p.peekTokenIs(token.ASSIGN) {
+				return p.parseAssignStatement()
+		}
+		return p.parseExpressionStatement()
+	
 	default:
 		return p.parseExpressionStatement()
 	}
