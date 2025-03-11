@@ -6,6 +6,8 @@ import (
 )
 
 var precedences = map[token.TokenType]int {
+  token.OR: LOGICAL,
+  token.AND: LOGICAL,
   token.EQ: EQUALS,
   token.NOT_EQ: EQUALS,
   token.LT: LESSGREATER,
