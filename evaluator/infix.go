@@ -25,6 +25,10 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() == object.FLOAT_OBJ || right.Type() == object.FLOAT_OBJ:
 		return evalFloatInfixExpression(operator, left, right)
 
+	// TODO: this probably should be a different error
+	case left.Type() != right.Type():
+		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
+
 	default:
 		return  newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
