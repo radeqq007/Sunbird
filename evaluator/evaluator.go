@@ -75,6 +75,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		env.Set(node.Name.Value, val)
 		
+	case *ast.AssignStatement:
+		if _, ok := env.Get(node.Name.Value) ; !ok {
+			return newError("Identifier '%s' has not been declared.", node.Name.Value)
+		}
+
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return val
+		}
+		
+		env.Set(node.Name.Value, val)
+
 		case *ast.Identifier:
 			return evalIdentifier(node, env)
 
