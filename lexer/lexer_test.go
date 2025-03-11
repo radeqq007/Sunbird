@@ -32,6 +32,8 @@ if (5 < 10) {
 'this is a " inside single quote string'
 
 [1, 2];
+||
+&&
 `
 
 	tests := []struct {
@@ -125,6 +127,8 @@ if (5 < 10) {
 			{token.INT, "2"},
 			{token.RBRACKET, "]"},
 			{token.SEMICOLON, ";"},
+			{token.OR, "||"},
+			{token.AND, "&&"},
 			{token.EOF, ""},
 		}
 	l := New(input)
