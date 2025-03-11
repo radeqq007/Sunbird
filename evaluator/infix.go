@@ -49,6 +49,15 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return nativeBoolToBooleanObject(leftVal == rightVal)
 	case "!=":
 		return nativeBoolToBooleanObject(leftVal != rightVal)
+			
+	case "||":
+		// TODO: Update isTruthy() to handle this
+		return nativeBoolToBooleanObject(leftVal != 0 || rightVal != 0)
+	
+	case "&&":
+		// TODO: Update isTruthy() to handle this
+		return nativeBoolToBooleanObject(leftVal != 0 && rightVal != 0)
+
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
@@ -86,18 +95,43 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 		return nativeBoolToBooleanObject(leftVal == rightVal)
 	case "!=":
 		return nativeBoolToBooleanObject(leftVal != rightVal)
+			
+	case "||":
+		// TODO: Update isTruthy() to handle this
+		return nativeBoolToBooleanObject(leftVal != 0 || rightVal != 0)
+	
+	case "&&":
+		// TODO: Update isTruthy() to handle this
+		return nativeBoolToBooleanObject(leftVal != 0 && rightVal != 0)
+
 	default:
 		return NULL
 	}
 }
 
 func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
-	if operator != "+" {
+	if operator != "+" && operator != "==" && operator != "!=" && operator != "&&" && operator != "||" {
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
 
 	leftVal := left.Inspect()
 	rightVal := right.Inspect()
 
+	if operator == "==" {
+		return nativeBoolToBooleanObject(leftVal == rightVal)
+	}
+
+	if operator == "!=" {
+		return nativeBoolToBooleanObject(leftVal != rightVal)
+	}
+
+	if operator == "&&" {
+		return nativeBoolToBooleanObject(leftVal != "" && rightVal != "")
+	}
+
+	if operator == "||" {
+		return nativeBoolToBooleanObject(leftVal != "" || rightVal != "")
+	}
+			
 	return &object.String{Value: leftVal + rightVal}
 }
