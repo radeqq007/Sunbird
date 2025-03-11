@@ -456,6 +456,8 @@ func TestParsingInfixExpressions(t *testing.T) {
 		{"3.14 != 4;", 3.14, "!=", 4},
 		{"5.21 >= 5.21;", 5.21, ">=", 5.21},
 		{"5 <= 5;", 5, "<=", 5},
+		{"true || false;", true, "||", false},
+		{"true && false;", true, "&&", false},
     {"true == true", true, "==", true},
     {"true != false", true, "!=", false},
     {"false == false", false, "==", false},
