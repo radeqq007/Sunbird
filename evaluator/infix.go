@@ -4,6 +4,18 @@ import "sunbird/object"
 
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
 	switch {
+	case operator == "&&":
+		return nativeBoolToBooleanObject(isTruthy(left) && isTruthy(right))
+	
+	case operator == "||":
+		return nativeBoolToBooleanObject(isTruthy(left) || isTruthy(right))
+
+	case operator == "==":
+		return nativeBoolToBooleanObject(left == right)
+
+	case operator == "!=":
+		return nativeBoolToBooleanObject(left != right)
+
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 
@@ -12,14 +24,6 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 
 	case left.Type() == object.FLOAT_OBJ || right.Type() == object.FLOAT_OBJ:
 		return evalFloatInfixExpression(operator, left, right)
-
-
-		
-	case operator == "==":
-		return nativeBoolToBooleanObject(left == right)
-
-	case operator == "!=":
-		return nativeBoolToBooleanObject(left != right)
 
 	default:
 		return  newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
@@ -43,14 +47,6 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
 		return nativeBoolToBooleanObject(leftVal > rightVal)
-
-	case "||":
-		// TODO: Update isTruthy() to handle this
-		return nativeBoolToBooleanObject(leftVal != 0 || rightVal != 0)
-	
-	case "&&":
-		// TODO: Update isTruthy() to handle this
-		return nativeBoolToBooleanObject(leftVal != 0 && rightVal != 0)
 
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
@@ -85,15 +81,6 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
 		return nativeBoolToBooleanObject(leftVal > rightVal)
-			
-	case "||":
-		// TODO: Update isTruthy() to handle this
-		return nativeBoolToBooleanObject(leftVal != 0 || rightVal != 0)
-	
-	case "&&":
-		// TODO: Update isTruthy() to handle this
-		return nativeBoolToBooleanObject(leftVal != 0 && rightVal != 0)
-
 	default:
 		return NULL
 	}
@@ -107,13 +94,5 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 	leftVal := left.Inspect()
 	rightVal := right.Inspect()
 
-	if operator == "&&" {
-		return nativeBoolToBooleanObject(leftVal != "" && rightVal != "")
-	}
-
-	if operator == "||" {
-		return nativeBoolToBooleanObject(leftVal != "" || rightVal != "")
-	}
-			
 	return &object.String{Value: leftVal + rightVal}
 }
