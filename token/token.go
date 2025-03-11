@@ -34,6 +34,10 @@ const (
 	LE = "<="
 	GE = ">="
 
+	// Logical operators
+	OR = 	"||"
+	AND = "&&"
+
 	// Delimeter
 	COMMA     = ","
 	SEMICOLON = ";"
