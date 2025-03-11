@@ -5,6 +5,7 @@
 # The Sunbird programming language
 [![Build](https://github.com/Sunbird-Lang/Sunbird/actions/workflows/build.yml/badge.svg)](https://github.com/Sunbird-Lang/Sunbird/actions/workflows/build.yml)
 [![Tests](https://github.com/Sunbird-Lang/Sunbird/actions/workflows/tests.yml/badge.svg)](https://github.com/Sunbird-Lang/Sunbird/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Sunbird is a simple, interpreted, dynamically typed language.
 
