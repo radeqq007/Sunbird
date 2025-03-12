@@ -1,6 +1,9 @@
 package evaluator
 
-import "sunbird/object"
+import (
+	"fmt"
+	"sunbird/object"
+)
 
 var builtins = map[string]*object.Builtin{
 	"len": {
@@ -32,6 +35,27 @@ var builtins = map[string]*object.Builtin{
 			newElements := append(arr.Elements, args[1:]...)
 			
 			return &object.Array{Elements: newElements}
+		},
+	},
+
+	"println": {
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Print(arg.Inspect(), " ")
+			}
+			fmt.Println()
+
+			return nil
+		},
+	},
+
+	"print": {
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Print(arg.Inspect(), " ")
+			}
+
+			return nil
 		},
 	},
 }
