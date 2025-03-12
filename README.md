@@ -88,11 +88,11 @@ var x = 5
 var y = 10
 
 if x > y {
-    print("x is greater than y")
+    println("x is greater than y")
 } else if x == y {
-    print("x is equal to y")
+    println("x is equal to y")
 } else {
-    print("x is less than y")
+    println("x is less than y")
 }
 ```
 
