@@ -31,6 +31,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
 
+	case *ast.NullLiteral:
+		return NULL
+
 	case *ast.InfixExpression:
 		left := Eval(node.Left, env)
 		if isError(left) {
