@@ -20,10 +20,21 @@ func (p *Parser) parseIfExpression() ast.Expression {
 
 	if p.peekTokenIs(token.ELSE) {
 		p.nextToken()
-
-		// TODO: hadle else ifs
-		//if p.peekTokenIs(token.IF) {
-		//}
+	
+		if p.peekTokenIs(token.IF) {
+				p.nextToken()
+	
+			expression.Alternative = &ast.BlockStatement{
+				Statements: []ast.Statement{
+					&ast.ExpressionStatement{
+						Expression: p.parseIfExpression(),
+					},
+				},
+				}
+	
+				return expression
+			}
+	
 
 		if !p.expectPeek(token.LBRACE) {
 			return nil
