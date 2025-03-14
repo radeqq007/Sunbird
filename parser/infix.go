@@ -14,11 +14,11 @@ var precedences = map[token.TokenType]int {
   token.GT: LESSGREATER,
   token.LE: LESSGREATER,
   token.GE: LESSGREATER,
+  token.PIPE: PIPE,
   token.PLUS: SUM,
   token.MINUS: SUM,
   token.SLASH: PRODUCT,
   token.ASTERISK: PRODUCT,
-  token.PIPE: PIPE,
   token.LPAREN: CALL,
   token.LBRACKET: INDEX,
 }

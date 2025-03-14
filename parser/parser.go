@@ -27,9 +27,9 @@ const  (
   LOGICAL          // && or ||
   EQUALS           // ==
   LESSGREATER      // >, <, <= or >=
+  PIPE             // |>
   SUM              // +
   PRODUCT          // *
-  PIPE             // |>
   PREFIX           // -X or !X
   CALL             // foo()
   INDEX            // arr[x]
