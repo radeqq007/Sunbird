@@ -10,6 +10,9 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case operator == "||":
 		return nativeBoolToBooleanObject(isTruthy(left) || isTruthy(right))
 
+	case operator == "|>":
+		return evalPipeExpression(left, right)
+
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 
@@ -99,4 +102,18 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 	rightVal := right.Inspect()
 
 	return &object.String{Value: leftVal + rightVal}
+}
+
+func evalPipeExpression(left, right object.Object) object.Object {
+
+	switch fn := right.(type) {
+
+	case *object.Function:
+		return applyFunction(fn, []object.Object{left})
+
+	case *object.Builtin:
+		return fn.Fn(left)
+	}
+
+	return newError("right side of pipe operator is not a function: %s", right.Type())
 }
