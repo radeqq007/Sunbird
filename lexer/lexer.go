@@ -153,6 +153,11 @@ func (l *Lexer) NextToken() token.Token {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{Type: token.OR, Literal: string(ch) + string(l.ch)}
+		} else if l.peekChar() == '>' {
+			ch := l.ch
+			l.readChar()
+
+			tok = token.Token{ Type: token.PIPE, Literal: string(ch) + string(l.ch)}
 		}
 
 	case '&':
