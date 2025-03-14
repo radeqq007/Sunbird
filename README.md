@@ -96,9 +96,10 @@ if x > y {
 }
 ```
 
+## Pipe operator
 
 
-*Note: documentation is yet to be finished*
+*Note: documentation is work in progress*
 
 
 
