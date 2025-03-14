@@ -97,7 +97,14 @@ if x > y {
 ```
 
 ## Pipe operator
-
+Embedded function calls can get messsy and hard to follow. For example:
+```go
+var result = foo(bar(baz(another_func(data))))
+```
+in that case you can use the **pipe operator**:
+```go
+var result = data |> another_func |> baz |> bar |> foo
+```
 
 *Note: documentation is work in progress*
 
