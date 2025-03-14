@@ -23,6 +23,7 @@ const (
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
+	PIPE     = "|>"
 
 	// Comparison operators
 	EQ     = "=="
@@ -35,7 +36,7 @@ const (
 	GE = ">="
 
 	// Logical operators
-	OR = 	"||"
+	OR  = "||"
 	AND = "&&"
 
 	// Delimeter
@@ -68,7 +69,7 @@ var keywords = map[string]TokenType{
 	"if":     IF,
 	"else":   ELSE,
 	"return": RETURN,
-	"null": NULL,
+	"null":   NULL,
 }
 
 func LookupIdent(ident string) TokenType {
