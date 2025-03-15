@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sunbird/evaluator"
 	"sunbird/lexer"
 	"sunbird/object"
@@ -26,6 +27,17 @@ func Start(in io.Reader, out io.Writer) {
 		line.ReadHistory(f)
 		f.Close()
 	}
+
+	keywords := []string{"func", "var", "true", "false", "if", "else", "return", "null"}
+
+	line.SetCompleter(func(line string) (c []string) {
+		for _, keyword := range keywords {
+			if strings.HasPrefix(keyword, line) {
+				c = append(c, keyword)
+			}
+		}
+		return
+	})
 
 	env := object.NewEnvironment()
 
