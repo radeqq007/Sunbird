@@ -1,46 +1,70 @@
 package repl
 
 import (
-	"bufio"
-	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"sunbird/evaluator"
 	"sunbird/lexer"
 	"sunbird/object"
 	"sunbird/parser"
+
+	"github.com/peterh/liner"
 )
 
 const PROMPT = "$ "
 
+var history_fn = filepath.Join(os.TempDir(), ".sunbird-history")
+
 func Start(in io.Reader, out io.Writer) {
-	scanner := bufio.NewScanner(in)
+	line := liner.NewLiner()
+	defer line.Close()
+
+	line.SetCtrlCAborts(true)
+
+	if f, err := os.Open(history_fn); err == nil {
+		line.ReadHistory(f)
+		f.Close()
+	}
+
 	env := object.NewEnvironment()
 
 	for {
-		fmt.Print(PROMPT)
-		scanned := scanner.Scan()
+		if input, err := line.Prompt(PROMPT); err == nil {
 
-		if !scanned {
+			if input == "exit" {
+
+				if f, err := os.Create(history_fn); err == nil {
+					line.WriteHistory(f)
+					f.Close()
+				}
+				return
+			}
+
+			line.AppendHistory(input)
+
+			l := lexer.New(input)
+			p := parser.New(l)
+			program := p.ParseProgram()
+
+			if len(p.Errors()) != 0 {
+				printParserErrors(out, p.Errors())
+				continue
+			}
+
+			evaluated := evaluator.Eval(program, env)
+			if evaluated != nil {
+				io.WriteString(out, evaluated.Inspect())
+				io.WriteString(out, "\n")
+			}
+
+		} else if err == liner.ErrPromptAborted {
+			if f, err := os.Create(history_fn); err == nil {
+				line.WriteHistory(f)
+				f.Close()
+			}
 			return
 		}
-
-		line := scanner.Text()
-
-		l := lexer.New(line)
-		p := parser.New(l)
-		program := p.ParseProgram()
-		
-		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
-			continue
-		}
-			
-		evaluated := evaluator.Eval(program, env)
-		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
-		}
-
 	}
 }
 
@@ -49,4 +73,3 @@ func printParserErrors(out io.Writer, errors []string) {
 		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
-	
