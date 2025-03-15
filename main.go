@@ -11,7 +11,6 @@ import (
 	"sunbird/repl"
 )
 
-
 func init() {
 	flag.Usage = func() {
 		fmt.Println("Usage: sunbird [options]")
@@ -27,9 +26,9 @@ func main() {
 	args := flag.Args()
 	if len(args) == 0 {
 		fmt.Println("Welcome to the sunbird programming language!")
-		fmt.Printf("Feel free to type in commands.\n")
+		fmt.Printf("Type in 'exit' to exit.\n")
 		repl.Start(os.Stdin, os.Stdout)
-		
+
 		os.Exit(0)
 	}
 
@@ -40,7 +39,7 @@ func main() {
 			os.Exit(1)
 		}
 		defer src.Close()
-		
+
 		content := make([]byte, 100)
 		_, err = src.Read(content)
 		if err != nil {
@@ -50,7 +49,7 @@ func main() {
 
 		l := lexer.New(string(content))
 		p := parser.New(l)
-		
+
 		program := p.ParseProgram()
 
 		if len(p.Errors()) != 0 {
