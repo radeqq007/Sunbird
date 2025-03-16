@@ -19,6 +19,9 @@ func (p *Parser) parseStatement() ast.Statement {
 		}
 		return p.parseExpressionStatement()
 	
+	case token.FOR:
+		return p.parseForStatement()
+
 	default:
 		return p.parseExpressionStatement()
 	}
