@@ -107,6 +107,3 @@ var result = data |> another_func |> baz |> bar |> foo
 ```
 
 *Note: documentation is work in progress*
-
-
-

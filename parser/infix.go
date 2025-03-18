@@ -23,7 +23,6 @@ var precedences = map[token.TokenType]int {
   token.LBRACKET: INDEX,
 }
 
-
 func (p *Parser) peekPrecedence() int {
   if p, ok := precedences[p.peekToken.Type]; ok {
     return p

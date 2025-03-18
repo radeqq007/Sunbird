@@ -322,6 +322,7 @@ func TestFunctionObject(t *testing.T) {
     t.Fatalf("body is not %q. got=%q", expectedBody, fn.Body.String())
   }
 }
+
 func TestFunctionApplication(t *testing.T) {
   tests := []struct {
     input string
