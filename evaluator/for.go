@@ -8,6 +8,11 @@ import (
 func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Object {
 	loopEnv := object.NewEnclosedEnvironment(env)
 
+	// This sucks but uhhh I don't know how to do it better
+	if assign, ok := fs.Init.(*ast.AssignStatement); ok {
+		loopEnv.Set(assign.Name.Value, NULL)
+	}
+
 	if fs.Init != nil {
 		initResult := Eval(fs.Init, loopEnv)
 		if isError(initResult) {
