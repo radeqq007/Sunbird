@@ -20,6 +20,17 @@ func (e *Environment) Get(name string) (Object, bool) {
 }
 
 func (e *Environment) Set(name string, val Object) Object {
+	if _, ok := e.store[name]; ok {
+		e.store[name] = val
+		return val
+	}
+
+	if e.outer != nil {
+		if _, ok := e.outer.Get(name); ok {
+			return e.outer.Set(name, val)
+		}
+	}
+
 	e.store[name] = val
 	return val
 }
