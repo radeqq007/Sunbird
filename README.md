@@ -96,6 +96,14 @@ if x > y {
 }
 ```
 
+## For loops
+A `for` loop is used to execute a block of code multiple times.
+
+```go
+  for i = 0; i < 10; i = i + 1 {
+    println("This code will run 10 times")
+  }
+```
 ## Pipe operator
 Embedded function calls can get messsy and hard to follow. For example:
 ```go
