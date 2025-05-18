@@ -9,8 +9,8 @@ type Lexer struct {
 	position     int  // Current position in input
 	readPosition int  // Current reading position
 	ch           byte // Current char under examination
-	// line				 int // TODO: add this in future
-	// col 				 int
+	line         int  // Current line number
+	col          int  // Current column number
 }
 
 func New(input string) *Lexer {
@@ -28,6 +28,13 @@ func (l *Lexer) readChar() {
 
 	l.position = l.readPosition
 	l.readPosition += 1
+
+	if l.ch == '\n' {
+		l.line++
+		l.col = 0
+	} else {
+		l.col++
+	}
 }
 
 func (l *Lexer) readIdentifier() string {
@@ -72,7 +79,16 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 
 }
 func (l *Lexer) NextToken() token.Token {
-	var tok token.Token
+	pos := token.Position{
+		Filename: "",
+		Offset:   l.position,
+		Line:     l.line,
+		Col:      l.col - 1,
+	}
+
+	tok := token.Token{
+		Pos: pos,
+	}
 
 	l.skipWhitespace()
 
@@ -83,17 +99,17 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.ASSIGN, l.ch)
+			tok = newToken(token.ASSIGN, l.ch, pos)
 		}
 
 	case '+':
-		tok = newToken(token.PLUS, l.ch)
+		tok = newToken(token.PLUS, l.ch, pos)
 
 	case '-':
-		tok = newToken(token.MINUS, l.ch)
+		tok = newToken(token.MINUS, l.ch, pos)
 
 	case ';':
-		tok = newToken(token.SEMICOLON, l.ch)
+		tok = newToken(token.SEMICOLON, l.ch, pos)
 
 	case '!':
 		if l.peekChar() == '=' {
@@ -101,7 +117,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.BANG, l.ch)
+			tok = newToken(token.BANG, l.ch, pos)
 		}
 
 	case '/':
@@ -123,10 +139,10 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar() // skip the /
 			return l.NextToken()
 		}
-		tok = newToken(token.SLASH, l.ch)
+		tok = newToken(token.SLASH, l.ch, pos)
 
 	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
+		tok = newToken(token.ASTERISK, l.ch, pos)
 
 	case '<':
 		if l.peekChar() == '=' {
@@ -134,7 +150,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.LE, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.LT, l.ch)
+			tok = newToken(token.LT, l.ch, pos)
 		}
 
 	case '>':
@@ -143,7 +159,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.GE, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.GT, l.ch)
+			tok = newToken(token.GT, l.ch, pos)
 		}
 
 	case '|':
@@ -166,25 +182,25 @@ func (l *Lexer) NextToken() token.Token {
 		}
 
 	case '(':
-		tok = newToken(token.LPAREN, l.ch)
+		tok = newToken(token.LPAREN, l.ch, pos)
 
 	case ')':
-		tok = newToken(token.RPAREN, l.ch)
+		tok = newToken(token.RPAREN, l.ch, pos)
 
 	case ',':
-		tok = newToken(token.COMMA, l.ch)
+		tok = newToken(token.COMMA, l.ch, pos)
 
 	case '{':
-		tok = newToken(token.LBRACE, l.ch)
+		tok = newToken(token.LBRACE, l.ch, pos)
 
 	case '}':
-		tok = newToken(token.RBRACE, l.ch)
+		tok = newToken(token.RBRACE, l.ch, pos)
 
 	case '[':
-		tok = newToken(token.LBRACKET, l.ch)
+		tok = newToken(token.LBRACKET, l.ch, pos)
 
 	case ']':
-		tok = newToken(token.RBRACKET, l.ch)
+		tok = newToken(token.RBRACKET, l.ch, pos)
 
 	case '"', '\'':
 		tok.Type = token.STRING
@@ -207,7 +223,7 @@ func (l *Lexer) NextToken() token.Token {
 			return tok // Return earlier because readChar() is already being executed in readNumber ()
 
 		} else {
-			tok = newToken(token.ILLEGAL, l.ch)
+			tok = newToken(token.ILLEGAL, l.ch, pos)
 		}
 
 	}
@@ -216,8 +232,8 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{Type: tokenType, Literal: string(ch)}
+func newToken(tokenType token.TokenType, ch byte, posistion token.Position) token.Token {
+	return token.Token{Type: tokenType, Literal: string(ch), Pos: posistion}
 }
 
 func isLetter(ch byte) bool {
