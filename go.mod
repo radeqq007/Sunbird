@@ -1,6 +1,6 @@
 module sunbird
 
-go 1.21.6
+go 1.22.2
 
 require github.com/peterh/liner v1.2.2
 
