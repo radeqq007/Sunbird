@@ -53,7 +53,7 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 			return newError("division by zero")
 		}
 
-		return &object.Float{Value: float64(leftVal) / float64(rightVal)}
+		return &object.Integer{Value: leftVal / rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
