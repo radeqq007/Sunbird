@@ -10,16 +10,16 @@ import (
 type ObjectType string
 
 const (
-	STRING_OBJ       = "STRING"
-	INTEGER_OBJ      = "INTEGER"
-	FLOAT_OBJ        = "FLOAT"
-	BOOLEAN_OBJ      = "BOOLEAN"
-	NULL_OBJ         = "NULL"
-	FUNCTION_OBJ     = "FUNCTION"
-	RETURN_VALUE_OBJ = "RETURN_VALUE"
-	ERROR_OBJ        = "ERROR"
-	BUILTIN_OBJ      = "BUILTIN"
-	ARRAY_OBJ        = "ARRAY"
+	StringObj      = "STRING"
+	IntegerObj     = "INTEGER"
+	FloatObj       = "FLOAT"
+	BooleanObj     = "BOOLEAN"
+	NullObj        = "NULL"
+	FunctionObj    = "FUNCTION"
+	ReturnValueObj = "RETURN_VALUE"
+	ErrorObj       = "ERROR"
+	BuiltinObj     = "BUILTIN"
+	ArrayObj       = "ARRAY"
 )
 
 type Object interface {
@@ -32,46 +32,46 @@ type String struct {
 }
 
 func (s *String) Inspect() string  { return s.Value }
-func (s *String) Type() ObjectType { return STRING_OBJ }
+func (s *String) Type() ObjectType { return StringObj }
 
 type Integer struct {
 	Value int64
 }
 
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
-func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
+func (i *Integer) Type() ObjectType { return IntegerObj }
 
 type Float struct {
 	Value float64
 }
 
 func (f *Float) Inspect() string  { return fmt.Sprintf("%f", f.Value) }
-func (f *Float) Type() ObjectType { return FLOAT_OBJ }
+func (f *Float) Type() ObjectType { return FloatObj }
 
 type Boolean struct {
 	Value bool
 }
 
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
-func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
+func (b *Boolean) Type() ObjectType { return BooleanObj }
 
 type Null struct{}
 
-func (n *Null) Type() ObjectType { return NULL_OBJ }
+func (n *Null) Type() ObjectType { return NullObj }
 func (n *Null) Inspect() string  { return "null" }
 
 type ReturnValue struct {
 	Value Object
 }
 
-func (rv *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
+func (rv *ReturnValue) Type() ObjectType { return ReturnValueObj }
 func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
 
 type Error struct {
 	Message string
 }
 
-func (e *Error) Type() ObjectType { return ERROR_OBJ }
+func (e *Error) Type() ObjectType { return ErrorObj }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 
 type Function struct {
@@ -80,7 +80,7 @@ type Function struct {
 	Env        *Environment
 }
 
-func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
+func (f *Function) Type() ObjectType { return FunctionObj }
 func (f *Function) Inspect() string {
 	var out bytes.Buffer
 
@@ -106,14 +106,14 @@ type Builtin struct {
 	Fn BuiltinFunction
 }
 
-func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }
+func (b *Builtin) Type() ObjectType { return BuiltinObj }
 func (b *Builtin) Inspect() string  { return "builtin function" }
 
 type Array struct {
 	Elements []Object
 }
 
-func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
+func (ao *Array) Type() ObjectType { return ArrayObj }
 func (ao *Array) Inspect() string {
 	var out bytes.Buffer
 

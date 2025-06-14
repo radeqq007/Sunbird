@@ -40,7 +40,7 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 		}
 
 		// handle return statements
-		if result != nil && result.Type() == object.RETURN_VALUE_OBJ {
+		if result != nil && result.Type() == object.ReturnValueObj {
 			return result
 		}
 

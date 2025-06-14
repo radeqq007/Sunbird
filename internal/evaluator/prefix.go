@@ -31,17 +31,17 @@ func evalBangOperator(right object.Object) object.Object {
 }
 
 func evalMinusPrefixOperator(right object.Object) object.Object {
-	if right.Type() == object.INTEGER_OBJ {
+	if right.Type() == object.IntegerObj {
 		value := right.(*object.Integer).Value
 		return &object.Integer{Value: -value}
 	}
 
-	if right.Type() == object.FLOAT_OBJ {
+	if right.Type() == object.FloatObj {
 		value := right.(*object.Float).Value
 		return &object.Float{Value: -value}
 	}
 
-	if right.Type() != object.INTEGER_OBJ && right.Type() != object.FLOAT_OBJ {
+	if right.Type() != object.IntegerObj && right.Type() != object.FloatObj {
 		return newError("unknown operator: -%s", right.Type())
 	}
 

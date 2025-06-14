@@ -19,13 +19,13 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case operator == "!=":
 		return nativeBoolToBooleanObject(left != right)
 
-	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
 		return evalIntegerInfixExpression(operator, left, right)
 
-	case left.Type() == object.STRING_OBJ || right.Type() == object.STRING_OBJ:
+	case left.Type() == object.StringObj || right.Type() == object.StringObj:
 		return evalStringInfixExpression(operator, left, right)
 
-	case left.Type() == object.FLOAT_OBJ || right.Type() == object.FLOAT_OBJ:
+	case left.Type() == object.FloatObj || right.Type() == object.FloatObj:
 		return evalFloatInfixExpression(operator, left, right)
 
 	// TODO: this probably should be a different error
@@ -67,13 +67,13 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 func evalFloatInfixExpression(operator string, left, right object.Object) object.Object {
 	var leftVal, rightVal float64
 
-	if left.Type() == object.INTEGER_OBJ {
+	if left.Type() == object.IntegerObj {
 		leftVal = float64(left.(*object.Integer).Value)
 	} else {
 		leftVal = left.(*object.Float).Value
 	}
 
-	if right.Type() == object.INTEGER_OBJ {
+	if right.Type() == object.IntegerObj {
 		rightVal = float64(right.(*object.Integer).Value)
 	} else {
 		rightVal = right.(*object.Float).Value
