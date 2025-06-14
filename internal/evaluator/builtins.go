@@ -29,7 +29,10 @@ var builtins = map[string]*object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
 			arr, ok := args[0].(*object.Array)
 			if !ok {
-				return newError("first argument to `append` must be an array, got %s", args[0].Type())
+				return newError(
+					"first argument to `append` must be an array, got %s",
+					args[0].Type(),
+				)
 			}
 
 			newElements := append(arr.Elements, args[1:]...)

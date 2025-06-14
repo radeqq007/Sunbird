@@ -98,7 +98,8 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 }
 
 func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
-	if operator != "+" && operator != "==" && operator != "!=" && operator != "&&" && operator != "||" {
+	if operator != "+" && operator != "==" && operator != "!=" && operator != "&&" &&
+		operator != "||" {
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
 
