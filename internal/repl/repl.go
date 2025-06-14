@@ -45,7 +45,6 @@ func Start(in io.Reader, out io.Writer) {
 		if input, err := line.Prompt(PROMPT); err == nil {
 
 			if input == "exit" {
-
 				if f, err := os.Create(history_fn); err == nil {
 					line.WriteHistory(f)
 					f.Close()

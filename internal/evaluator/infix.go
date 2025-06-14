@@ -109,9 +109,7 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 }
 
 func evalPipeExpression(left, right object.Object) object.Object {
-
 	switch fn := right.(type) {
-
 	case *object.Function:
 		return applyFunction(fn, []object.Object{left})
 

@@ -16,7 +16,6 @@ func init() {
 		fmt.Println("Usage: sunbird [options]")
 		fmt.Println("Options:")
 		flag.PrintDefaults()
-
 	}
 }
 

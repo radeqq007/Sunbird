@@ -72,12 +72,11 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 			l.readChar()
 		}
 		return l.input[position:l.position], token.FLOAT
-
 	}
 
 	return l.input[position:l.position], token.INT
-
 }
+
 func (l *Lexer) NextToken() token.Token {
 	pos := token.Position{
 		Filename: "",
@@ -225,7 +224,6 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch, pos)
 		}
-
 	}
 
 	l.readChar()

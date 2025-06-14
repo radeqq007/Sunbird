@@ -4,7 +4,6 @@ import "sunbird/internal/object"
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
 	switch fn := fn.(type) {
-
 	case *object.Function:
 		if len(args) != len(fn.Parameters) {
 			return newError("wrong number of arguments: expected %d, got %d", len(fn.Parameters), len(args))

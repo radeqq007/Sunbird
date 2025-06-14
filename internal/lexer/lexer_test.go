@@ -142,7 +142,6 @@ if (5 < 10) {
 
 		if tok.Literal != tt.expectedLiteral {
 			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
-
 		}
 	}
 }

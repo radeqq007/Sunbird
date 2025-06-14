@@ -50,7 +50,6 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 				return updateResult
 			}
 		}
-
 	}
 
 	return result

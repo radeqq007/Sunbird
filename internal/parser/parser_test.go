@@ -103,7 +103,6 @@ func TestAssignStatement(t *testing.T) {
 	if assignStmt.Value.String() != "4" {
 		t.Errorf("assignStmt.Value.String not '%s'. got=%s", "4", assignStmt.Value.String())
 	}
-
 }
 
 func TestReturnStatement(t *testing.T) {
@@ -353,7 +352,6 @@ func TestParsingPrefixExpressions(t *testing.T) {
 		if !testLiteralExpression(t, exp.Right, tt.value) {
 			return
 		}
-
 	}
 }
 
@@ -600,7 +598,6 @@ func testLiteralExpression(
 
 	case bool:
 		return testBooleanLiteral(t, exp, v)
-
 	}
 
 	t.Errorf("type of exp not handled. got=%T", exp)
@@ -875,7 +872,6 @@ func TestFunctionParameterParsing(t *testing.T) {
 		for i, ident := range tt.expectedParams {
 			testLiteralExpression(t, function.Parameters[i], ident)
 		}
-
 	}
 }
 
