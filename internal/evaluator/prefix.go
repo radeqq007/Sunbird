@@ -41,7 +41,7 @@ func evalMinusPrefixOperator(right object.Object) object.Object {
 		return &object.Float{Value: -value}
 	}
 
-	if right.Type() != object.INTEGER_OBJ || right.Type() != object.FLOAT_OBJ {
+	if right.Type() != object.INTEGER_OBJ && right.Type() != object.FLOAT_OBJ {
 		return newError("unknown operator: -%s", right.Type())
 	}
 
