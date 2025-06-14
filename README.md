@@ -44,11 +44,11 @@ var foo = null // null
 
 <br />
 
-## Arrays:
+## Arrays
 
 Arrays are an ordered list of elements of possibly different types identified by a number index. Each element in an array can be accessed individually by their index. Arrays are constructed as a comma separated list of elements, can contain any type of value, and are enclosed by square brackets:
 ```go
-var arr = [ 1, "sunbird", 10, 2.2]
+var arr = [1, "sunbird", 10, 2.2]
 ```
 
 To get a value from an array you use the bracket notation:
