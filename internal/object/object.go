@@ -7,19 +7,19 @@ import (
 	"sunbird/internal/ast"
 )
 
-type ObjectType string
+type ObjectType uint8
 
 const (
-	StringObj      = "STRING"
-	IntegerObj     = "INTEGER"
-	FloatObj       = "FLOAT"
-	BooleanObj     = "BOOLEAN"
-	NullObj        = "NULL"
-	FunctionObj    = "FUNCTION"
-	ReturnValueObj = "RETURN_VALUE"
-	ErrorObj       = "ERROR"
-	BuiltinObj     = "BUILTIN"
-	ArrayObj       = "ARRAY"
+	StringObj ObjectType = iota
+	IntegerObj
+	FloatObj
+	BooleanObj
+	NullObj
+	FunctionObj
+	ReturnValueObj
+	ErrorObj
+	BuiltinObj
+	ArrayObj
 )
 
 type Object interface {
