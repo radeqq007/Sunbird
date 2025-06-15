@@ -1,6 +1,8 @@
 package token
 
-import "fmt"
+import (
+	"strconv"
+)
 
 type Position struct {
 	Filename string
@@ -16,9 +18,9 @@ func (p Position) IsValid() bool {
 func (p Position) String() string {
 	var msg string
 	if p.Filename == "" {
-		msg = fmt.Sprint(" <", p.Line, ":", p.Col, "> ")
+		msg = " <" + strconv.Itoa(p.Line) + ":" + strconv.Itoa(p.Col) + "> "
 	} else {
-		msg = fmt.Sprint(" <", p.Filename, ":", p.Line, ":", p.Col, "> ")
+		msg = " <" + p.Filename + ":" + strconv.Itoa(p.Line) + ":" + strconv.Itoa(p.Col) + "> "
 	}
 
 	return msg
@@ -27,9 +29,9 @@ func (p Position) String() string {
 func (p Position) LineString() string {
 	var msg string
 	if p.Filename == "" {
-		msg = fmt.Sprint(p.Line)
+		msg = strconv.Itoa(p.Line)
 	} else {
-		msg = fmt.Sprint(" <", p.Filename, ":", p.Line, "> ")
+		msg = " <" + p.Filename + ":" + strconv.Itoa(p.Line) + "> "
 	}
 	return msg
 }
