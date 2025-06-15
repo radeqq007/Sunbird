@@ -2,7 +2,6 @@ package object
 
 import (
 	"bytes"
-	"fmt"
 	"strconv"
 	"strings"
 	"sunbird/internal/ast"
@@ -73,7 +72,7 @@ type Float struct {
 	Value float64
 }
 
-func (f *Float) Inspect() string  { return fmt.Sprintf("%f", f.Value) }
+func (f *Float) Inspect() string  { return strconv.FormatFloat(f.Value, 'f', -1, 64) }
 func (f *Float) Type() ObjectType { return FloatObj }
 
 type Boolean struct {
