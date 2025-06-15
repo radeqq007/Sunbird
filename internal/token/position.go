@@ -24,7 +24,6 @@ func (p Position) String() string {
 	return msg
 }
 
-// Line() is already defined in the Position struct, thus use LineString as the name
 func (p Position) LineString() string {
 	var msg string
 	if p.Filename == "" {
