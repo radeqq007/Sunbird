@@ -1,6 +1,7 @@
-package lexer
+package lexer_test
 
 import (
+	"sunbird/internal/lexer"
 	"sunbird/internal/token"
 	"testing"
 )
@@ -131,7 +132,7 @@ if (5 < 10) {
 		{token.AND, "&&"},
 		{token.EOF, ""},
 	}
-	l := New(input)
+	l := lexer.New(input)
 
 	for i, tt := range tests {
 		tok := l.NextToken()
