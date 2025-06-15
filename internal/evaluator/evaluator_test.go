@@ -184,7 +184,6 @@ func testNullObject(t *testing.T, obj object.Object) {
 	if obj != NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
 	}
-
 }
 
 func TestReturnStatements(t *testing.T) {
