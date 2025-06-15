@@ -92,7 +92,6 @@ func testFloatObject(t *testing.T, obj object.Object, expected float64) {
 	if math.Abs(result.Value-expected) > floatTolerance {
 		t.Errorf("object has wrong value. got=%f, want=%f", result.Value, expected)
 	}
-
 }
 
 func TestEvalBooleanExpression(t *testing.T) {
