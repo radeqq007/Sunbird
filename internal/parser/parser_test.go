@@ -2,6 +2,7 @@ package parser_test
 
 import (
 	"fmt"
+	"strconv"
 	"sunbird/internal/ast"
 	"sunbird/internal/lexer"
 	"sunbird/internal/parser"
@@ -396,7 +397,7 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 		return false
 	}
 
-	if integ.TokenLiteral() != fmt.Sprintf("%d", value) {
+	if integ.TokenLiteral() != strconv.FormatInt(value, 10) {
 		t.Errorf("integ.TokenLiteral not %d. got=%s", value, integ.TokenLiteral())
 		return false
 	}
