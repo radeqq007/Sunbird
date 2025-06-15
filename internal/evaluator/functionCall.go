@@ -17,7 +17,7 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 		return fn.Fn(args...)
 
 	default:
-		return newError("not a function: %s", fn.Type())
+		return newError("not a function: %s", fn.Type().String())
 	}
 }
 

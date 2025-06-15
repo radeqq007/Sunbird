@@ -8,7 +8,7 @@ func evalIndexExpression(left, index object.Object) object.Object {
 		return evalArrayIndexExpression(left, index)
 
 	default:
-		return newError("index operator not supported: %s", left.Type())
+		return newError("index operator not supported: %s", left.Type().String())
 	}
 }
 

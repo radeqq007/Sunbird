@@ -21,7 +21,7 @@ var builtins = map[string]*object.Builtin{
 				return &object.Integer{Value: int64(len(arg.Elements))}
 
 			default:
-				return newError("argument to `len` not supported, got %s", args[0].Type())
+				return newError("argument to `len` not supported, got %s", args[0].Type().String())
 			}
 		},
 	},
@@ -31,7 +31,7 @@ var builtins = map[string]*object.Builtin{
 			if !ok {
 				return newError(
 					"first argument to `append` must be an array, got %s",
-					args[0].Type(),
+					args[0].Type().String(),
 				)
 			}
 
