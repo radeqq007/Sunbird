@@ -24,12 +24,7 @@ func Start(in io.Reader, out io.Writer) {
 	line.SetCtrlCAborts(true)
 
 	if f, err := os.Open(history_fn); err == nil {
-		_, err = line.ReadHistory(f)
-		if err != nil {
-			if os.IsExist(err) {
-				io.WriteString(out, "Error reading history file: "+err.Error()+"\n")
-			}
-		}
+		_, _ = line.ReadHistory(f)
 
 		f.Close()
 	}
@@ -52,7 +47,7 @@ func Start(in io.Reader, out io.Writer) {
 
 			if input == "exit" {
 				if f, err := os.Create(history_fn); err == nil {
-					line.WriteHistory(f)
+					_, _ = line.WriteHistory(f)
 					f.Close()
 				}
 				return
