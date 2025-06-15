@@ -18,6 +18,7 @@ const (
 	FLOAT  = "FLOAT"
 	INT    = "INT"
 	STRING = "STRING"
+
 	// Operators
 	ASSIGN   = "="
 	PLUS     = "+"
