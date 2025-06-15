@@ -1,7 +1,8 @@
-package evaluator
+package evaluator_test
 
 import (
 	"math"
+	"sunbird/internal/evaluator"
 	"sunbird/internal/lexer"
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
@@ -64,7 +65,7 @@ func testEval(input string) object.Object {
 	program := p.ParseProgram()
 	env := object.NewEnvironment()
 
-	return Eval(program, env)
+	return evaluator.Eval(program, env)
 }
 
 func testIntegerObject(t *testing.T, obj object.Object, expected int64) {
@@ -176,7 +177,7 @@ func TestIfElseExpressions(t *testing.T) {
 }
 
 func testNullObject(t *testing.T, obj object.Object) {
-	if obj != NULL {
+	if obj != evaluator.NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
 	}
 }
