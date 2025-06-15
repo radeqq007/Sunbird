@@ -37,14 +37,16 @@ func main() {
 			fmt.Printf("Error: %s\n", err)
 			os.Exit(1)
 		}
-		defer src.Close()
+		defer func() {
+			_ = src.Close()
+		}()
 
 		content := make([]byte, 100)
 		_, err = src.Read(content)
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
 
-			src.Close() // Close file before exiting
+			_ = src.Close() // Close file before exiting
 			os.Exit(1)
 		}
 
