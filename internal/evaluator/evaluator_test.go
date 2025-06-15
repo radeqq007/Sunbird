@@ -67,39 +67,32 @@ func testEval(input string) object.Object {
 	return Eval(program, env)
 }
 
-func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
+func testIntegerObject(t *testing.T, obj object.Object, expected int64) {
 	result, ok := obj.(*object.Integer)
 
 	if !ok {
 		t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
-		return false
 	}
 
 	if result.Value != expected {
 		t.Errorf("object has wrong value. got=%d, want=%d", result.Value, expected)
-		return false
 	}
-
-	return true
 }
 
 // I have to do it that way cause result.Value == expected doesn't work
 const floatTolerance = 1e-9
 
-func testFloatObject(t *testing.T, obj object.Object, expected float64) bool {
+func testFloatObject(t *testing.T, obj object.Object, expected float64) {
 	result, ok := obj.(*object.Float)
 
 	if !ok {
 		t.Errorf("object is not Float. got=%T (%+v)", obj, obj)
-		return false
 	}
 
 	if math.Abs(result.Value-expected) > floatTolerance {
 		t.Errorf("object has wrong value. got=%f, want=%f", result.Value, expected)
-		return false
 	}
 
-	return true
 }
 
 func TestEvalBooleanExpression(t *testing.T) {
@@ -187,13 +180,11 @@ func TestIfElseExpressions(t *testing.T) {
 	}
 }
 
-func testNullObject(t *testing.T, obj object.Object) bool {
+func testNullObject(t *testing.T, obj object.Object) {
 	if obj != NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
-		return false
 	}
 
-	return true
 }
 
 func TestReturnStatements(t *testing.T) {
