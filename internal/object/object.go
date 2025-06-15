@@ -22,6 +22,33 @@ const (
 	ArrayObj
 )
 
+func (ot ObjectType) String() string {
+	switch ot {
+	case StringObj:
+		return "STRING"
+	case IntegerObj:
+		return "INTEGER"
+	case FloatObj:
+		return "FLOAT"
+	case BooleanObj:
+		return "BOOLEAN"
+	case NullObj:
+		return "NULL"
+	case FunctionObj:
+		return "FUNCTION"
+	case ReturnValueObj:
+		return "RETURN_VALUE"
+	case ErrorObj:
+		return "ERROR"
+	case BuiltinObj:
+		return "BUILTIN"
+	case ArrayObj:
+		return "ARRAY"
+	default:
+		return "UNKNOWN"
+	}
+}
+
 type Object interface {
 	Type() ObjectType
 	Inspect() string
