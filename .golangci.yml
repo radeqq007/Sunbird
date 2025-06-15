@@ -215,6 +215,11 @@ linters:
       patterns:
         - '.*'
 
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+
     sloglint:
       no-global: all
       context: scope
