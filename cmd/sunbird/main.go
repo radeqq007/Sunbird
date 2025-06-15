@@ -43,6 +43,8 @@ func main() {
 		_, err = src.Read(content)
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
+
+			src.Close() // Close file before exiting
 			os.Exit(1)
 		}
 
