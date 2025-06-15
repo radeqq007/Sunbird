@@ -13,7 +13,11 @@ func evalIndexExpression(left, index object.Object) object.Object {
 }
 
 func evalArrayIndexExpression(left, index object.Object) object.Object {
-	array := left.(*object.Array)
+	array, ok := left.(*object.Array)
+	if !ok {
+		return newError("index operator not supported: %s", left.Type())
+	}
+
 	idx := index.(*object.Integer).Value
 	max := int64(len(array.Elements) - 1)
 
