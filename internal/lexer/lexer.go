@@ -220,7 +220,6 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = literal
 			tok.Type = tokenType
 			return tok // Return earlier because readChar() is already being executed in readNumber ()
-
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch, pos)
 		}
