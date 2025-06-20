@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"sunbird/internal/evaluator"
 	"sunbird/internal/lexer"
@@ -41,8 +42,7 @@ func main() {
 			_ = src.Close()
 		}()
 
-		content := make([]byte, 100)
-		_, err = src.Read(content)
+		content, err := io.ReadAll(src)
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
 
