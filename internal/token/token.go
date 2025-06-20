@@ -66,6 +66,91 @@ const (
 	While
 )
 
+func (tt TokenType) String() string {
+	switch tt {
+	case Illegal:
+		return "ILLEGAL"
+	case Eof:
+		return "EOF"
+	case Ident:
+		return "IDENT"
+	case Float:
+		return "FLOAT"
+	case Int:
+		return "INT"
+	case String:
+		return "STRING"
+	case Assign:
+		return "="
+	case Plus:
+		return "+"
+	case Minus:
+		return "-"
+	case Bang:
+		return "!"
+	case Asterisk:
+		return "*"
+	case Slash:
+		return "/"
+	case Pipe:
+		return "|>"
+	case Eq:
+		return "=="
+	case NotEq:
+		return "!="
+	case LT:
+		return "<"
+	case GT:
+		return ">"
+	case LE:
+		return "<="
+	case GE:
+		return ">="
+	case Or:
+		return "||"
+	case And:
+		return "&&"
+	case Comma:
+		return ","
+	case Semicolon:
+		return ";"
+	case LParen:
+		return "("
+	case RParen:
+		return ")"
+	case LBrace:
+		return "{"
+	case RBrace:
+		return "}"
+	case LBracket:
+		return "["
+	case RBracket:
+		return "]"
+	case Function:
+		return "FUNCTION"
+	case Var:
+		return "VAR"
+	case True:
+		return "TRUE"
+	case False:
+		return "FALSE"
+	case If:
+		return "IF"
+	case Else:
+		return "ELSE"
+	case Return:
+		return "RETURN"
+	case Null:
+		return "NULL"
+	case For:
+		return "FOR"
+	case While:
+		return "WHILE"
+	default:
+		return "UNKNOWN"
+	}
+}
+
 var keywords = map[string]TokenType{
 	"func":   Function,
 	"var":    Var,
