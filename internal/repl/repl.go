@@ -43,39 +43,36 @@ func Start(in io.Reader, out io.Writer) {
 	env := object.NewEnvironment()
 
 	for {
-		if input, err := line.Prompt(PROMPT); err == nil {
+		input, err := line.Prompt(PROMPT)
+		if err != nil && err == liner.ErrPromptAborted {
+			f, _ := os.Create(history_fn)
+			line.WriteHistory(f)
+			f.Close()
+		}
 
-			if input == "exit" {
-				if f, err := os.Create(history_fn); err == nil {
-					_, _ = line.WriteHistory(f)
-					f.Close()
-				}
-				return
-			}
+		if input == "exit" {
+			f, _ := os.Create(history_fn)
 
-			line.AppendHistory(input)
-
-			l := lexer.New(input)
-			p := parser.New(l)
-			program := p.ParseProgram()
-
-			if len(p.Errors()) != 0 {
-				printParserErrors(out, p.Errors())
-				continue
-			}
-
-			evaluated := evaluator.Eval(program, env)
-			if evaluated != nil {
-				io.WriteString(out, evaluated.Inspect())
-				io.WriteString(out, "\n")
-			}
-
-		} else if err == liner.ErrPromptAborted {
-			if f, err := os.Create(history_fn); err == nil {
-				line.WriteHistory(f)
-				f.Close()
-			}
+			_, _ = line.WriteHistory(f)
+			f.Close()
 			return
+		}
+
+		line.AppendHistory(input)
+
+		l := lexer.New(input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
+		}
+
+		evaluated := evaluator.Eval(program, env)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
 		}
 	}
 }
