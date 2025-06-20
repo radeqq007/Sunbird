@@ -30,10 +30,20 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 
 	// TODO: this probably should be a different error
 	case left.Type() != right.Type():
-		return newError("type mismatch: %s %s %s", left.Type().String(), operator, right.Type().String())
+		return newError(
+			"type mismatch: %s %s %s",
+			left.Type().String(),
+			operator,
+			right.Type().String(),
+		)
 
 	default:
-		return newError("unknown operator: %s %s %s", left.Type().String(), operator, right.Type().String())
+		return newError(
+			"unknown operator: %s %s %s",
+			left.Type().String(),
+			operator,
+			right.Type().String(),
+		)
 	}
 }
 
