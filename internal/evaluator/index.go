@@ -19,14 +19,14 @@ func evalArrayIndexExpression(left, index object.Object) object.Object {
 	}
 
 	idx := index.(*object.Integer).Value
-	max := int64(len(array.Elements) - 1)
+	maxIdx := int64(len(array.Elements) - 1)
 
-	if idx > max {
+	if idx > maxIdx {
 		return NULL
 	}
 
 	if idx < 0 {
-		return array.Elements[max+1+idx]
+		return array.Elements[maxIdx+1+idx]
 	}
 
 	return array.Elements[idx]
