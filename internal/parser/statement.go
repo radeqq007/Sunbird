@@ -7,19 +7,19 @@ import (
 
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
-	case token.VAR:
+	case token.Var:
 		return p.parseVarStatement()
 
-	case token.RETURN:
+	case token.Return:
 		return p.parseReturnStatement()
 
-	case token.IDENT:
-		if p.peekTokenIs(token.ASSIGN) {
+	case token.Ident:
+		if p.peekTokenIs(token.Assign) {
 			return p.parseAssignStatement()
 		}
 		return p.parseExpressionStatement()
 
-	case token.FOR:
+	case token.For:
 		return p.parseForStatement()
 
 	default:

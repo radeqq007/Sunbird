@@ -12,7 +12,7 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 
 	exp.Index = p.parseExpression(LOWEST)
 
-	if !p.expectPeek(token.RBRACKET) {
+	if !p.expectPeek(token.RBracket) {
 		return nil
 	}
 

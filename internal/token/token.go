@@ -10,27 +10,27 @@ type Token struct {
 }
 
 const (
-	ILLEGAL TokenType = iota
-	EOF               // End of file
+	Illegal TokenType = iota
+	Eof               // End of file
 
 	// Identifiers + literals
-	IDENT
-	FLOAT
-	INT
-	STRING
+	Ident
+	Float
+	Int
+	String
 
 	// Operators
-	ASSIGN
-	PLUS
-	MINUS
-	BANG
-	ASTERISK
-	SLASH
-	PIPE
+	Assign
+	Plus
+	Minus
+	Bang
+	Asterisk
+	Slash
+	Pipe
 
 	// Comparison operators
-	EQ
-	NOT_EQ
+	Eq
+	NotEq
 
 	LT
 	GT
@@ -39,49 +39,49 @@ const (
 	GE
 
 	// Logical operators
-	OR
-	AND
+	Or
+	And
 
-	// Delimeter
-	COMMA
-	SEMICOLON
+	// Delimiter
+	Comma
+	Semicolon
 
-	LPAREN
-	RPAREN
-	LBRACE
-	RBRACE
-	LBRACKET
-	RBRACKET
+	LParen
+	RParen
+	LBrace
+	RBrace
+	LBracket
+	RBracket
 
 	// Keywords
-	FUNCTION
-	VAR
-	TRUE
-	FALSE
-	IF
-	ELSE
-	RETURN
-	NULL
-	FOR
-	WHILE
+	Function
+	Var
+	True
+	False
+	If
+	Else
+	Return
+	Null
+	For
+	While
 )
 
 var keywords = map[string]TokenType{
-	"func":   FUNCTION,
-	"var":    VAR,
-	"true":   TRUE,
-	"false":  FALSE,
-	"if":     IF,
-	"else":   ELSE,
-	"return": RETURN,
-	"null":   NULL,
-	"for":    FOR,
-	"while":  WHILE,
+	"func":   Function,
+	"var":    Var,
+	"true":   True,
+	"false":  False,
+	"if":     If,
+	"else":   Else,
+	"return": Return,
+	"null":   Null,
+	"for":    For,
+	"while":  While,
 }
 
 func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
 	}
-	return IDENT
+	return Ident
 }

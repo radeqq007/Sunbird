@@ -10,13 +10,13 @@ func (p *Parser) parseForStatement() *ast.ForStatement {
 
 	p.nextToken()
 
-	if p.curTokenIs(token.VAR) {
+	if p.curTokenIs(token.Var) {
 		stmt.Init = p.parseVarStatement()
-	} else if p.curTokenIs(token.IDENT) {
+	} else if p.curTokenIs(token.Ident) {
 		stmt.Init = p.parseAssignStatement()
 	}
 
-	if !p.curTokenIs(token.SEMICOLON) {
+	if !p.curTokenIs(token.Semicolon) {
 		return nil
 	}
 
@@ -24,17 +24,17 @@ func (p *Parser) parseForStatement() *ast.ForStatement {
 
 	stmt.Condition = p.parseExpression(LOWEST)
 
-	if !p.expectPeek(token.SEMICOLON) {
+	if !p.expectPeek(token.Semicolon) {
 		return nil
 	}
 
 	p.nextToken()
 
-	if p.curTokenIs(token.IDENT) {
+	if p.curTokenIs(token.Ident) {
 		stmt.Update = p.parseAssignStatement()
 	}
 
-	if !p.expectPeek(token.LBRACE) {
+	if !p.expectPeek(token.LBrace) {
 		return nil
 	}
 

@@ -12,16 +12,16 @@ func (p *Parser) parseIfExpression() ast.Expression {
 
 	expression.Condition = p.parseExpression(LOWEST)
 
-	if !p.expectPeek(token.LBRACE) {
+	if !p.expectPeek(token.LBrace) {
 		return nil
 	}
 
 	expression.Consequence = p.parseBlockStatement()
 
-	if p.peekTokenIs(token.ELSE) {
+	if p.peekTokenIs(token.Else) {
 		p.nextToken()
 
-		if p.peekTokenIs(token.IF) {
+		if p.peekTokenIs(token.If) {
 			p.nextToken()
 
 			expression.Alternative = &ast.BlockStatement{
@@ -35,7 +35,7 @@ func (p *Parser) parseIfExpression() ast.Expression {
 			return expression
 		}
 
-		if !p.expectPeek(token.LBRACE) {
+		if !p.expectPeek(token.LBrace) {
 			return nil
 		}
 

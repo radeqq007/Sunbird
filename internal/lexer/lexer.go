@@ -71,10 +71,10 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 		for isDigit(l.ch) {
 			l.readChar()
 		}
-		return l.input[position:l.position], token.FLOAT
+		return l.input[position:l.position], token.Float
 	}
 
-	return l.input[position:l.position], token.INT
+	return l.input[position:l.position], token.Int
 }
 
 func (l *Lexer) NextToken() token.Token {
@@ -96,27 +96,27 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch)}
+			tok = token.Token{Type: token.Eq, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.ASSIGN, l.ch, pos)
+			tok = newToken(token.Assign, l.ch, pos)
 		}
 
 	case '+':
-		tok = newToken(token.PLUS, l.ch, pos)
+		tok = newToken(token.Plus, l.ch, pos)
 
 	case '-':
-		tok = newToken(token.MINUS, l.ch, pos)
+		tok = newToken(token.Minus, l.ch, pos)
 
 	case ';':
-		tok = newToken(token.SEMICOLON, l.ch, pos)
+		tok = newToken(token.Semicolon, l.ch, pos)
 
 	case '!':
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch)}
+			tok = token.Token{Type: token.NotEq, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.BANG, l.ch, pos)
+			tok = newToken(token.Bang, l.ch, pos)
 		}
 
 	case '/':
@@ -138,10 +138,10 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar() // skip the /
 			return l.NextToken()
 		}
-		tok = newToken(token.SLASH, l.ch, pos)
+		tok = newToken(token.Slash, l.ch, pos)
 
 	case '*':
-		tok = newToken(token.ASTERISK, l.ch, pos)
+		tok = newToken(token.Asterisk, l.ch, pos)
 
 	case '<':
 		if l.peekChar() == '=' {
@@ -165,49 +165,49 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '|' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.OR, Literal: string(ch) + string(l.ch)}
+			tok = token.Token{Type: token.Or, Literal: string(ch) + string(l.ch)}
 		} else if l.peekChar() == '>' {
 			ch := l.ch
 			l.readChar()
 
-			tok = token.Token{Type: token.PIPE, Literal: string(ch) + string(l.ch)}
+			tok = token.Token{Type: token.Pipe, Literal: string(ch) + string(l.ch)}
 		}
 
 	case '&':
 		if l.peekChar() == '&' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.AND, Literal: string(ch) + string(l.ch)}
+			tok = token.Token{Type: token.And, Literal: string(ch) + string(l.ch)}
 		}
 
 	case '(':
-		tok = newToken(token.LPAREN, l.ch, pos)
+		tok = newToken(token.LParen, l.ch, pos)
 
 	case ')':
-		tok = newToken(token.RPAREN, l.ch, pos)
+		tok = newToken(token.RParen, l.ch, pos)
 
 	case ',':
-		tok = newToken(token.COMMA, l.ch, pos)
+		tok = newToken(token.Comma, l.ch, pos)
 
 	case '{':
-		tok = newToken(token.LBRACE, l.ch, pos)
+		tok = newToken(token.LBrace, l.ch, pos)
 
 	case '}':
-		tok = newToken(token.RBRACE, l.ch, pos)
+		tok = newToken(token.RBrace, l.ch, pos)
 
 	case '[':
-		tok = newToken(token.LBRACKET, l.ch, pos)
+		tok = newToken(token.LBracket, l.ch, pos)
 
 	case ']':
-		tok = newToken(token.RBRACKET, l.ch, pos)
+		tok = newToken(token.RBracket, l.ch, pos)
 
 	case '"', '\'':
-		tok.Type = token.STRING
+		tok.Type = token.String
 		tok.Literal = l.readString()
 
 	case 0:
 		tok.Literal = ""
-		tok.Type = token.EOF
+		tok.Type = token.Eof
 
 	default:
 		if isLetter(l.ch) {
@@ -221,7 +221,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Type = tokenType
 			return tok // Return earlier because readChar() is already being executed in readNumber ()
 		} else {
-			tok = newToken(token.ILLEGAL, l.ch, pos)
+			tok = newToken(token.Illegal, l.ch, pos)
 		}
 	}
 
