@@ -31,13 +31,14 @@ func Start(in io.Reader, out io.Writer) {
 
 	keywords := []string{"func", "var", "true", "false", "if", "else", "return", "null"}
 
-	line.SetCompleter(func(line string) (c []string) {
+	line.SetCompleter(func(line string) []string {
+		var c []string
 		for _, keyword := range keywords {
 			if strings.HasPrefix(keyword, line) {
 				c = append(c, keyword)
 			}
 		}
-		return
+		return c
 	})
 
 	env := object.NewEnvironment()
