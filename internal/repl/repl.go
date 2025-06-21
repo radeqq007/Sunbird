@@ -30,7 +30,6 @@ func Start(in io.Reader, out io.Writer) {
 	env := object.NewEnvironment()
 
 	replLoop(line, env, out)
-
 }
 
 func loadHistory(line *liner.State) {
@@ -97,7 +96,6 @@ func evalInput(input string, env *object.Environment, out io.Writer) {
 		io.WriteString(out, evaluated.Inspect())
 		io.WriteString(out, "\n")
 	}
-
 }
 
 func printParserErrors(out io.Writer, errors []string) {
