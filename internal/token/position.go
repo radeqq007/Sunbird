@@ -6,7 +6,7 @@ import (
 
 type Position struct {
 	Filename string
-	Offset   int //offset relative to entire file
+	Offset   int // offset relative to entire file
 	Line     int
 	Col      int
 }
