@@ -26,7 +26,7 @@ func Start(in io.Reader, out io.Writer) {
 	if f, err := os.Open(history_fn); err == nil {
 		_, _ = line.ReadHistory(f)
 
-		f.Close()
+		_ = f.Close()
 	}
 
 	keywords := []string{"func", "var", "true", "false", "if", "else", "return", "null"}
@@ -48,14 +48,14 @@ func Start(in io.Reader, out io.Writer) {
 		if err != nil && err == liner.ErrPromptAborted {
 			f, _ := os.Create(history_fn)
 			line.WriteHistory(f)
-			f.Close()
+			_ = f.Close()
 		}
 
 		if input == "exit" {
 			f, _ := os.Create(history_fn)
 
 			_, _ = line.WriteHistory(f)
-			f.Close()
+			_ = f.Close()
 			return
 		}
 
