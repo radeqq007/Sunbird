@@ -23,32 +23,49 @@ func Start(in io.Reader, out io.Writer) {
 
 	line.SetCtrlCAborts(true)
 
+	loadHistory(line)
+
+	setupCompleter(line)
+
+	env := object.NewEnvironment()
+
+	replLoop(line, env, out)
+
+}
+
+func loadHistory(line *liner.State) {
 	if f, err := os.Open(history_fn); err == nil {
 		_, _ = line.ReadHistory(f)
 
 		_ = f.Close()
 	}
+}
 
+func saveHistory(line *liner.State) {
+	f, _ := os.Create(history_fn)
+	line.WriteHistory(f)
+	_ = f.Close()
+}
+
+func setupCompleter(line *liner.State) {
 	keywords := []string{"func", "var", "true", "false", "if", "else", "return", "null"}
 
-	line.SetCompleter(func(line string) []string {
-		var c []string
+	line.SetCompleter(func(input string) []string {
+		var completions []string
 		for _, keyword := range keywords {
-			if strings.HasPrefix(keyword, line) {
-				c = append(c, keyword)
+			if strings.HasPrefix(keyword, input) {
+				completions = append(completions, keyword)
 			}
 		}
-		return c
+		return completions
 	})
+}
 
-	env := object.NewEnvironment()
-
+func replLoop(line *liner.State, env *object.Environment, out io.Writer) {
 	for {
 		input, err := line.Prompt(PROMPT)
 		if err != nil && err == liner.ErrPromptAborted {
-			f, _ := os.Create(history_fn)
-			line.WriteHistory(f)
-			_ = f.Close()
+			saveHistory(line)
 		}
 
 		if input == "exit" {
@@ -61,21 +78,26 @@ func Start(in io.Reader, out io.Writer) {
 
 		line.AppendHistory(input)
 
-		l := lexer.New(input)
-		p := parser.New(l)
-		program := p.ParseProgram()
-
-		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
-			continue
-		}
-
-		evaluated := evaluator.Eval(program, env)
-		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
-		}
+		evalInput(input, env, out)
 	}
+}
+
+func evalInput(input string, env *object.Environment, out io.Writer) {
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+
+	if len(p.Errors()) != 0 {
+		printParserErrors(out, p.Errors())
+		return
+	}
+
+	evaluated := evaluator.Eval(program, env)
+	if evaluated != nil {
+		io.WriteString(out, evaluated.Inspect())
+		io.WriteString(out, "\n")
+	}
+
 }
 
 func printParserErrors(out io.Writer, errors []string) {
