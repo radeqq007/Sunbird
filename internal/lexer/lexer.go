@@ -207,7 +207,7 @@ func (l *Lexer) NextToken() token.Token {
 
 	case 0:
 		tok.Literal = ""
-		tok.Type = token.Eof
+		tok.Type = token.EOF
 
 	default:
 		if isLetter(l.ch) {

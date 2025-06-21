@@ -130,7 +130,7 @@ if (5 < 10) {
 		{token.Semicolon, ";"},
 		{token.Or, "||"},
 		{token.And, "&&"},
-		{token.Eof, ""},
+		{token.EOF, ""},
 	}
 	l := lexer.New(input)
 

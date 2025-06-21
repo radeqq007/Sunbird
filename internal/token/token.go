@@ -11,7 +11,7 @@ type Token struct {
 
 const (
 	Illegal TokenType = iota
-	Eof               // End of file
+	EOF               // End of file
 
 	// Identifiers + literals
 	Ident
@@ -70,7 +70,7 @@ func (tt TokenType) String() string {
 	switch tt {
 	case Illegal:
 		return "ILLEGAL"
-	case Eof:
+	case EOF:
 		return "EOF"
 	case Ident:
 		return "IDENT"
