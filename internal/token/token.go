@@ -24,6 +24,7 @@ const (
 	Plus
 	Minus
 	Bang
+	Modulo
 	Asterisk
 	Slash
 	Pipe
@@ -92,6 +93,8 @@ func (tt TokenType) String() string {
 		return "*"
 	case Slash:
 		return "/"
+	case Modulo:
+		return "%"
 	case Pipe:
 		return "|>"
 	case Eq:
