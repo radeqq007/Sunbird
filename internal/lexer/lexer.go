@@ -13,6 +13,19 @@ type Lexer struct {
 	col          int  // Current column number
 }
 
+var keywords = map[string]token.TokenType{
+	"func":   token.Function,
+	"var":    token.Var,
+	"true":   token.True,
+	"false":  token.False,
+	"if":     token.If,
+	"else":   token.Else,
+	"return": token.Return,
+	"null":   token.Null,
+	"for":    token.For,
+	"while":  token.While,
+}
+
 func New(input string) *Lexer {
 	l := &Lexer{input: input, line: 0, col: 0}
 	l.readChar()
@@ -213,7 +226,7 @@ func (l *Lexer) NextToken() token.Token {
 		switch {
 		case isLetter(l.ch):
 			tok.Literal = l.readIdentifier()
-			tok.Type = token.LookupIdent(tok.Literal)
+			tok.Type = LookupIdent(tok.Literal)
 			return tok // Return earlier because readChar() is already being executed in LookupIdent()
 
 		case isDigit(l.ch):
@@ -256,4 +269,11 @@ func (l *Lexer) peekChar() byte {
 	}
 
 	return l.input[l.readPosition]
+}
+
+func LookupIdent(ident string) token.TokenType {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return token.Ident
 }

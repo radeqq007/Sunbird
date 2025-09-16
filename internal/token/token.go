@@ -154,22 +154,3 @@ func (tt TokenType) String() string {
 	}
 }
 
-var keywords = map[string]TokenType{
-	"func":   Function,
-	"var":    Var,
-	"true":   True,
-	"false":  False,
-	"if":     If,
-	"else":   Else,
-	"return": Return,
-	"null":   Null,
-	"for":    For,
-	"while":  While,
-}
-
-func LookupIdent(ident string) TokenType {
-	if tok, ok := keywords[ident]; ok {
-		return tok
-	}
-	return Ident
-}
