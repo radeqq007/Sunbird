@@ -1,6 +1,8 @@
 package token
 
-type TokenType uint8
+import "fmt"
+
+type TokenType string
 
 type Token struct {
 	Type    TokenType
@@ -10,147 +12,64 @@ type Token struct {
 }
 
 const (
-	Illegal TokenType = iota
-	EOF               // End of file
+	Illegal TokenType = "ILLEGAL"
+	EOF TokenType     = "EOF"
 
 	// Identifiers + literals
-	Ident
-	Float
-	Int
-	String
+	Ident  TokenType = "IDENT"
+	Float  TokenType = "FLOAT"
+	Int    TokenType = "INT"
+	String TokenType = "STRING"
 
 	// Operators
-	Assign
-	Plus
-	Minus
-	Bang
-	Modulo
-	Asterisk
-	Slash
-	Pipe
+	Assign   TokenType = "ASSIGN"
+	Plus     TokenType = "PLUS"
+	Minus    TokenType = "MINUS"
+	Bang     TokenType = "BANG"
+	Modulo   TokenType = "MODULO"
+	Asterisk TokenType = "ASTERISK"
+	Slash    TokenType = "SLASH"
+	Pipe     TokenType = "PIPE"
 
 	// Comparison operators
-	Eq
-	NotEq
+	Eq    TokenType = "EQ"
+	NotEq TokenType = "NOTEQ"
 
-	LT
-	GT
+	LT TokenType = "LT"
+	GT TokenType = "GT"
 
-	LE
-	GE
+	LE TokenType = "LE"
+	GE TokenType = "GE"
 
 	// Logical operators
-	Or
-	And
+	Or  TokenType = "OR"
+	And TokenType = "AND"
 
 	// Delimiter
-	Comma
-	Semicolon
+	Comma     TokenType = "COMMA"
+	Semicolon TokenType = "SEMICOLON"
 
-	LParen
-	RParen
-	LBrace
-	RBrace
-	LBracket
-	RBracket
+	LParen   TokenType = "LPAREN"
+	RParen   TokenType = "RPAREN"
+	LBrace   TokenType = "LBRACE"
+	RBrace   TokenType = "RBRACE"
+	LBracket TokenType = "LBRACKET"
+	RBracket TokenType = "RBRACKET"
 
 	// Keywords
-	Function
-	Var
-	True
-	False
-	If
-	Else
-	Return
-	Null
-	For
-	While
+	Function TokenType = "FUNC"
+	Var      TokenType = "VAR"
+	True     TokenType = "TRUE"
+	False    TokenType = "FALSE"
+	If       TokenType = "IF"
+	Else     TokenType = "ELSE"
+	Return   TokenType = "RETURN"
+	Null     TokenType = "NULL"
+	For      TokenType = "FOR"
+	While    TokenType = "WHILE"
 )
 
-func (tt TokenType) String() string {
-	switch tt {
-	case Illegal:
-		return "ILLEGAL"
-	case EOF:
-		return "EOF"
-	case Ident:
-		return "IDENT"
-	case Float:
-		return "FLOAT"
-	case Int:
-		return "INT"
-	case String:
-		return "STRING"
-	case Assign:
-		return "="
-	case Plus:
-		return "+"
-	case Minus:
-		return "-"
-	case Bang:
-		return "!"
-	case Asterisk:
-		return "*"
-	case Slash:
-		return "/"
-	case Modulo:
-		return "%"
-	case Pipe:
-		return "|>"
-	case Eq:
-		return "=="
-	case NotEq:
-		return "!="
-	case LT:
-		return "<"
-	case GT:
-		return ">"
-	case LE:
-		return "<="
-	case GE:
-		return ">="
-	case Or:
-		return "||"
-	case And:
-		return "&&"
-	case Comma:
-		return ","
-	case Semicolon:
-		return ";"
-	case LParen:
-		return "("
-	case RParen:
-		return ")"
-	case LBrace:
-		return "{"
-	case RBrace:
-		return "}"
-	case LBracket:
-		return "["
-	case RBracket:
-		return "]"
-	case Function:
-		return "FUNCTION"
-	case Var:
-		return "VAR"
-	case True:
-		return "TRUE"
-	case False:
-		return "FALSE"
-	case If:
-		return "IF"
-	case Else:
-		return "ELSE"
-	case Return:
-		return "RETURN"
-	case Null:
-		return "NULL"
-	case For:
-		return "FOR"
-	case While:
-		return "WHILE"
-	default:
-		return "UNKNOWN"
-	}
+func (t Token) String() string {
+	return fmt.Sprintf("%v %v", t.Type, t.Literal)
 }
 
