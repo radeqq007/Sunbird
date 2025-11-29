@@ -2,15 +2,15 @@ package evaluator
 
 import "sunbird/internal/object"
 
-func evalPrefixExpression(operator string, right object.Object) object.Object {
+func evalPrefixExpression(operator string, right object.Object, line, col int) object.Object {
 	switch operator {
 	case "!":
 		return evalBangOperator(right)
 
 	case "-":
-		return evalMinusPrefixOperator(right)
+		return evalMinusPrefixOperator(right, line, col)
 	default:
-		return newError("unknown operator: %s%s", operator, right.Type())
+		return newError(line, col, "unknown operator: %s%s", operator, right.Type())
 	}
 }
 
@@ -30,7 +30,7 @@ func evalBangOperator(right object.Object) object.Object {
 	}
 }
 
-func evalMinusPrefixOperator(right object.Object) object.Object {
+func evalMinusPrefixOperator(right object.Object, line, col int) object.Object {
 	if right.Type() == object.IntegerObj {
 		value := right.(*object.Integer).Value
 		return &object.Integer{Value: -value}
@@ -42,7 +42,7 @@ func evalMinusPrefixOperator(right object.Object) object.Object {
 	}
 
 	if right.Type() != object.IntegerObj && right.Type() != object.FloatObj {
-		return newError("unknown operator: -%s", right.Type())
+		return newError(line, col, "unknown operator: -%s", right.Type())
 	}
 
 	return NULL

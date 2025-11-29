@@ -2,6 +2,7 @@ package object
 
 import (
 	"bytes"
+	"fmt"
 	"strconv"
 	"strings"
 	"sunbird/internal/ast"
@@ -96,10 +97,17 @@ func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
 
 type Error struct {
 	Message string
+	Line    int
+	Col     int
 }
 
 func (e *Error) Type() ObjectType { return ErrorObj }
-func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
+func (e *Error) Inspect() string {
+	if e.Line > 0 {
+		return fmt.Sprintf("ERROR: %s (at line %d, col %d)", e.Message, e.Line, e.Col)
+	}
+	return "ERROR: " + e.Message
+}
 
 type Function struct {
 	Parameters []*ast.Identifier

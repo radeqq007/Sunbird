@@ -2,7 +2,7 @@ package evaluator
 
 import "sunbird/internal/object"
 
-func evalInfixExpression(operator string, left, right object.Object) object.Object {
+func evalInfixExpression(operator string, left, right object.Object, line, col int) object.Object {
 	switch {
 	case operator == "&&":
 		return nativeBoolToBooleanObject(isTruthy(left) && isTruthy(right))
@@ -11,7 +11,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 		return nativeBoolToBooleanObject(isTruthy(left) || isTruthy(right))
 
 	case operator == "|>":
-		return evalPipeExpression(left, right)
+		return evalPipeExpression(left, right, line, col)
 
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
@@ -20,10 +20,10 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 		return nativeBoolToBooleanObject(left != right)
 
 	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
-		return evalIntegerInfixExpression(operator, left, right)
+		return evalIntegerInfixExpression(operator, left, right, line, col)
 
 	case left.Type() == object.StringObj || right.Type() == object.StringObj:
-		return evalStringInfixExpression(operator, left, right)
+		return evalStringInfixExpression(operator, left, right, line, col)
 
 	case left.Type() == object.FloatObj || right.Type() == object.FloatObj:
 		return evalFloatInfixExpression(operator, left, right)
@@ -31,6 +31,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	// TODO: this probably should be a different error
 	case left.Type() != right.Type():
 		return newError(
+			line, col,
 			"type mismatch: %s %s %s",
 			left.Type().String(),
 			operator,
@@ -39,6 +40,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 
 	default:
 		return newError(
+			line, col,
 			"unknown operator: %s %s %s",
 			left.Type().String(),
 			operator,
@@ -47,7 +49,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	}
 }
 
-func evalIntegerInfixExpression(operator string, left, right object.Object) object.Object {
+func evalIntegerInfixExpression(operator string, left, right object.Object, line, col int) object.Object {
 	leftVal := left.(*object.Integer).Value
 	rightVal := right.(*object.Integer).Value
 
@@ -60,13 +62,13 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return &object.Integer{Value: leftVal * rightVal}
 	case "/":
 		if rightVal == 0 {
-			return newError("division by zero")
+			return newError(line, col, "division by zero")
 		}
 
 		return &object.Integer{Value: leftVal / rightVal}
 	case "%":
 		if rightVal == 0 {
-			return newError("division by zero")
+			return newError(line, col, "division by zero")
 		}
 
 		return &object.Integer{Value: leftVal % rightVal}
@@ -76,7 +78,7 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return nativeBoolToBooleanObject(leftVal > rightVal)
 
 	default:
-		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+		return newError(line, col, "unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
 }
 
@@ -113,10 +115,10 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 	}
 }
 
-func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
+func evalStringInfixExpression(operator string, left, right object.Object, line, col int) object.Object {
 	if operator != "+" && operator != "==" && operator != "!=" && operator != "&&" &&
 		operator != "||" {
-		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+		return newError(line, col, "unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
 
 	leftVal := left.Inspect()
@@ -125,14 +127,14 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 	return &object.String{Value: leftVal + rightVal}
 }
 
-func evalPipeExpression(left, right object.Object) object.Object {
+func evalPipeExpression(left, right object.Object, line, col int) object.Object {
 	switch fn := right.(type) {
 	case *object.Function:
-		return applyFunction(fn, []object.Object{left})
+		return applyFunction(fn, []object.Object{left}, line, col)
 
 	case *object.Builtin:
 		return fn.Fn(left)
 	}
 
-	return newError("right side of pipe operator is not a function: %s", right.Type())
+	return newError(line, col, "right side of pipe operator is not a function: %s", right.Type())
 }

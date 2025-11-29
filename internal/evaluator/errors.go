@@ -5,8 +5,8 @@ import (
 	"sunbird/internal/object"
 )
 
-func newError(format string, a ...interface{}) *object.Error {
-	return &object.Error{Message: fmt.Sprintf(format, a...)}
+func newError(line, col int, format string, a ...interface{}) *object.Error {
+	return &object.Error{Message: fmt.Sprintf(format, a...), Line: line, Col: col}
 }
 
 func isError(obj object.Object) bool {

@@ -7,11 +7,13 @@ type TokenType string
 type Token struct {
 	Type    TokenType
 	Literal string
+	Line    int
+	Col     int
 }
 
 const (
 	Illegal TokenType = "ILLEGAL"
-	EOF TokenType     = "EOF"
+	EOF     TokenType = "EOF"
 
 	// Identifiers + literals
 	Ident  TokenType = "IDENT"
@@ -70,4 +72,3 @@ const (
 func (t Token) String() string {
 	return fmt.Sprintf("%v %v", t.Type, t.Literal)
 }
-

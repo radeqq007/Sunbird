@@ -45,14 +45,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return right
 		}
 
-		return evalInfixExpression(node.Operator, left, right)
+		return evalInfixExpression(node.Operator, left, right, node.Token.Line, node.Token.Col)
 
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, env)
 		if isError(right) {
 			return right
 		}
-		return evalPrefixExpression(node.Operator, right)
+		return evalPrefixExpression(node.Operator, right, node.Token.Line, node.Token.Col)
 
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, env)
@@ -72,7 +72,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.VarStatement:
 		if _, ok := env.Get(node.Name.Value); ok {
-			return newError("Identifier '%s' has already been declared.", node.Name.Value)
+			return newError(node.Token.Line, node.Token.Col, "Identifier '%s' has already been declared.", node.Name.Value)
 		}
 
 		val := Eval(node.Value, env)
@@ -83,7 +83,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.AssignStatement:
 		if _, ok := env.Get(node.Name.Value); !ok {
-			return newError("Identifier '%s' has not been declared.", node.Name.Value)
+			return newError(node.Token.Line, node.Token.Col, "Identifier '%s' has not been declared.", node.Name.Value)
 		}
 
 		val := Eval(node.Value, env)
@@ -110,7 +110,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
-		return applyFunction(function, args)
+		return applyFunction(function, args, node.Token.Line, node.Token.Col)
 
 	case *ast.ArrayLiteral:
 		elements := evalExpressions(node.Elements, env)
@@ -132,7 +132,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return index
 		}
 
-		return evalIndexExpression(left, index)
+		return evalIndexExpression(left, index, node.Token.Line, node.Token.Col)
 	}
 	return nil
 }
