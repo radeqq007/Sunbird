@@ -152,4 +152,39 @@ var builtins = map[string]*object.Builtin{
 			}
 		},
 	},
+
+	"bool": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+					len(args))
+			}
+
+			switch arg := args[0].(type) {
+			case *object.Integer:
+				if arg.Value == 0 {
+					return &object.Boolean{Value: false}
+				}
+				return &object.Boolean{Value: true}
+
+			case *object.Float:
+				if arg.Value == 0.0 {
+					return &object.Boolean{Value: false}
+				}
+				return &object.Boolean{Value: true}
+
+			case *object.String:
+				if arg.Value == "" {
+					return &object.Boolean{Value: false}
+				}
+				return &object.Boolean{Value: true}
+
+			case *object.Boolean:
+				return arg
+
+			default:
+				return newError(0, 0, "argument to `bool` not supported, got %s", args[0].Type().String())
+			}
+		},
+	},
 }
