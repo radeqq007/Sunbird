@@ -195,4 +195,19 @@ var builtins = map[string]*object.Builtin{
 			return nil
 		},
 	},
+
+	"error": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+					len(args))
+			}
+
+			if args[0].Type() != object.StringObj {
+				return newError(0, 0, "argument to `error` must be a string, got %s", args[0].Type().String())
+			}
+
+			return newError(0, 0, "%s", args[0].Inspect())
+		},
+	},
 }
