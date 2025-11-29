@@ -25,6 +25,7 @@ var builtins = map[string]*object.Builtin{
 			}
 		},
 	},
+
 	"append": {
 		Fn: func(args ...object.Object) object.Object {
 			arr, ok := args[0].(*object.Array)
