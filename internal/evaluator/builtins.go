@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"sunbird/internal/object"
 )
@@ -185,6 +186,13 @@ var builtins = map[string]*object.Builtin{
 			default:
 				return newError(0, 0, "argument to `bool` not supported, got %s", args[0].Type().String())
 			}
+		},
+	},
+
+	"exit": {
+		Fn: func(args ...object.Object) object.Object {
+			os.Exit(0)
+			return nil
 		},
 	},
 }
