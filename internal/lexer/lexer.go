@@ -91,16 +91,7 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 }
 
 func (l *Lexer) NextToken() token.Token {
-	pos := token.Position{
-		Filename: "",
-		Offset:   l.position,
-		Line:     l.line,
-		Col:      l.col - 1,
-	}
-
-	tok := token.Token{
-		Pos: pos,
-	}
+	tok := token.Token{}
 
 	l.skipWhitespace()
 
@@ -111,17 +102,17 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.Eq, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.Assign, l.ch, pos)
+			tok = newToken(token.Assign, l.ch)
 		}
 
 	case '+':
-		tok = newToken(token.Plus, l.ch, pos)
+		tok = newToken(token.Plus, l.ch)
 
 	case '-':
-		tok = newToken(token.Minus, l.ch, pos)
+		tok = newToken(token.Minus, l.ch)
 
 	case ';':
-		tok = newToken(token.Semicolon, l.ch, pos)
+		tok = newToken(token.Semicolon, l.ch)
 
 	case '!':
 		if l.peekChar() == '=' {
@@ -129,7 +120,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.NotEq, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.Bang, l.ch, pos)
+			tok = newToken(token.Bang, l.ch)
 		}
 
 	case '/':
@@ -151,10 +142,10 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar() // skip the /
 			return l.NextToken()
 		}
-		tok = newToken(token.Slash, l.ch, pos)
+		tok = newToken(token.Slash, l.ch)
 
 	case '*':
-		tok = newToken(token.Asterisk, l.ch, pos)
+		tok = newToken(token.Asterisk, l.ch)
 
 	case '<':
 		if l.peekChar() == '=' {
@@ -162,7 +153,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.LE, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.LT, l.ch, pos)
+			tok = newToken(token.LT, l.ch)
 		}
 
 	case '>':
@@ -171,7 +162,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.GE, Literal: string(ch) + string(l.ch)}
 		} else {
-			tok = newToken(token.GT, l.ch, pos)
+			tok = newToken(token.GT, l.ch)
 		}
 
 	case '|':
@@ -194,25 +185,25 @@ func (l *Lexer) NextToken() token.Token {
 		}
 
 	case '(':
-		tok = newToken(token.LParen, l.ch, pos)
+		tok = newToken(token.LParen, l.ch)
 
 	case ')':
-		tok = newToken(token.RParen, l.ch, pos)
+		tok = newToken(token.RParen, l.ch)
 
 	case ',':
-		tok = newToken(token.Comma, l.ch, pos)
+		tok = newToken(token.Comma, l.ch)
 
 	case '{':
-		tok = newToken(token.LBrace, l.ch, pos)
+		tok = newToken(token.LBrace, l.ch)
 
 	case '}':
-		tok = newToken(token.RBrace, l.ch, pos)
+		tok = newToken(token.RBrace, l.ch)
 
 	case '[':
-		tok = newToken(token.LBracket, l.ch, pos)
+		tok = newToken(token.LBracket, l.ch)
 
 	case ']':
-		tok = newToken(token.RBracket, l.ch, pos)
+		tok = newToken(token.RBracket, l.ch)
 
 	case '"', '\'':
 		tok.Type = token.String
@@ -237,7 +228,7 @@ func (l *Lexer) NextToken() token.Token {
 			return tok // Return earlier because readChar() is already being executed in readNumber ()
 
 		default:
-			tok = newToken(token.Illegal, l.ch, pos)
+			tok = newToken(token.Illegal, l.ch)
 		}
 	}
 
@@ -245,8 +236,8 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func newToken(tokenType token.TokenType, ch byte, posistion token.Position) token.Token {
-	return token.Token{Type: tokenType, Literal: string(ch), Pos: posistion}
+func newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
 func isLetter(ch byte) bool {
