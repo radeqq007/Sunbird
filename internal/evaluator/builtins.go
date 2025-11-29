@@ -62,4 +62,15 @@ var builtins = map[string]*object.Builtin{
 			return nil
 		},
 	},
+
+	"type": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+					len(args))
+			}
+
+			return &object.String{Value: args[0].Type().String()}
+		},
+	},
 }
