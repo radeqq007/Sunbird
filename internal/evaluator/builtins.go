@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"strconv"
 	"sunbird/internal/object"
 )
 
@@ -83,6 +84,39 @@ var builtins = map[string]*object.Builtin{
 			}
 
 			return &object.String{Value: args[0].Inspect()}
+		},
+	},
+
+	"int": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+					len(args))
+			}
+
+			switch arg := args[0].(type) {
+			case *object.Integer:
+				return arg
+
+			case *object.Float:
+				return &object.Integer{Value: int64(arg.Value)}
+
+			case *object.String:
+				num, err := strconv.Atoi(arg.Value)
+				if err != nil {
+					return newError(0, 0, "failed to convert string to int: %s", arg.Value)
+				}
+				return &object.Integer{Value: int64(num)}
+
+			case *object.Boolean:
+				if arg.Value {
+					return &object.Integer{Value: 1}
+				}
+				return &object.Integer{Value: 0}
+
+			default:
+				return newError(0, 0, "argument to `int` not supported, got %s", args[0].Type().String())
+			}
 		},
 	},
 }
