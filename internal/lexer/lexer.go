@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"sunbird/internal/token"
 )
 
@@ -58,7 +59,7 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[position:l.position]
 }
 
-func (l *Lexer) readString() string {
+func (l *Lexer) readString() (string, error) {
 	startingQuote := l.ch
 
 	l.readChar() // skip the starting quote
@@ -66,10 +67,13 @@ func (l *Lexer) readString() string {
 	position := l.position
 
 	for l.ch != startingQuote {
+		if l.ch == 0 {
+			return "", fmt.Errorf("unterminated string")
+		}
 		l.readChar()
 	}
 
-	return l.input[position:l.position]
+	return l.input[position:l.position], nil
 }
 
 func (l *Lexer) readNumber() (string, token.TokenType) {
@@ -210,7 +214,13 @@ func (l *Lexer) NextToken() token.Token {
 
 	case '"', '\'':
 		tok.Type = token.String
-		tok.Literal = l.readString()
+		lit, err := l.readString()
+		if err != nil {
+			tok.Type = token.Illegal
+			tok.Literal = err.Error()
+		} else {
+			tok.Literal = lit
+		}
 		tok.Line = startLine
 		tok.Col = startCol
 
