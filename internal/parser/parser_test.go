@@ -86,27 +86,26 @@ func TestAssignStatement(t *testing.T) {
 		t.Fatalf("program.Statements does not contain 1 statement. got=%d", len(program.Statements))
 	}
 
-	stmt := program.Statements[0]
-
-	assignStmt, ok := stmt.(*ast.AssignStatement)
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
-		t.Errorf("stmt not *ast.AssignStmt. got=%T", stmt)
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
 	}
 
-	if assignStmt.TokenLiteral() != "x" {
-		t.Errorf("returnStmt.TokenLiteral not 'x', got %q", assignStmt.TokenLiteral())
+	assignExp, ok := stmt.Expression.(*ast.AssignExpression)
+	if !ok {
+		t.Fatalf("stmt.Expression is not *ast.AssignExpression. got=%T", stmt.Expression)
 	}
 
-	if assignStmt.Name.Value != "x" {
-		t.Errorf("varStmt.Name.Value not '%s'. got=%s", "x", assignStmt.Name.Value)
+	if assignExp.TokenLiteral() != "=" {
+		t.Errorf("assignExp.TokenLiteral not '=', got %q", assignExp.TokenLiteral())
 	}
 
-	if assignStmt.Name.TokenLiteral() != "x" {
-		t.Errorf("assignStmt.Name not '%s'. got=%s", "x", assignStmt.Name)
+	if assignExp.Name.String() != "x" {
+		t.Errorf("assignExp.Name not '%s'. got=%s", "x", assignExp.Name.String())
 	}
 
-	if assignStmt.Value.String() != "4" {
-		t.Errorf("assignStmt.Value.String not '%s'. got=%s", "4", assignStmt.Value.String())
+	if assignExp.Value.String() != "4" {
+		t.Errorf("assignExp.Value.String not '%s'. got=%s", "4", assignExp.Value.String())
 	}
 }
 

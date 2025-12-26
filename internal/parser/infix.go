@@ -6,6 +6,7 @@ import (
 )
 
 var precedences = map[token.TokenType]int{
+	token.Assign:   ASSIGN,
 	token.Or:       LOGICAL,
 	token.And:      LOGICAL,
 	token.Eq:       EQUALS,
@@ -22,6 +23,7 @@ var precedences = map[token.TokenType]int{
 	token.LParen:   CALL,
 	token.Pipe:     PIPE,
 	token.LBracket: INDEX,
+	token.Dot:      PROPERTY,
 }
 
 func (p *Parser) peekPrecedence() int {

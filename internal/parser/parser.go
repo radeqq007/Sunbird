@@ -24,6 +24,7 @@ type (
 const (
 	_ int = iota
 	LOWEST
+	ASSIGN      // =
 	LOGICAL     // && or ||
 	EQUALS      // ==
 	LESSGREATER // >, <, <= or >=
@@ -33,6 +34,7 @@ const (
 	PREFIX      // -X or !X
 	CALL        // foo()
 	INDEX       // arr[x]
+	PROPERTY    // obj.prop
 )
 
 func New(l *lexer.Lexer) *Parser {
@@ -71,6 +73,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LParen, p.parseCallExpression)
 	p.registerInfix(token.LBracket, p.parseIndexExpression)
 	p.registerInfix(token.Pipe, p.parseInfixExpression)
+	p.registerInfix(token.Dot, p.parsePropertyExpression)
+	p.registerInfix(token.Assign, p.parseAssignExpression)
 
 	// Read 2 tokens so curToken and peekToken are set
 	p.nextToken()

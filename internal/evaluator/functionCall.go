@@ -10,6 +10,12 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 		}
 
 		extendedEnv := extendFunctionEnv(fn, args)
+
+		// set 'this' binding
+		if thisVal, ok := extendedEnv.Get("this"); ok {
+			extendedEnv.Set("this", thisVal)
+		}
+
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
 

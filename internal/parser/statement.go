@@ -14,9 +14,6 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseReturnStatement()
 
 	case token.Ident:
-		if p.peekTokenIs(token.Assign) {
-			return p.parseAssignStatement()
-		}
 		return p.parseExpressionStatement()
 
 	case token.For:

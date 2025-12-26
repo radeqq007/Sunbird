@@ -81,17 +81,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		env.Set(node.Name.Value, val)
 
-	case *ast.AssignStatement:
-		if _, ok := env.Get(node.Name.Value); !ok {
-			return newError(node.Token.Line, node.Token.Col, "Identifier '%s' has not been declared.", node.Name.Value)
-		}
-
+	case *ast.AssignExpression:
 		val := Eval(node.Value, env)
 		if isError(val) {
 			return val
 		}
 
-		env.Set(node.Name.Value, val)
+		return evalAssignment(node.Name, val, env)
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
@@ -101,7 +97,35 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		body := node.Body
 		return &object.Function{Parameters: params, Body: body, Env: env}
 
+	case *ast.PropertyExpression:
+		return evalPropertyExpression(node, env)
+
 	case *ast.CallExpression:
+		// Check if it's an object method call
+		if propExpr, ok := node.Function.(*ast.PropertyExpression); ok {
+			obj := Eval(propExpr.Object, env)
+			if isError(obj) {
+				return obj
+			}
+
+			hash, ok := obj.(*object.Hash)
+			if ok {
+				key := &object.String{Value: propExpr.Property.Value}
+				method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
+				if isError(method) {
+					return method
+				}
+
+				args := evalExpressions(node.Arguments, env)
+				if len(args) == 1 && isError(args[0]) {
+					return args[0]
+				}
+
+				return evalMethodCall(hash, method, args, node.Token.Line, node.Token.Col)
+			}
+		}
+
+		// Regular function call
 		function := Eval(node.Function, env)
 		if isError(function) {
 			return function
@@ -112,17 +136,15 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return applyFunction(function, args, node.Token.Line, node.Token.Col)
 
+	case *ast.HashLiteral:
+		return evalHashLiteral(node, env)
+
 	case *ast.ArrayLiteral:
 		elements := evalExpressions(node.Elements, env)
-
 		if len(elements) == 1 && isError(elements[0]) {
 			return elements[0]
 		}
-
 		return &object.Array{Elements: elements}
-
-	case *ast.HashLiteral:
-		return evalHashLiteral(node, env)
 
 	case *ast.IndexExpression:
 		left := Eval(node.Left, env)
