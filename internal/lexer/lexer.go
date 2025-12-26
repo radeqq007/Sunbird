@@ -212,6 +212,9 @@ func (l *Lexer) NextToken() token.Token {
 	case ']':
 		tok = l.newToken(token.RBracket, l.ch)
 
+	case ':':
+		tok = l.newToken(token.Colon, l.ch)
+
 	case '"', '\'':
 		tok.Type = token.String
 		lit, err := l.readString()
