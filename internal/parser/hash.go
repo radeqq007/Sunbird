@@ -10,7 +10,13 @@ func (p *Parser) parseHashLiteral() ast.Expression {
 
 	hash.Pairs = make([]ast.HashPair, 0)
 
-	for !p.curTokenIs(token.RBrace) {
+	// Check for an empty hash
+	if p.peekTokenIs(token.RBrace) {
+		p.nextToken()
+		return &hash
+	}
+
+	for !p.peekTokenIs(token.RBrace) {
 		p.nextToken()
 		key := p.parseExpression(LOWEST)
 
@@ -24,6 +30,7 @@ func (p *Parser) parseHashLiteral() ast.Expression {
 
 		hash.Pairs = append(hash.Pairs, ast.HashPair{Key: key, Value: value})
 
+		// If the next token isn't the end, we MUST see a comma
 		if !p.peekTokenIs(token.RBrace) && !p.expectPeek(token.Comma) {
 			return nil
 		}
