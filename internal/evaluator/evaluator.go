@@ -121,6 +121,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		return &object.Array{Elements: elements}
 
+	case *ast.HashLiteral:
+		return evalHashLiteral(node, env)
+
 	case *ast.IndexExpression:
 		left := Eval(node.Left, env)
 		if isError(left) {
