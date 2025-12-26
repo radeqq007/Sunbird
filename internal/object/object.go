@@ -3,6 +3,7 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"strconv"
 	"strings"
 	"sunbird/internal/ast"
@@ -21,6 +22,7 @@ const (
 	ErrorObj
 	BuiltinObj
 	ArrayObj
+	HashObj
 )
 
 func (ot ObjectType) String() string {
@@ -163,4 +165,33 @@ func (ao *Array) Inspect() string {
 	out.WriteString("]")
 
 	return out.String()
+}
+
+type Hash struct {
+	Pairs map[HashKey]HashPair
+	Proto *Hash // Prototype link for inheritance
+}
+
+type HashKey struct {
+	Type  ObjectType
+	Value uint64
+}
+
+type HashPair struct {
+	Key   Object
+	Value Object
+}
+
+type Hashable interface {
+	HashKey() HashKey
+}
+
+func (s *String) HashKey() HashKey {
+	h := fnv.New64a()
+	h.Write([]byte(s.Value))
+	return HashKey{Type: s.Type(), Value: h.Sum64()}
+}
+
+func (i *Integer) HashKey() HashKey {
+	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
 }
