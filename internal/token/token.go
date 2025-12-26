@@ -48,6 +48,7 @@ const (
 	// Delimiter
 	Comma     TokenType = "COMMA"
 	Semicolon TokenType = "SEMICOLON"
+	Colon     TokenType = "COLON"
 
 	LParen   TokenType = "LPAREN"
 	RParen   TokenType = "RPAREN"
