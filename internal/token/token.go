@@ -49,6 +49,7 @@ const (
 	Comma     TokenType = "COMMA"
 	Semicolon TokenType = "SEMICOLON"
 	Colon     TokenType = "COLON"
+	Dot       TokenType = "DOT"
 
 	LParen   TokenType = "LPAREN"
 	RParen   TokenType = "RPAREN"
