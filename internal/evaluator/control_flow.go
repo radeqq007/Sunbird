@@ -5,6 +5,22 @@ import (
 	"sunbird/internal/object"
 )
 
+func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
+	condition := Eval(ie.Condition, env)
+	if isError(condition) {
+		return condition
+	}
+
+	switch {
+	case isTruthy(condition):
+		return Eval(ie.Consequence, env)
+	case ie.Alternative != nil:
+		return Eval(ie.Alternative, env)
+	default:
+		return NULL
+	}
+}
+
 func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Object {
 	loopEnv := object.NewEnclosedEnvironment(env)
 
@@ -48,6 +64,23 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 			updateResult := Eval(fs.Update, loopEnv)
 			if isError(updateResult) {
 				return updateResult
+			}
+		}
+	}
+
+	return result
+}
+
+func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
+	var result object.Object
+
+	for _, statement := range block.Statements {
+		result = Eval(statement, env)
+
+		if result != nil {
+			rt := result.Type()
+			if rt == object.ReturnValueObj || rt == object.ErrorObj {
+				return result
 			}
 		}
 	}

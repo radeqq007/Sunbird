@@ -162,3 +162,73 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	}
 	return nil
 }
+
+func evalProgram(stmts []ast.Statement, env *object.Environment) object.Object {
+	var result object.Object
+
+	for _, statement := range stmts {
+		result = Eval(statement, env)
+
+		switch result := result.(type) {
+		case *object.ReturnValue:
+			return result.Value
+
+		case *object.Error:
+			return result
+		}
+	}
+
+	return result
+}
+
+func evalExpressions(
+	exps []ast.Expression,
+	env *object.Environment,
+) []object.Object {
+	var result []object.Object
+
+	for _, e := range exps {
+		evaluated := Eval(e, env)
+
+		if isError(evaluated) {
+			return []object.Object{evaluated}
+		}
+
+		result = append(result, evaluated)
+	}
+
+	return result
+}
+
+func isTruthy(obj object.Object) bool {
+	switch obj {
+	case NULL:
+		return false
+
+	case TRUE:
+		return true
+
+	case FALSE:
+		return false
+
+	default:
+		switch obj := obj.(type) {
+		case *object.String:
+			return obj.Value != ""
+		case *object.Integer:
+			return obj.Value != 0
+		case *object.Float:
+			return obj.Value != 0.0
+		default:
+			return true
+		}
+	}
+}
+
+func nativeBoolToBooleanObject(input bool) *object.Boolean {
+	if input {
+		return TRUE
+	}
+
+	return FALSE
+}
