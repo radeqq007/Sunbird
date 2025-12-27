@@ -60,10 +60,10 @@ func evalInfixExpression(operator string, left, right object.Object, line, col i
 		return evalPipeExpression(left, right, line, col)
 
 	case operator == "==":
-		return nativeBoolToBooleanObject(left == right)
+		return nativeBoolToBooleanObject(left.Inspect() == right.Inspect())
 
 	case operator == "!=":
-		return nativeBoolToBooleanObject(left != right)
+		return nativeBoolToBooleanObject(left.Inspect() != right.Inspect())
 
 	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
 		return evalIntegerInfixExpression(operator, left, right, line, col)
