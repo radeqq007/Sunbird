@@ -41,32 +41,30 @@ var foobar = 32.1;
 	}
 
 	for i, tt := range tests {
-		stmt := program.Statements[i]
-		if !testVarStatement(t, stmt, tt.expectedIdentifier) {
+		stmt, ok := program.Statements[i].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[%d] is not ast.ExpressionStatement. got=%T", i, program.Statements[i])
+		}
+		if !testVarExpression(t, stmt.Expression, tt.expectedIdentifier) {
 			return
 		}
 	}
 }
 
-func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
+func testVarExpression(t *testing.T, s ast.Expression, name string) bool {
 	if s.TokenLiteral() != "var" {
 		t.Errorf("s.TokenLiteral is not 'var'. got=%q", s.TokenLiteral())
 		return false
 	}
 
-	varStmt, ok := s.(*ast.VarStatement)
+	varExp, ok := s.(*ast.VarExpression)
 	if !ok {
-		t.Errorf("s not *ast.VarStatement. got=%T", s)
+		t.Errorf("s not *ast.VarExpression. got=%T", s)
 		return false
 	}
 
-	if varStmt.Name.Value != name {
-		t.Errorf("varStmt.Name.Value not '%s'. got=%s", name, varStmt.Name.Value)
-		return false
-	}
-
-	if varStmt.Name.TokenLiteral() != name {
-		t.Errorf("s.Name not '%s'. got=%s", name, varStmt.Name)
+	if varExp.Name.String() != name {
+		t.Errorf("varExp.Name.Value not '%s'. got=%s", name, varExp.Name.String())
 		return false
 	}
 
