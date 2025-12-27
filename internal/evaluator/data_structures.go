@@ -57,7 +57,7 @@ func evalArrayIndexExpression(left, index object.Object, line, col int) object.O
 	maxIdx := int64(len(array.Elements) - 1)
 
 	if idx > maxIdx {
-		return NULL
+		return NewError(line, col, "index out of range: %d", idx)
 	}
 
 	if idx < 0 {
@@ -100,7 +100,7 @@ func evalStringIndexExpression(left, index object.Object, line, col int) object.
 	maxIdx := int64(len(str.Value) - 1)
 
 	if idx > maxIdx {
-		return NULL
+		return NewError(line, col, "index out of range: %d", idx)
 	}
 
 	if idx < 0 {
