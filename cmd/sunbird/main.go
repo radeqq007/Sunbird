@@ -32,7 +32,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	if len(args) == 1 {
+	if len(args) >= 1 {
 		src, err := os.Open(args[0])
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
