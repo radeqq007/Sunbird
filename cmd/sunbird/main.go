@@ -68,7 +68,10 @@ func main() {
 		evaluated := evaluator.Eval(program, env)
 
 		if evaluated != nil {
-			fmt.Println(evaluated.Inspect())
+			if errObj, ok := evaluated.(*object.Error); ok {
+				fmt.Println(errObj.Inspect())
+				os.Exit(1)
+			}
 		}
 
 		os.Exit(0)
