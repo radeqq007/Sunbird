@@ -19,6 +19,7 @@ func (ae *AssignExpression) String() string {
 	out.WriteString(ae.Name.String())
 	out.WriteString(" = ")
 	out.WriteString(ae.Value.String())
+	out.WriteString(";")
 
 	return out.String()
 }
