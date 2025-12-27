@@ -39,6 +39,9 @@ func evalIndexExpression(left, index object.Object, line, col int) object.Object
 	case left.Type() == object.HashObj:
 		return evalHashIndexExpression(left, index, line, col)
 
+	case left.Type() == object.StringObj:
+		return evalStringIndexExpression(left, index, line, col)
+
 	default:
 		return NewError(line, col, "index operator not supported: %s", left.Type().String())
 	}
@@ -85,6 +88,26 @@ func evalHashIndexExpression(left, index object.Object, line, col int) object.Ob
 	}
 
 	return NULL
+}
+
+func evalStringIndexExpression(left, index object.Object, line, col int) object.Object {
+	str, ok := left.(*object.String)
+	if !ok {
+		return NewError(line, col, "index operator not supported: %s", left.Type())
+	}
+
+	idx := index.(*object.Integer).Value
+	maxIdx := int64(len(str.Value) - 1)
+
+	if idx > maxIdx {
+		return NULL
+	}
+
+	if idx < 0 {
+		return &object.String{Value: string(str.Value[maxIdx+1+idx])}
+	}
+
+	return &object.String{Value: string(str.Value[idx])}
 }
 
 func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment) object.Object {
