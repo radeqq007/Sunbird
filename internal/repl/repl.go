@@ -47,7 +47,7 @@ func saveHistory(line *liner.State) {
 }
 
 func setupCompleter(line *liner.State) {
-	keywords := []string{"func", "var", "true", "false", "if", "else", "return", "null"}
+	keywords := []string{"func", "var", "true", "false", "if", "else", "return", "null", "import", "as", "for"}
 
 	line.SetCompleter(func(input string) []string {
 		var completions []string
