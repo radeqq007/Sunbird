@@ -14,5 +14,5 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 		return builtin
 	}
 
-	return newError(node.Token.Line, node.Token.Col, "identifier not found: %s", node.Value)
+	return NewError(node.Token.Line, node.Token.Col, "identifier not found: %s", node.Value)
 }

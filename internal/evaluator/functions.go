@@ -6,7 +6,7 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 	switch fn := fn.(type) {
 	case *object.Function:
 		if len(args) != len(fn.Parameters) {
-			return newError(line, col, "wrong number of arguments: expected %d, got %d", len(fn.Parameters), len(args))
+			return NewError(line, col, "wrong number of arguments: expected %d, got %d", len(fn.Parameters), len(args))
 		}
 
 		extendedEnv := extendFunctionEnv(fn, args)
@@ -23,7 +23,7 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 		return fn.Fn(args...)
 
 	default:
-		return newError(line, col, "not a function: %s", fn.Type().String())
+		return NewError(line, col, "not a function: %s", fn.Type().String())
 	}
 }
 

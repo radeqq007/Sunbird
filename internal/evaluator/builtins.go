@@ -11,7 +11,7 @@ var builtins = map[string]*object.Builtin{
 	"len": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
@@ -23,7 +23,7 @@ var builtins = map[string]*object.Builtin{
 				return &object.Integer{Value: int64(len(arg.Elements))}
 
 			default:
-				return newError(0, 0, "argument to `len` not supported, got %s", args[0].Type().String())
+				return NewError(0, 0, "argument to `len` not supported, got %s", args[0].Type().String())
 			}
 		},
 	},
@@ -32,7 +32,7 @@ var builtins = map[string]*object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
 			arr, ok := args[0].(*object.Array)
 			if !ok {
-				return newError(
+				return NewError(
 					0, 0,
 					"first argument to `append` must be an array, got %s",
 					args[0].Type().String(),
@@ -69,7 +69,7 @@ var builtins = map[string]*object.Builtin{
 	"type": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
@@ -80,7 +80,7 @@ var builtins = map[string]*object.Builtin{
 	"string": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
@@ -91,7 +91,7 @@ var builtins = map[string]*object.Builtin{
 	"int": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
@@ -105,7 +105,7 @@ var builtins = map[string]*object.Builtin{
 			case *object.String:
 				num, err := strconv.Atoi(arg.Value)
 				if err != nil {
-					return newError(0, 0, "failed to convert string to int: %s", arg.Value)
+					return NewError(0, 0, "failed to convert string to int: %s", arg.Value)
 				}
 				return &object.Integer{Value: int64(num)}
 
@@ -116,7 +116,7 @@ var builtins = map[string]*object.Builtin{
 				return &object.Integer{Value: 0}
 
 			default:
-				return newError(0, 0, "argument to `int` not supported, got %s", args[0].Type().String())
+				return NewError(0, 0, "argument to `int` not supported, got %s", args[0].Type().String())
 			}
 		},
 	},
@@ -124,7 +124,7 @@ var builtins = map[string]*object.Builtin{
 	"float": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
@@ -138,7 +138,7 @@ var builtins = map[string]*object.Builtin{
 			case *object.String:
 				num, err := strconv.ParseFloat(arg.Value, 64)
 				if err != nil {
-					return newError(0, 0, "failed to convert string to float: %s", arg.Value)
+					return NewError(0, 0, "failed to convert string to float: %s", arg.Value)
 				}
 				return &object.Float{Value: num}
 
@@ -149,7 +149,7 @@ var builtins = map[string]*object.Builtin{
 				return &object.Float{Value: 0.0}
 
 			default:
-				return newError(0, 0, "argument to `float` not supported, got %s", args[0].Type().String())
+				return NewError(0, 0, "argument to `float` not supported, got %s", args[0].Type().String())
 			}
 		},
 	},
@@ -157,7 +157,7 @@ var builtins = map[string]*object.Builtin{
 	"bool": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
@@ -184,7 +184,7 @@ var builtins = map[string]*object.Builtin{
 				return arg
 
 			default:
-				return newError(0, 0, "argument to `bool` not supported, got %s", args[0].Type().String())
+				return NewError(0, 0, "argument to `bool` not supported, got %s", args[0].Type().String())
 			}
 		},
 	},
@@ -199,15 +199,15 @@ var builtins = map[string]*object.Builtin{
 	"error": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError(0, 0, "wrong number of arguments. got=%d, want=1",
+				return NewError(0, 0, "wrong number of arguments. got=%d, want=1",
 					len(args))
 			}
 
 			if args[0].Type() != object.StringObj {
-				return newError(0, 0, "argument to `error` must be a string, got %s", args[0].Type().String())
+				return NewError(0, 0, "argument to `error` must be a string, got %s", args[0].Type().String())
 			}
 
-			return newError(0, 0, "%s", args[0].Inspect())
+			return NewError(0, 0, "%s", args[0].Inspect())
 		},
 	},
 }

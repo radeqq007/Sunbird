@@ -4,10 +4,10 @@ package evaluator
 import (
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"path/filepath"
 	"sunbird/internal/lexer"
+	"sunbird/internal/modules"
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
 )
@@ -28,7 +28,7 @@ func (mc *ModuleCache) loadModule(path string, env *object.Environment) (*object
 	}
 
 	// Check if it's a built-in module
-	if builtinModule, ok := builtinModules[path]; ok {
+	if builtinModule, ok := modules.BuiltinModules[path]; ok {
 		mc.modules[path] = builtinModule
 		return builtinModule, nil
 	}
@@ -91,77 +91,4 @@ func (mc *ModuleCache) loadFileModule(path string, env *object.Environment) (*ob
 	mc.modules[path] = module
 
 	return module, nil
-}
-
-type ModuleBuilder struct {
-	pairs map[object.HashKey]object.HashPair
-}
-
-func NewModuleBuilder() *ModuleBuilder {
-	return &ModuleBuilder{
-		pairs: make(map[object.HashKey]object.HashPair),
-	}
-}
-
-func (mb *ModuleBuilder) AddFunction(name string, fn object.BuiltinFunction) *ModuleBuilder {
-	key := &object.String{Value: name}
-	hashKey := key.HashKey()
-	mb.pairs[hashKey] = object.HashPair{
-		Key:   key,
-		Value: &object.Builtin{Fn: fn},
-	}
-	return mb
-}
-
-func (mb *ModuleBuilder) AddValue(name string, value object.Object) *ModuleBuilder {
-	key := &object.String{Value: name}
-	hashKey := key.HashKey()
-	mb.pairs[hashKey] = object.HashPair{
-		Key:   key,
-		Value: value,
-	}
-	return mb
-}
-
-func (mb *ModuleBuilder) AddInteger(name string, value int64) *ModuleBuilder {
-	return mb.AddValue(name, &object.Integer{Value: value})
-}
-
-func (mb *ModuleBuilder) AddFloat(name string, value float64) *ModuleBuilder {
-	return mb.AddValue(name, &object.Float{Value: value})
-}
-
-func (mb *ModuleBuilder) AddString(name string, value string) *ModuleBuilder {
-	return mb.AddValue(name, &object.String{Value: value})
-}
-
-func (mb *ModuleBuilder) AddBoolean(name string, value bool) *ModuleBuilder {
-	return mb.AddValue(name, &object.Boolean{Value: value})
-}
-
-// Build the module hash
-func (mb *ModuleBuilder) Build() *object.Hash {
-	return &object.Hash{Pairs: mb.pairs}
-}
-
-func createModule(pairs map[object.HashKey]object.HashPair) *object.Hash {
-	return &object.Hash{Pairs: pairs}
-}
-
-var builtinModules = map[string]*object.Hash{
-	"math": NewModuleBuilder().
-		AddFunction("abs", mathAbs).
-		Build(),
-}
-
-func mathAbs(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		// return newError("wrong number of arguments. got=%d, want=1", len(args))
-	}
-
-	if args[0].Type() != object.IntegerObj {
-		// return newError("argument to `abs` must be INTEGER, got %s", args[0].Type())
-	}
-
-	return &object.Integer{Value: int64(math.Abs(float64(args[0].(*object.Integer).Value)))}
 }

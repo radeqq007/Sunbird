@@ -16,7 +16,7 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 
 		hashKey, ok := key.(object.Hashable)
 		if !ok {
-			return newError(node.Token.Line, node.Token.Col, "unusable as hash key: %s", key.Type())
+			return NewError(node.Token.Line, node.Token.Col, "unusable as hash key: %s", key.Type())
 		}
 
 		value := Eval(pair.Value, env)
@@ -40,14 +40,14 @@ func evalIndexExpression(left, index object.Object, line, col int) object.Object
 		return evalHashIndexExpression(left, index, line, col)
 
 	default:
-		return newError(line, col, "index operator not supported: %s", left.Type().String())
+		return NewError(line, col, "index operator not supported: %s", left.Type().String())
 	}
 }
 
 func evalArrayIndexExpression(left, index object.Object, line, col int) object.Object {
 	array, ok := left.(*object.Array)
 	if !ok {
-		return newError(line, col, "index operator not supported: %s", left.Type())
+		return NewError(line, col, "index operator not supported: %s", left.Type())
 	}
 
 	idx := index.(*object.Integer).Value
@@ -67,12 +67,12 @@ func evalArrayIndexExpression(left, index object.Object, line, col int) object.O
 func evalHashIndexExpression(left, index object.Object, line, col int) object.Object {
 	hash, ok := left.(*object.Hash)
 	if !ok {
-		return newError(line, col, "index operator not supported: %s", left.Type())
+		return NewError(line, col, "index operator not supported: %s", left.Type())
 	}
 
 	key, ok := index.(object.Hashable)
 	if !ok {
-		return newError(line, col, "unusable as hash key: %s", index.Type())
+		return NewError(line, col, "unusable as hash key: %s", index.Type())
 	}
 
 	pair, ok := hash.Pairs[key.HashKey()]
@@ -95,7 +95,7 @@ func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment)
 
 	hash, ok := obj.(*object.Hash)
 	if !ok {
-		return newError(pe.Token.Line, pe.Token.Col,
+		return NewError(pe.Token.Line, pe.Token.Col,
 			"property access on non-object: %s", obj.Type())
 	}
 
@@ -111,13 +111,13 @@ func evalPropertyAssignment(stmt *ast.PropertyAssignStatement, env *object.Envir
 	}
 
 	if obj == nil {
-		return newError(stmt.Token.Line, stmt.Token.Col,
+		return NewError(stmt.Token.Line, stmt.Token.Col,
 			"identifier not found: %s", stmt.Object.String())
 	}
 
 	hash, ok := obj.(*object.Hash)
 	if !ok {
-		return newError(stmt.Token.Line, stmt.Token.Col,
+		return NewError(stmt.Token.Line, stmt.Token.Col,
 			"property assignment on non-object: %s", obj.Type())
 	}
 

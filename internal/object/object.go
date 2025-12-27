@@ -111,6 +111,10 @@ func (e *Error) Inspect() string {
 	return "ERROR: " + e.Message
 }
 
+func NewError(line, col int, format string, a ...interface{}) *Error {
+	return &Error{Message: fmt.Sprintf(format, a...), Line: line, Col: col}
+}
+
 type Function struct {
 	Parameters []*ast.Identifier
 	Body       *ast.BlockStatement

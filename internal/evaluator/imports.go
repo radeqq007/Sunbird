@@ -12,7 +12,7 @@ func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) obj
 
 	module, err := moduleCache.loadModule(path, env)
 	if err != nil {
-		return newError(stmt.Token.Line, stmt.Token.Col, "failed to import module: %s", err.Error())
+		return NewError(stmt.Token.Line, stmt.Token.Col, "failed to import module: %s", err.Error())
 	}
 
 	// Determine the name to bind to
