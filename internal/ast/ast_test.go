@@ -9,15 +9,18 @@ import (
 func TestString(t *testing.T) {
 	program := &ast.Program{
 		Statements: []ast.Statement{
-			&ast.VarStatement{
+			&ast.ExpressionStatement{
 				Token: token.Token{Type: token.Var, Literal: "var"},
-				Name: &ast.Identifier{
-					Token: token.Token{Type: token.Ident, Literal: "myVar"},
-					Value: "myVar",
-				},
-				Value: &ast.Identifier{
-					Token: token.Token{Type: token.Ident, Literal: "anotherVar"},
-					Value: "anotherVar",
+				Expression: &ast.VarExpression{
+					Token: token.Token{Type: token.Var, Literal: "var"},
+					Name: &ast.Identifier{
+						Token: token.Token{Type: token.Ident, Literal: "myVar"},
+						Value: "myVar",
+					},
+					Value: &ast.Identifier{
+						Token: token.Token{Type: token.Ident, Literal: "anotherVar"},
+						Value: "anotherVar",
+					},
 				},
 			},
 		},
