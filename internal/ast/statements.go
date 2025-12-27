@@ -97,3 +97,24 @@ func (pas *PropertyAssignStatement) String() string {
 	out.WriteString(";")
 	return out.String()
 }
+
+// Import
+type ImportStatement struct {
+	Token token.Token
+	Path  *StringLiteral
+	Alias *Identifier
+}
+
+func (is *ImportStatement) statementNode()       {}
+func (is *ImportStatement) TokenLiteral() string { return is.Token.Literal }
+func (is *ImportStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString("import ")
+	out.WriteString(is.Path.String())
+	if is.Alias != nil {
+		out.WriteString(" as ")
+		out.WriteString(is.Alias.String())
+	}
+	out.WriteString(";")
+	return out.String()
+}

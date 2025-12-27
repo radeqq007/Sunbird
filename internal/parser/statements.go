@@ -16,6 +16,9 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.For:
 		return p.parseForStatement()
 
+	case token.Import:
+		return p.parseImportStatement()
+
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -101,4 +104,28 @@ func (p *Parser) validateDeclarationTarget(exp ast.Expression) bool {
 		return true
 	}
 	return false
+}
+
+func (p *Parser) parseImportStatement() *ast.ImportStatement {
+	stmt := &ast.ImportStatement{Token: p.curToken}
+
+	if !p.expectPeek(token.String) {
+		return nil
+	}
+
+	stmt.Path = &ast.StringLiteral{Token: p.curToken, Value: p.curToken.Literal}
+
+	if p.peekTokenIs(token.As) {
+		p.nextToken()
+		if !p.expectPeek(token.Ident) {
+			return nil
+		}
+		stmt.Alias = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	}
+
+	if p.peekTokenIs(token.Semicolon) {
+		p.nextToken() // skip the ;
+	}
+
+	return stmt
 }

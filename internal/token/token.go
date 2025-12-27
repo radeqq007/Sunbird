@@ -69,6 +69,8 @@ const (
 	Null     TokenType = "NULL"
 	For      TokenType = "FOR"
 	While    TokenType = "WHILE"
+	Import   TokenType = "IMPORT"
+	As       TokenType = "AS"
 )
 
 func (t Token) String() string {

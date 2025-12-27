@@ -16,6 +16,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.Program:
 		return evalProgram(node.Statements, env)
 
+	case *ast.ImportStatement:
+		return evalImportStatement(node, env)
+
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
 

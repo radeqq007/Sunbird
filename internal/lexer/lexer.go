@@ -25,6 +25,8 @@ var keywords = map[string]token.TokenType{
 	"null":   token.Null,
 	"for":    token.For,
 	"while":  token.While,
+	"import": token.Import,
+	"as":     token.As,
 }
 
 func New(input string) *Lexer {
