@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"sunbird/internal/ast"
 	"sunbird/internal/lexer"
 	"sunbird/internal/token"
@@ -113,4 +114,34 @@ func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
 
 func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 	p.infixParseFns[tokenType] = fn
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead (at line %d, col %d)",
+		t, p.peekToken.Type, p.peekToken.Line, p.peekToken.Col)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) noPrefixParseFnError(t token.TokenType) {
+	msg := fmt.Sprintf("no prefix parse function for %s found (at line %d, col %d)", t, p.curToken.Line, p.curToken.Col)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) ParseProgram() *ast.Program {
+	program := &ast.Program{}
+	program.Statements = []ast.Statement{}
+
+	for !p.curTokenIs(token.EOF) {
+		stmt := p.parseStatement()
+
+		program.Statements = append(program.Statements, stmt)
+
+		p.nextToken()
+	}
+
+	return program
 }
