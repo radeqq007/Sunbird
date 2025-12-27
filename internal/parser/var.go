@@ -5,26 +5,29 @@ import (
 	"sunbird/internal/token"
 )
 
-func (p *Parser) parseVarStatement() *ast.VarStatement {
-	stmt := &ast.VarStatement{Token: p.curToken}
+func (p *Parser) parseVarExpression() ast.Expression {
+	exp := &ast.VarExpression{Token: p.curToken}
 
 	if !p.expectPeek(token.Ident) {
 		return nil
 	}
 
-	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	exp.Name = p.parseIdentifier()
 
 	if !p.expectPeek(token.Assign) {
 		return nil
 	}
 
 	p.nextToken()
+	exp.Value = p.parseExpression(LOWEST)
 
-	stmt.Value = p.parseExpression(LOWEST)
+	return exp
+}
 
-	if p.peekTokenIs(token.Semicolon) {
-		p.nextToken()
+func (p *Parser) validateDeclarationTarget(exp ast.Expression) bool {
+	switch exp.(type) {
+	case *ast.Identifier, *ast.PropertyExpression, *ast.IndexExpression:
+		return true
 	}
-
-	return stmt
+	return false
 }

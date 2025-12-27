@@ -70,16 +70,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return &object.ReturnValue{Value: val}
 
-	case *ast.VarStatement:
-		if _, ok := env.Get(node.Name.Value); ok {
-			return newError(node.Token.Line, node.Token.Col, "Identifier '%s' has already been declared.", node.Name.Value)
+	case *ast.VarExpression:
+		if _, ok := env.Get(node.Name.String()); ok {
+			return newError(node.Token.Line, node.Token.Col, "Identifier '%s' has already been declared.", node.Name.String())
 		}
 
 		val := Eval(node.Value, env)
 		if isError(val) {
 			return val
 		}
-		env.Set(node.Name.Value, val)
+		env.Set(node.Name.String(), val)
+		return val
 
 	case *ast.AssignExpression:
 		val := Eval(node.Value, env)

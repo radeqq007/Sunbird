@@ -1,30 +1,32 @@
 package parser
 
 import (
+	"fmt"
 	"sunbird/internal/ast"
-	"sunbird/internal/token"
 )
 
-func (p *Parser) parseAssignStatement() *ast.AssignStatement {
-	stmt := &ast.AssignStatement{Token: p.curToken}
+func (p *Parser) parseAssignExpression(left ast.Expression) ast.Expression {
+	exp := &ast.AssignExpression{
+		Token: p.curToken,
+		Name:  left,
+	}
 
-	if !p.curTokenIs(token.Ident) {
+	if !p.validateAssignmentTarget(left) {
+		p.errors = append(p.errors, fmt.Sprintf("invalid assignment target: %s", left.String()))
 		return nil
 	}
 
-	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-
-	if !p.expectPeek(token.Assign) {
-		return nil
-	}
-
+	precedence := p.curPrecedence()
 	p.nextToken()
+	exp.Value = p.parseExpression(precedence)
 
-	stmt.Value = p.parseExpression(LOWEST)
+	return exp
+}
 
-	if p.peekTokenIs(token.Semicolon) {
-		p.nextToken()
+func (p *Parser) validateAssignmentTarget(exp ast.Expression) bool {
+	switch exp.(type) {
+	case *ast.Identifier, *ast.PropertyExpression, *ast.IndexExpression:
+		return true
 	}
-
-	return stmt
+	return false
 }

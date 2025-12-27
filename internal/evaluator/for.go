@@ -9,8 +9,8 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 	loopEnv := object.NewEnclosedEnvironment(env)
 
 	// This sucks but uhhh I don't know how to do it better
-	if assign, ok := fs.Init.(*ast.AssignStatement); ok {
-		loopEnv.Set(assign.Name.Value, NULL)
+	if assign, ok := fs.Init.(*ast.AssignExpression); ok {
+		loopEnv.Set(assign.Name.String(), NULL)
 	}
 
 	if fs.Init != nil {

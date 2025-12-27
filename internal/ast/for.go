@@ -7,9 +7,9 @@ import (
 
 type ForStatement struct {
 	Token     token.Token
-	Init      Statement
+	Init      Expression
 	Condition Expression
-	Update    Statement
+	Update    Expression
 	Body      *BlockStatement
 }
 

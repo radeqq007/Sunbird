@@ -5,16 +5,16 @@ import (
 	"sunbird/internal/token"
 )
 
-type VarStatement struct {
+type VarExpression struct {
 	Token token.Token
-	Name  *Identifier
+	Name  Expression
 	Value Expression
 }
 
-func (vs *VarStatement) statementNode()       {}
-func (vs *VarStatement) TokenLiteral() string { return vs.Token.Literal }
+func (vs *VarExpression) expressionNode()      {}
+func (vs *VarExpression) TokenLiteral() string { return vs.Token.Literal }
 
-func (vs *VarStatement) String() string {
+func (vs *VarExpression) String() string {
 	var out bytes.Buffer
 
 	out.WriteString(vs.TokenLiteral() + " ")

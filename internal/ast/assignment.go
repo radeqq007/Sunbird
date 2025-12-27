@@ -5,27 +5,20 @@ import (
 	"sunbird/internal/token"
 )
 
-type AssignStatement struct {
-	Statement
-	Token token.Token
-	Name  *Identifier
+type AssignExpression struct {
+	Token token.Token // the token.ASSIGN token
+	Name  Expression  // The identifier or property expression being assigned to
 	Value Expression
 }
 
-func (as *AssignStatement) statementNode()       {}
-func (as *AssignStatement) TokenLiteral() string { return as.Token.Literal }
-
-func (as *AssignStatement) String() string {
+func (ae *AssignExpression) expressionNode()      {}
+func (ae *AssignExpression) TokenLiteral() string { return ae.Token.Literal }
+func (ae *AssignExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(as.Name.String())
+	out.WriteString(ae.Name.String())
 	out.WriteString(" = ")
-
-	if as.Value != nil {
-		out.WriteString(as.Value.String())
-	}
-
-	out.WriteString(";")
+	out.WriteString(ae.Value.String())
 
 	return out.String()
 }
