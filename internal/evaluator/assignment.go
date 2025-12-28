@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"sunbird/internal/ast"
+	"sunbird/internal/errors"
 	"sunbird/internal/object"
 )
 
@@ -17,13 +18,13 @@ func evalAssignment(name ast.Expression, val object.Object, env *object.Environm
 		return evalIndexExpressionAssignment(node, val, env)
 
 	default:
-		return NewError(0, 0, "invalid assignment target: %s", name.String())
+		return errors.NewInvalidAssignmentTargetError(0, 0, name.String())
 	}
 }
 
 func evalIdentifierAssignment(node *ast.Identifier, val object.Object, env *object.Environment) object.Object {
 	if _, ok := env.Get(node.Value); !ok {
-		return NewError(node.Token.Line, node.Token.Col, "Identifier '%s' has not been declared.", node.Value)
+		return errors.NewUndefinedVariableError(node.Token.Line, node.Token.Col, node.Value)
 	}
 
 	env.Set(node.Value, val)
@@ -38,7 +39,7 @@ func evalPropertyExpressionAssignment(node *ast.PropertyExpression, val object.O
 
 	hash, ok := obj.(*object.Hash)
 	if !ok {
-		return NewError(node.Token.Line, node.Token.Col, "only hash objects have properties, got %s", obj.Type())
+		return errors.NewNonObjectPropertyAccessError(node.Token.Line, node.Token.Col, obj)
 	}
 
 	key := &object.String{Value: node.Property.Value}
@@ -65,11 +66,11 @@ func evalIndexExpressionAssignment(node *ast.IndexExpression, val object.Object,
 	case *object.Array:
 		idx, ok := index.(*object.Integer)
 		if !ok {
-			return NewError(node.Token.Line, node.Token.Col, "index must be an integer, got %s", index.Type())
+			return errors.NewIndexNotSupportedError(node.Token.Line, node.Token.Col, obj)
 		}
 
 		if idx.Value < 0 || idx.Value >= int64(len(obj.Elements)) {
-			return NewError(node.Token.Line, node.Token.Col, "index out of bounds")
+			return errors.NewIndexOutOfBoundsError(node.Token.Line, node.Token.Col, obj)
 		}
 
 		obj.Elements[idx.Value] = val
@@ -78,7 +79,7 @@ func evalIndexExpressionAssignment(node *ast.IndexExpression, val object.Object,
 	case *object.Hash:
 		key, ok := index.(object.Hashable)
 		if !ok {
-			return NewError(node.Token.Line, node.Token.Col, "unusable as hash key: %s", index.Type())
+			return errors.NewUnusableAsHashKeyError(node.Token.Line, node.Token.Col, index)
 		}
 
 		pair := object.HashPair{Key: index, Value: val}
@@ -86,6 +87,6 @@ func evalIndexExpressionAssignment(node *ast.IndexExpression, val object.Object,
 		return val
 
 	default:
-		return NewError(node.Token.Line, node.Token.Col, "index operator not supported: %s", left.Type())
+		return errors.NewIndexNotSupportedError(node.Token.Line, node.Token.Col, left)
 	}
 }

@@ -1,12 +1,16 @@
 package evaluator
 
-import "sunbird/internal/object"
+import (
+	"sunbird/internal/errors"
+	"sunbird/internal/object"
+)
 
 func applyFunction(fn object.Object, args []object.Object, line, col int) object.Object {
 	switch fn := fn.(type) {
 	case *object.Function:
-		if len(args) != len(fn.Parameters) {
-			return NewError(line, col, "wrong number of arguments: expected %d, got %d", len(fn.Parameters), len(args))
+		err := errors.ExpectNumberOfArguments(line, col, len(fn.Parameters), args)
+		if err != nil {
+			return err
 		}
 
 		extendedEnv := extendFunctionEnv(fn, args)
@@ -23,7 +27,7 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 		return fn.Fn(args...)
 
 	default:
-		return NewError(line, col, "not a function: %s", fn.Type().String())
+		return errors.NewNotCallableError(line, col, fn)
 	}
 }
 

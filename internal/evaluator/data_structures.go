@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"sunbird/internal/ast"
+	"sunbird/internal/errors"
 	"sunbird/internal/object"
 )
 
@@ -16,7 +17,7 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 
 		hashKey, ok := key.(object.Hashable)
 		if !ok {
-			return NewError(node.Token.Line, node.Token.Col, "unusable as hash key: %s", key.Type())
+			return errors.NewUnusableAsHashKeyError(node.Token.Line, node.Token.Col, key)
 		}
 
 		value := Eval(pair.Value, env)
@@ -43,21 +44,21 @@ func evalIndexExpression(left, index object.Object, line, col int) object.Object
 		return evalStringIndexExpression(left, index, line, col)
 
 	default:
-		return NewError(line, col, "index operator not supported: %s", left.Type().String())
+		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 }
 
 func evalArrayIndexExpression(left, index object.Object, line, col int) object.Object {
 	array, ok := left.(*object.Array)
 	if !ok {
-		return NewError(line, col, "index operator not supported: %s", left.Type())
+		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
 	idx := index.(*object.Integer).Value
 	maxIdx := int64(len(array.Elements) - 1)
 
 	if idx > maxIdx {
-		return NewError(line, col, "index out of range: %d", idx)
+		return errors.NewIndexOutOfBoundsError(line, col, left)
 	}
 
 	if idx < 0 {
@@ -70,12 +71,12 @@ func evalArrayIndexExpression(left, index object.Object, line, col int) object.O
 func evalHashIndexExpression(left, index object.Object, line, col int) object.Object {
 	hash, ok := left.(*object.Hash)
 	if !ok {
-		return NewError(line, col, "index operator not supported: %s", left.Type())
+		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
 	key, ok := index.(object.Hashable)
 	if !ok {
-		return NewError(line, col, "unusable as hash key: %s", index.Type())
+		return errors.NewIndexNotSupportedError(line, col, index)
 	}
 
 	pair, ok := hash.Pairs[key.HashKey()]
@@ -93,14 +94,14 @@ func evalHashIndexExpression(left, index object.Object, line, col int) object.Ob
 func evalStringIndexExpression(left, index object.Object, line, col int) object.Object {
 	str, ok := left.(*object.String)
 	if !ok {
-		return NewError(line, col, "index operator not supported: %s", left.Type())
+		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
 	idx := index.(*object.Integer).Value
 	maxIdx := int64(len(str.Value) - 1)
 
 	if idx > maxIdx {
-		return NewError(line, col, "index out of range: %d", idx)
+		return errors.NewIndexOutOfBoundsError(line, col, left)
 	}
 
 	if idx < 0 {
@@ -118,8 +119,7 @@ func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment)
 
 	hash, ok := obj.(*object.Hash)
 	if !ok {
-		return NewError(pe.Token.Line, pe.Token.Col,
-			"property access on non-object: %s", obj.Type())
+		return errors.NewNonObjectPropertyAccessError(pe.Token.Line, pe.Token.Col, obj)
 	}
 
 	// Convert property name to string key
@@ -134,14 +134,12 @@ func evalPropertyAssignment(stmt *ast.PropertyAssignStatement, env *object.Envir
 	}
 
 	if obj == nil {
-		return NewError(stmt.Token.Line, stmt.Token.Col,
-			"identifier not found: %s", stmt.Object.String())
+		return errors.NewUndefinedVariableError(stmt.Token.Line, stmt.Token.Col, stmt.Object.String())
 	}
 
 	hash, ok := obj.(*object.Hash)
 	if !ok {
-		return NewError(stmt.Token.Line, stmt.Token.Col,
-			"property assignment on non-object: %s", obj.Type())
+		return errors.NewNonObjectPropertyAccessError(stmt.Token.Line, stmt.Token.Col, obj)
 	}
 
 	value := Eval(stmt.Value, env)

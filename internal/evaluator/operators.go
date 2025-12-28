@@ -1,6 +1,9 @@
 package evaluator
 
-import "sunbird/internal/object"
+import (
+	"sunbird/internal/errors"
+	"sunbird/internal/object"
+)
 
 func evalPrefixExpression(operator string, right object.Object, line, col int) object.Object {
 	switch operator {
@@ -10,7 +13,7 @@ func evalPrefixExpression(operator string, right object.Object, line, col int) o
 	case "-":
 		return evalMinusPrefixOperator(right, line, col)
 	default:
-		return NewError(line, col, "unknown operator: %s%s", operator, right.Type())
+		return errors.NewUnknownPrefixOperatorError(line, col, operator, right)
 	}
 }
 
@@ -42,7 +45,7 @@ func evalMinusPrefixOperator(right object.Object, line, col int) object.Object {
 	}
 
 	if right.Type() != object.IntegerObj && right.Type() != object.FloatObj {
-		return NewError(line, col, "unknown operator: -%s", right.Type())
+		return errors.NewUnknownPrefixOperatorError(line, col, "-", right)
 	}
 
 	return NULL
@@ -76,22 +79,10 @@ func evalInfixExpression(operator string, left, right object.Object, line, col i
 
 	// TODO: this probably should be a different error
 	case left.Type() != right.Type():
-		return NewError(
-			line, col,
-			"type mismatch: %s %s %s",
-			left.Type().String(),
-			operator,
-			right.Type().String(),
-		)
+		return errors.NewTypeMismatchError(line, col, left.Type(), operator, right.Type())
 
 	default:
-		return NewError(
-			line, col,
-			"unknown operator: %s %s %s",
-			left.Type().String(),
-			operator,
-			right.Type().String(),
-		)
+		return errors.NewUnknownOperatorError(line, col, left, operator, right)
 	}
 }
 
@@ -108,13 +99,13 @@ func evalIntegerInfixExpression(operator string, left, right object.Object, line
 		return &object.Integer{Value: leftVal * rightVal}
 	case "/":
 		if rightVal == 0 {
-			return NewError(line, col, "division by zero")
+			return errors.NewDivisionByZeroError(line, col)
 		}
 
 		return &object.Integer{Value: leftVal / rightVal}
 	case "%":
 		if rightVal == 0 {
-			return NewError(line, col, "division by zero")
+			return errors.NewDivisionByZeroError(line, col)
 		}
 
 		return &object.Integer{Value: leftVal % rightVal}
@@ -124,7 +115,7 @@ func evalIntegerInfixExpression(operator string, left, right object.Object, line
 		return nativeBoolToBooleanObject(leftVal > rightVal)
 
 	default:
-		return NewError(line, col, "unknown operator: %s %s %s", left.Type(), operator, right.Type())
+		return errors.NewUnknownOperatorError(line, col, left, operator, right)
 	}
 }
 
@@ -164,7 +155,7 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 func evalStringInfixExpression(operator string, left, right object.Object, line, col int) object.Object {
 	if operator != "+" && operator != "==" && operator != "!=" && operator != "&&" &&
 		operator != "||" {
-		return NewError(line, col, "unknown operator: %s %s %s", left.Type(), operator, right.Type())
+		return errors.NewUnknownOperatorError(line, col, left, operator, right)
 	}
 
 	leftVal := left.Inspect()
@@ -182,5 +173,5 @@ func evalPipeExpression(left, right object.Object, line, col int) object.Object 
 		return fn.Fn(left)
 	}
 
-	return NewError(line, col, "right side of pipe operator is not a function: %s", right.Type())
+	return errors.NewNotCallableError(line, col, right)
 }

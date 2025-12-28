@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"sunbird/internal/ast"
+	"sunbird/internal/errors"
 	"sunbird/internal/object"
 )
 
@@ -75,7 +76,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.VarExpression:
 		if _, ok := env.Get(node.Name.String()); ok {
-			return NewError(node.Token.Line, node.Token.Col, "Identifier '%s' has already been declared.", node.Name.String())
+			return errors.NewVariableReassignmentError(node.Token.Line, node.Token.Col, node.Name.String())
 		}
 
 		val := Eval(node.Value, env)

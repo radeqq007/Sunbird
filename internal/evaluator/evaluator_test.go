@@ -215,27 +215,27 @@ func TestErrorHandling(t *testing.T) {
 	}{
 		{
 			"5 + true;",
-			"type mismatch: INTEGER + BOOLEAN",
+			"TypeMismatchError: INTEGER + BOOLEAN",
 		},
 		{
 			"5 + true; 5;",
-			"type mismatch: INTEGER + BOOLEAN",
+			"TypeMismatchError: INTEGER + BOOLEAN",
 		},
 		{
 			"-true",
-			"unknown operator: -BOOLEAN",
+			"UnknownOperatorError: -BOOLEAN",
 		},
 		{
 			"true + false;",
-			"unknown operator: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: BOOLEAN + BOOLEAN",
 		},
 		{
 			"5; true + false; 5",
-			"unknown operator: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: BOOLEAN + BOOLEAN",
 		},
 		{
 			"if 10 > 1 { true + false; }",
-			"unknown operator: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: BOOLEAN + BOOLEAN",
 		},
 		{
 			`
@@ -247,11 +247,11 @@ func TestErrorHandling(t *testing.T) {
       return 1;
     }
     `,
-			"unknown operator: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: BOOLEAN + BOOLEAN",
 		},
 		{
 			"foobar",
-			"identifier not found: foobar",
+			"UndefinedVariableError: foobar",
 		},
 	}
 	for _, tt := range tests {
@@ -376,12 +376,12 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`len("")`, 0},
 		{`len("sunbird")`, 7},
 		{`len("hello world")`, 11},
-		{`len(1)`, "argument to `len` not supported, got INTEGER"},
-		{`len("one", "two")`, "wrong number of arguments. got=2, want=1"},
+		{`len(1)`, "TypeError: expected one of STRING, ARRAY, got INTEGER"},
+		{`len("one", "two")`, "ArgumentError: expected 1 arguments, got 2"},
 		{`len([1, 2, 3])`, 3},
 		{`len([])`, 0},
 		{`append([], 1)`, []int64{1}},
-		{`append(1, 1)`, "first argument to `append` must be an array, got INTEGER"},
+		{`append(1, 1)`, "TypeError: expected ARRAY, got INTEGER"},
 		{`append([1, 2, 3], 4)`, []int64{1, 2, 3, 4}},
 		{`append([1, 2, 3], 4, 5, 6)`, []int64{1, 2, 3, 4, 5, 6}},
 	}

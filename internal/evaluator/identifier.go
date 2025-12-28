@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"sunbird/internal/ast"
+	"sunbird/internal/errors"
 	"sunbird/internal/object"
 )
 
@@ -14,5 +15,5 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 		return builtin
 	}
 
-	return NewError(node.Token.Line, node.Token.Col, "identifier not found: %s", node.Value)
+	return errors.NewUndefinedVariableError(node.Token.Line, node.Token.Col, node.Value)
 }

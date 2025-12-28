@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"sunbird/internal/ast"
+	"sunbird/internal/errors"
 	"sunbird/internal/object"
 )
 
@@ -12,7 +13,7 @@ func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) obj
 
 	module, err := moduleCache.loadModule(path, env)
 	if err != nil {
-		return NewError(stmt.Token.Line, stmt.Token.Col, "failed to import module: %s", err.Error())
+		return errors.NewImportError(stmt.Token.Line, stmt.Token.Col, err.Error())
 	}
 
 	// Determine the name to bind to

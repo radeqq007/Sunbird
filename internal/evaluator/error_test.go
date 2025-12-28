@@ -18,22 +18,22 @@ func TestErrorLineNumbers(t *testing.T) {
 		{
 			"5 + true;",
 			1, 3,
-			"type mismatch: INTEGER + BOOLEAN",
+			"TypeMismatchError: INTEGER + BOOLEAN",
 		},
 		{
 			"foobar",
 			1, 1,
-			"identifier not found: foobar",
+			"UndefinedVariableError: foobar",
 		},
 		{
 			"-true",
 			1, 1,
-			"unknown operator: -BOOLEAN",
+			"UnknownOperatorError: -BOOLEAN",
 		},
 		{
 			"if (10 > 1) { true + false; }",
 			1, 20,
-			"unknown operator: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: BOOLEAN + BOOLEAN",
 		},
 		{
 			`
@@ -41,7 +41,7 @@ var a = 5;
 a + true;
 `,
 			3, 3,
-			"type mismatch: INTEGER + BOOLEAN",
+			"TypeMismatchError: INTEGER + BOOLEAN",
 		},
 	}
 

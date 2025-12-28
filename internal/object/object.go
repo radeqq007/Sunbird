@@ -106,9 +106,9 @@ type Error struct {
 func (e *Error) Type() ObjectType { return ErrorObj }
 func (e *Error) Inspect() string {
 	if e.Line > 0 {
-		return fmt.Sprintf("ERROR: %s (at line %d, col %d)", e.Message, e.Line, e.Col)
+		return fmt.Sprintf("%s (at line %d, col %d)", e.Message, e.Line, e.Col)
 	}
-	return "ERROR: " + e.Message
+	return e.Message
 }
 
 func NewError(line, col int, format string, a ...interface{}) *Error {
