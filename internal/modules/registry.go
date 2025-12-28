@@ -1,14 +1,16 @@
 package modules
 
 import (
+	"sunbird/internal/modules/array"
 	"sunbird/internal/modules/io"
 	"sunbird/internal/modules/math"
 	"sunbird/internal/object"
 )
 
 var BuiltinModules = map[string]*object.Hash{
-	"math": math.Module,
-	"io":   io.Module,
+	"math":  math.Module,
+	"io":    io.Module,
+	"array": array.Module,
 }
 
 func Get(name string) (*object.Hash, bool) {
