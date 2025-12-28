@@ -72,10 +72,12 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 }
 
 func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
+	blockEnv := object.NewEnclosedEnvironment(env)
+
 	var result object.Object
 
 	for _, statement := range block.Statements {
-		result = Eval(statement, env)
+		result = Eval(statement, blockEnv)
 
 		if result != nil {
 			rt := result.Type()

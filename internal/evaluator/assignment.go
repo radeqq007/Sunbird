@@ -23,12 +23,11 @@ func evalAssignment(name ast.Expression, val object.Object, env *object.Environm
 }
 
 func evalIdentifierAssignment(node *ast.Identifier, val object.Object, env *object.Environment) object.Object {
-	if _, ok := env.Get(node.Value); !ok {
-		return errors.NewUndefinedVariableError(node.Token.Line, node.Token.Col, node.Value)
+	if env.Update(node.Value, val) {
+		return val
 	}
 
-	env.Set(node.Value, val)
-	return val
+	return errors.NewUndefinedVariableError(node.Token.Line, node.Token.Col, node.Value)
 }
 
 func evalPropertyExpressionAssignment(node *ast.PropertyExpression, val object.Object, env *object.Environment) object.Object {

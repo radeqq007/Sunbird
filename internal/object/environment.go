@@ -19,20 +19,33 @@ func (e *Environment) Get(name string) (Object, bool) {
 	return obj, ok
 }
 
+func (e *Environment) GetFromCurrentScope(name string) (Object, bool) {
+	obj, ok := e.store[name]
+	return obj, ok
+}
+
+func (e *Environment) Has(name string) bool {
+	_, ok := e.store[name]
+	return ok
+}
+
 func (e *Environment) Set(name string, val Object) Object {
+	e.store[name] = val
+	return val
+}
+
+func (e *Environment) Update(name string, val Object) bool {
 	if _, ok := e.store[name]; ok {
 		e.store[name] = val
-		return val
+		return true
 	}
 
 	if e.outer != nil {
-		if _, ok := e.outer.Get(name); ok {
-			return e.outer.Set(name, val)
-		}
+		return e.outer.Update(name, val)
 	}
 
-	e.store[name] = val
-	return val
+	// Variable not found anywhere
+	return false
 }
 
 func (e *Environment) GetStore() map[string]Object {
