@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"sunbird/internal/errors"
 	"sunbird/internal/modules/modbuilder"
 	"sunbird/internal/object"
 )
@@ -42,6 +43,10 @@ func println(args ...object.Object) object.Object {
 
 func readln(args ...object.Object) object.Object {
 	if len(args) > 0 {
+		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		if err != nil {
+			return err
+		}
 		print(args[0])
 	}
 
@@ -57,6 +62,14 @@ func readln(args ...object.Object) object.Object {
 
 func read(args ...object.Object) object.Object {
 	if len(args) > 0 {
+		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		if err != nil {
+			return err
+		}
+		err = errors.ExpectType(0, 0, args[0], object.StringObj)
+		if err != nil {
+			return err
+		}
 		print(args[0])
 	}
 
@@ -71,12 +84,13 @@ func read(args ...object.Object) object.Object {
 }
 
 func printf(args ...object.Object) object.Object {
-	if len(args) == 0 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=1", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
-
-	if args[0].Type() != object.StringObj {
-		return object.NewError(0, 0, "argument must be a string, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.StringObj)
+	if err != nil {
+		return err
 	}
 
 	format := args[0].Inspect()
@@ -91,12 +105,13 @@ func printf(args ...object.Object) object.Object {
 }
 
 func sprintf(args ...object.Object) object.Object {
-	if len(args) == 0 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=1", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
-
-	if args[0].Type() != object.StringObj {
-		return object.NewError(0, 0, "argument must be a string, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.StringObj)
+	if err != nil {
+		return err
 	}
 
 	format := args[0].Inspect()
@@ -111,8 +126,9 @@ func sprintf(args ...object.Object) object.Object {
 }
 
 func clear(args ...object.Object) object.Object {
-	if len(args) > 0 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=0", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+	if err != nil {
+		return err
 	}
 	fmt.Print("\033[H")
 	fmt.Print("\033[2J")
@@ -120,16 +136,18 @@ func clear(args ...object.Object) object.Object {
 }
 
 func beep(args ...object.Object) object.Object {
-	if len(args) != 0 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=0", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+	if err != nil {
+		return err
 	}
 	fmt.Print("\a")
 	return nil
 }
 
 func getArgsArray(args ...object.Object) object.Object {
-	if len(args) > 0 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=0", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+	if err != nil {
+		return err
 	}
 
 	var elements []object.Object
