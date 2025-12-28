@@ -2,6 +2,7 @@ package math
 
 import (
 	"math"
+	"sunbird/internal/errors"
 	"sunbird/internal/modules/modbuilder"
 	"sunbird/internal/object"
 )
@@ -22,12 +23,14 @@ var Module = modbuilder.NewModuleBuilder().
 	Build()
 
 func abs(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	return &object.Integer{
@@ -36,16 +39,19 @@ func abs(args ...object.Object) object.Object {
 }
 
 func max(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 2, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
-	if args[1].Type() != object.IntegerObj && args[1].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj || args[1].Type() == object.FloatObj {
@@ -60,8 +66,19 @@ func max(args ...object.Object) object.Object {
 }
 
 func min(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 2, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
+	}
+
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
+	}
+
+	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
@@ -84,16 +101,19 @@ func min(args ...object.Object) object.Object {
 }
 
 func pow(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 2, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
-	if args[1].Type() != object.IntegerObj && args[1].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj || args[1].Type() == object.FloatObj {
@@ -108,12 +128,14 @@ func pow(args ...object.Object) object.Object {
 }
 
 func sqrt(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -128,12 +150,14 @@ func sqrt(args ...object.Object) object.Object {
 }
 
 func floor(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -148,12 +172,14 @@ func floor(args ...object.Object) object.Object {
 }
 
 func ceil(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -168,12 +194,14 @@ func ceil(args ...object.Object) object.Object {
 }
 
 func round(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -188,20 +216,24 @@ func round(args ...object.Object) object.Object {
 }
 
 func clamp(args ...object.Object) object.Object {
-	if len(args) != 3 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 3, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 3, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
-	if args[1].Type() != object.IntegerObj && args[1].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
-	if args[2].Type() != object.IntegerObj && args[2].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[2], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj || args[1].Type() == object.FloatObj || args[2].Type() == object.FloatObj {
@@ -216,12 +248,14 @@ func clamp(args ...object.Object) object.Object {
 }
 
 func sign(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -245,12 +279,14 @@ func sign(args ...object.Object) object.Object {
 }
 
 func sin(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -265,12 +301,14 @@ func sin(args ...object.Object) object.Object {
 }
 
 func cos(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
@@ -285,12 +323,14 @@ func cos(args ...object.Object) object.Object {
 }
 
 func tan(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments: expected 1, got %d", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() == object.FloatObj {
