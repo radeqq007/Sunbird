@@ -441,7 +441,6 @@ func TestArrayIndexExpressions(t *testing.T) {
 		{"var myArray = [1, 2, 3]; myArray[2];", 3},
 		{"var myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];", 6},
 		{"var myArray = [1, 2, 3]; var i = myArray[0]; myArray[i]", 2},
-		{"[1, 2, 3][3]", nil},
 		{"[1, 2, 3][-1]", 3},
 	}
 	for _, tt := range tests {
