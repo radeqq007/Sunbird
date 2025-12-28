@@ -156,3 +156,7 @@ func NewUnknownPrefixOperatorError(line, col int, operator string, right object.
 func NewDivisionByZeroError(line, col int) *object.Error {
 	return New(DivisionByZeroError, line, col, "")
 }
+
+func NewRuntimeError(line, col int, format string, args ...interface{}) *object.Error {
+	return New(RuntimeError, line, col, format, args...)
+}
