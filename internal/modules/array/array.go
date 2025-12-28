@@ -1,6 +1,7 @@
 package array
 
 import (
+	"sunbird/internal/errors"
 	"sunbird/internal/modules/modbuilder"
 	"sunbird/internal/object"
 )
@@ -20,12 +21,14 @@ var Module = modbuilder.NewModuleBuilder().
 	Build()
 
 func push(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=2", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -34,17 +37,19 @@ func push(args ...object.Object) object.Object {
 }
 
 func pop(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=1", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
 	if len(array.Elements) == 0 {
-		return object.NewError(0, 0, "array is empty")
+		return errors.NewRuntimeError(0, 0, "array is empty")
 	}
 
 	lastElement := array.Elements[len(array.Elements)-1]
@@ -54,12 +59,14 @@ func pop(args ...object.Object) object.Object {
 }
 
 func shift(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=1", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -74,12 +81,14 @@ func shift(args ...object.Object) object.Object {
 }
 
 func unshift(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=2", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -88,12 +97,14 @@ func unshift(args ...object.Object) object.Object {
 }
 
 func reverse(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=1", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -108,16 +119,19 @@ func reverse(args ...object.Object) object.Object {
 }
 
 func join(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=2", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
-	if args[1].Type() != object.StringObj {
-		return object.NewError(0, 0, "argument must be a string, got %s", args[1].Type().String())
+	err = errors.ExpectType(0, 0, args[1], object.StringObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -135,32 +149,49 @@ func join(args ...object.Object) object.Object {
 }
 
 func slice(args ...object.Object) object.Object {
-	if len(args) != 2 && len(args) != 3 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want 2 or 3", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		err = errors.ExpectNumberOfArguments(0, 0, 3, args)
+		if err != nil {
+			return err
+		}
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "first argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
-	if args[1].Type() != object.IntegerObj {
-		return object.NewError(0, 0, "second argument must be an integer, got %s", args[1].Type().String())
+	err = errors.ExpectType(0, 0, args[1], object.IntegerObj)
+	if err != nil {
+		return err
 	}
 
-	if len(args) == 3 && args[2].Type() != object.IntegerObj {
-		return object.NewError(0, 0, "third argument must be an integer, got %s", args[2].Type().String())
+	if len(args) == 3 {
+		err = errors.ExpectType(0, 0, args[2], object.IntegerObj)
+		if err != nil {
+			return err
+		}
 	}
 
 	array := args[0].(*object.Array)
 	start := args[1].(*object.Integer).Value
-	var end int64 = int64(len(array.Elements))
+	end := int64(len(array.Elements))
 
 	if len(args) == 3 {
 		end = args[2].(*object.Integer).Value
 	}
 
-	if start < 0 || end < 0 || start > end {
-		return object.NewError(0, 0, "invalid slice arguments")
+	if start < 0 {
+		return errors.NewIndexOutOfBoundsError(0, 0, array)
+	}
+
+	if end < 0 {
+		return errors.NewIndexOutOfBoundsError(0, 0, array)
+	}
+
+	if start > end {
+		return errors.NewRuntimeError(0, 0, "start index is greater than end index")
 	}
 
 	result := make([]object.Object, end-start)
@@ -170,12 +201,19 @@ func slice(args ...object.Object) object.Object {
 }
 
 func indexOf(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=2", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "first argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
+	}
+
+	err = errors.ExpectType(0, 0, args[1], object.StringObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -191,12 +229,19 @@ func indexOf(args ...object.Object) object.Object {
 }
 
 func contains(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=2", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "first argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
+	}
+
+	err = errors.ExpectType(0, 0, args[1], object.StringObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
@@ -212,16 +257,19 @@ func contains(args ...object.Object) object.Object {
 }
 
 func concat(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=2", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err != nil {
+		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "first argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
-	if args[1].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "second argument must be an array, got %s", args[1].Type().String())
+	err = errors.ExpectType(0, 0, args[1], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	arr1 := args[0].(*object.Array)
@@ -235,8 +283,9 @@ func concat(args ...object.Object) object.Object {
 }
 
 func clear(args ...object.Object) object.Object {
-	if len(args) != 1 {
-		return object.NewError(0, 0, "wrong number of arguments. got=%d, want=1", len(args))
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err != nil {
+		return err
 	}
 
 	if args[0].Type() != object.ArrayObj {
