@@ -239,11 +239,6 @@ func contains(args ...object.Object) object.Object {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
-		return err
-	}
-
 	array := args[0].(*object.Array)
 	value := args[1]
 
