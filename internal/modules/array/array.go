@@ -147,7 +147,7 @@ func slice(args ...object.Object) object.Object {
 		return object.NewError(0, 0, "second argument must be an integer, got %s", args[1].Type().String())
 	}
 
-	if args[2] != nil && args[2].Type() != object.IntegerObj {
+	if len(args) == 3 && args[2].Type() != object.IntegerObj {
 		return object.NewError(0, 0, "third argument must be an integer, got %s", args[2].Type().String())
 	}
 
@@ -155,7 +155,7 @@ func slice(args ...object.Object) object.Object {
 	start := args[1].(*object.Integer).Value
 	var end int64 = int64(len(array.Elements))
 
-	if args[2] != nil {
+	if len(args) == 3 {
 		end = args[2].(*object.Integer).Value
 	}
 
