@@ -2,27 +2,28 @@ package errors
 
 import (
 	"fmt"
+	"strings"
 	"sunbird/internal/object"
 )
 
 const (
 	SyntaxError = iota
 	TypeError
-	TypeMismatch
-	UndefinedVariable
-	DivisionByZero
+	TypeMismatchError
+	UndefinedVariableError
+	DivisionByZeroError
 	RuntimeError
-	IndexNotSupported
-	IndexOutOfBounds
+	IndexNotSupportedError
+	IndexOutOfBoundsError
 	KeyError
 	ImportError
 	VariableReassignmentError
-	NotCallable
-	InvalidAssignment
+	NotCallableError
+	InvalidAssignmentError
 	ArgumentError
 	ParseError
-	PropertyAccessOnNonObject
-	UnknownOperator
+	PropertyAccessOnNonObjectError
+	UnknownOperatorError
 )
 
 type ErrorCode int
@@ -33,36 +34,36 @@ func (ec ErrorCode) String() string {
 		return "SyntaxError"
 	case TypeError:
 		return "TypeError"
-	case TypeMismatch:
-		return "TypeMismatch"
-	case UndefinedVariable:
-		return "UndefinedVariable"
-	case DivisionByZero:
-		return "DivisionByZero"
+	case TypeMismatchError:
+		return "TypeMismatchError"
+	case UndefinedVariableError:
+		return "UndefinedVariableError"
+	case DivisionByZeroError:
+		return "DivisionByZeroError"
 	case RuntimeError:
 		return "RuntimeError"
-	case IndexNotSupported:
-		return "IndexNotSupported"
-	case IndexOutOfBounds:
-		return "IndexOutOfBounds"
+	case IndexNotSupportedError:
+		return "IndexNotSupportedError"
+	case IndexOutOfBoundsError:
+		return "IndexOutOfBoundsError"
 	case KeyError:
 		return "KeyError"
 	case ImportError:
 		return "ImportError"
 	case VariableReassignmentError:
 		return "VariableReassignmentError"
-	case NotCallable:
-		return "NotCallable"
-	case InvalidAssignment:
-		return "InvalidAssignment"
+	case NotCallableError:
+		return "NotCallableError"
+	case InvalidAssignmentError:
+		return "InvalidAssignmentError"
 	case ArgumentError:
 		return "ArgumentError"
 	case ParseError:
 		return "ParseError"
-	case PropertyAccessOnNonObject:
-		return "PropertyAccessOnNonObject"
-	case UnknownOperator:
-		return "UnknownOperator"
+	case PropertyAccessOnNonObjectError:
+		return "PropertyAccessOnNonObjectError"
+	case UnknownOperatorError:
+		return "UnknownOperatorError"
 	default:
 		return "UnknownError"
 	}
@@ -85,10 +86,15 @@ func ExpectOneOfTypes(line, col int, obj object.Object, expectedTypes ...object.
 			return nil
 		}
 	}
-	return New(TypeError, line, col, "expected one of %s, got %s", expectedTypes, obj.Type().String())
+
+	typeNames := make([]string, len(expectedTypes))
+	for i, t := range expectedTypes {
+		typeNames[i] = t.String()
+	}
+	return New(TypeError, line, col, "expected one of %s, got %s", strings.Join(typeNames, ", "), obj.Type().String())
 }
 
-func ExpectNumberOfArguments(line, col int, expected int, args ...object.Object) *object.Error {
+func ExpectNumberOfArguments(line, col int, expected int, args []object.Object) *object.Error {
 	if len(args) != expected {
 		return New(ArgumentError, line, col, "expected %d arguments, got %d", expected, len(args))
 	}
@@ -96,27 +102,27 @@ func ExpectNumberOfArguments(line, col int, expected int, args ...object.Object)
 }
 
 func NewIndexNotSupportedError(line, col int, obj object.Object) *object.Error {
-	return New(IndexNotSupported, line, col, "index operator not supported: %s", obj.Type().String())
+	return New(IndexNotSupportedError, line, col, "%s", obj.Type().String())
 }
 
 func NewIndexOutOfBoundsError(line, col int, obj object.Object) *object.Error {
-	return New(IndexOutOfBounds, line, col, "index out of bounds: %s", obj.Type().String())
+	return New(IndexOutOfBoundsError, line, col, "%s", obj.Type().String())
 }
 
 func NewNonObjectPropertyAccessError(line, col int, obj object.Object) *object.Error {
-	return New(PropertyAccessOnNonObject, line, col, "property access on non-object: %s", obj.Type().String())
+	return New(PropertyAccessOnNonObjectError, line, col, "%s", obj.Type().String())
 }
 
 func NewUndefinedVariableError(line, col int, identifier string) *object.Error {
-	return New(UndefinedVariable, line, col, "undefined variable: %s", identifier)
+	return New(UndefinedVariableError, line, col, "%s", identifier)
 }
 
 func NewUnusableAsHashKeyError(line, col int, obj object.Object) *object.Error {
-	return New(KeyError, line, col, "unusable as hash key: %s", obj.Type().String())
+	return New(KeyError, line, col, "%s", obj.Type().String())
 }
 
 func NewInvalidAssignmentTargetError(line, col int, name string) *object.Error {
-	return New(InvalidAssignment, line, col, "invalid assignment target: %s", name)
+	return New(InvalidAssignmentError, line, col, "%s", name)
 }
 
 func NewTypeError(line, col int, format string, args ...interface{}) *object.Error {
@@ -124,25 +130,29 @@ func NewTypeError(line, col int, format string, args ...interface{}) *object.Err
 }
 
 func NewTypeMismatchError(line, col int, left object.ObjectType, operator string, right object.ObjectType) *object.Error {
-	return New(TypeMismatch, line, col, "type mismatch: %s %s %s", left.String(), operator, right.String())
+	return New(TypeMismatchError, line, col, "%s %s %s", left.String(), operator, right.String())
 }
 
 func NewVariableReassignmentError(line, col int, identifier string) *object.Error {
-	return New(VariableReassignmentError, line, col, "variable reassignment: %s", identifier)
+	return New(VariableReassignmentError, line, col, "%s", identifier)
 }
 
 func NewNotCallableError(line, col int, obj object.Object) *object.Error {
-	return New(NotCallable, line, col, "not callable: %s", obj.Type().String())
+	return New(NotCallableError, line, col, "%s", obj.Type().String())
 }
 
 func NewImportError(line, col int, message string) *object.Error {
-	return New(ImportError, line, col, message)
+	return New(ImportError, line, col, "%s", message)
 }
 
-func NewUnknownOperatorError(line, col int, operator string) *object.Error {
-	return New(UnknownOperator, line, col, "unknown operator: %s", operator)
+func NewUnknownOperatorError(line, col int, left object.Object, operator string, right object.Object) *object.Error {
+	return New(UnknownOperatorError, line, col, "%s %s %s", left.Type().String(), operator, right.Type().String())
+}
+
+func NewUnknownPrefixOperatorError(line, col int, operator string, right object.Object) *object.Error {
+	return New(UnknownOperatorError, line, col, "%s%s", operator, right.Type().String())
 }
 
 func NewDivisionByZeroError(line, col int) *object.Error {
-	return New(DivisionByZero, line, col, "division by zero")
+	return New(DivisionByZeroError, line, col, "")
 }
