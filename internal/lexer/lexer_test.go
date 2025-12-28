@@ -7,14 +7,14 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `var five = 5;
-	var ten = 10;
+	input := `let five = 5;
+let ten = 10;
 
-var add = func(x, y) {
+let add = func(x, y) {
   x + y;
 };
 
-var result = add(five, ten);
+let result = add(five, ten);
 !-/ *5;
 5 <= 10 >= 5;
 2.2 > 0;
@@ -41,17 +41,17 @@ if (5 < 10) {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
-		{token.Var, "var"},
+		{token.Let, "let"},
 		{token.Ident, "five"},
 		{token.Assign, "="},
 		{token.Int, "5"},
 		{token.Semicolon, ";"},
-		{token.Var, "var"},
+		{token.Let, "let"},
 		{token.Ident, "ten"},
 		{token.Assign, "="},
 		{token.Int, "10"},
 		{token.Semicolon, ";"},
-		{token.Var, "var"},
+		{token.Let, "let"},
 		{token.Ident, "add"},
 		{token.Assign, "="},
 		{token.Function, "func"},
@@ -67,7 +67,7 @@ if (5 < 10) {
 		{token.Semicolon, ";"},
 		{token.RBrace, "}"},
 		{token.Semicolon, ";"},
-		{token.Var, "var"},
+		{token.Let, "let"},
 		{token.Ident, "result"},
 		{token.Assign, "="},
 		{token.Ident, "add"},

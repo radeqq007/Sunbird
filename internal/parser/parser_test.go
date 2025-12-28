@@ -9,11 +9,11 @@ import (
 	"testing"
 )
 
-func TestVarStatement(t *testing.T) {
+func TestLetStatement(t *testing.T) {
 	input := `
-var x = 5;
-var y = 10;
-var foobar = 32.1;
+let x = 5;
+let y = 10;
+let foobar = 32.1;
   `
 
 	l := lexer.New(input)
@@ -45,26 +45,26 @@ var foobar = 32.1;
 		if !ok {
 			t.Fatalf("program.Statements[%d] is not ast.ExpressionStatement. got=%T", i, program.Statements[i])
 		}
-		if !testVarExpression(t, stmt.Expression, tt.expectedIdentifier) {
+		if !testLetExpression(t, stmt.Expression, tt.expectedIdentifier) {
 			return
 		}
 	}
 }
 
-func testVarExpression(t *testing.T, s ast.Expression, name string) bool {
-	if s.TokenLiteral() != "var" {
-		t.Errorf("s.TokenLiteral is not 'var'. got=%q", s.TokenLiteral())
+func testLetExpression(t *testing.T, s ast.Expression, name string) bool {
+	if s.TokenLiteral() != "let" {
+		t.Errorf("s.TokenLiteral is not 'let'. got=%q", s.TokenLiteral())
 		return false
 	}
 
-	varExp, ok := s.(*ast.VarExpression)
+	letExp, ok := s.(*ast.LetExpression)
 	if !ok {
-		t.Errorf("s not *ast.VarExpression. got=%T", s)
+		t.Errorf("s not *ast.LetExpression. got=%T", s)
 		return false
 	}
 
-	if varExp.Name.String() != name {
-		t.Errorf("varExp.Name.Value not '%s'. got=%s", name, varExp.Name.String())
+	if letExp.Name.String() != name {
+		t.Errorf("letExp.Name.Value not '%s'. got=%s", name, letExp.Name.String())
 		return false
 	}
 
@@ -1045,8 +1045,8 @@ func TestForStatementParsing(t *testing.T) {
 		expectedBody   string
 	}{
 		{
-			input:          "for var i = 0; i < 10; i = i + 1 { println(i); }",
-			expectedInit:   "var i = 0;",
+			input:          "for let i = 0; i < 10; i = i + 1 { println(i); }",
+			expectedInit:   "let i = 0;",
 			expectedCond:   "(i < 10)",
 			expectedUpdate: "i = (i + 1);",
 			expectedBody:   "println(i)",

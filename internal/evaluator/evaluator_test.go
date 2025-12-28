@@ -269,15 +269,15 @@ func TestErrorHandling(t *testing.T) {
 	}
 }
 
-func TestVarStatements(t *testing.T) {
+func TestLetStatements(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected int64
 	}{
-		{"var a = 5; a;", 5},
-		{"var a = 5 * 5; a;", 25},
-		{"var a = 5; var b = a; b;", 5},
-		{"var a = 5; var b = a; var c = a + b + 5; c;", 15},
+		{"let a = 5; a;", 5},
+		{"let a = 5 * 5; a;", 25},
+		{"let a = 5; let b = a; b;", 5},
+		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
 	}
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
@@ -314,11 +314,11 @@ func TestFunctionApplication(t *testing.T) {
 		input    string
 		expected int64
 	}{
-		{"var identity = func(x) { x; }; identity(5);", 5},
-		{"var identity = func(x) { return x; }; identity(5);", 5},
-		{"var double = func(x) { x * 2; }; double(5);", 10},
-		{"var add = func(x, y) { x + y; }; add(5, 5);", 10},
-		{"var add = func(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"let identity = func(x) { x; }; identity(5);", 5},
+		{"let identity = func(x) { return x; }; identity(5);", 5},
+		{"let double = func(x) { x * 2; }; double(5);", 10},
+		{"let add = func(x, y) { x + y; }; add(5, 5);", 10},
+		{"let add = func(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
 		{"func(x) { x; }(5)", 5},
 	}
 
@@ -329,10 +329,10 @@ func TestFunctionApplication(t *testing.T) {
 
 func TestClosures(t *testing.T) {
 	input := `
-var newAdder = func(x) {
+let newAdder = func(x) {
   func(y) { x + y };
 };
-var addTwo = newAdder(2);
+let addTwo = newAdder(2);
 addTwo(2);`
 	testIntegerObject(t, testEval(input), 4)
 }
@@ -436,11 +436,11 @@ func TestArrayIndexExpressions(t *testing.T) {
 		{"[1, 2, 3][0]", 1},
 		{"[1, 2, 3][1]", 2},
 		{"[1, 2, 3][2]", 3},
-		{"var i = 0; [1][i];", 1},
+		{"let i = 0; [1][i];", 1},
 		{"[1, 2, 3][1 + 1];", 3},
-		{"var myArray = [1, 2, 3]; myArray[2];", 3},
-		{"var myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];", 6},
-		{"var myArray = [1, 2, 3]; var i = myArray[0]; myArray[i]", 2},
+		{"let myArray = [1, 2, 3]; myArray[2];", 3},
+		{"let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];", 6},
+		{"let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]", 2},
 		{"[1, 2, 3][-1]", 3},
 	}
 	for _, tt := range tests {
@@ -484,7 +484,7 @@ func TestErrorLineNumbers(t *testing.T) {
 		},
 		{
 			`
-var a = 5;
+let a = 5;
 a + true;
 `,
 			3, 3,

@@ -74,7 +74,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return &object.ReturnValue{Value: val}
 
-	case *ast.VarExpression:
+	case *ast.LetExpression:
 		if env.Has(node.Name.String()) {
 			return errors.NewVariableReassignmentError(node.Token.Line, node.Token.Col, node.Name.String())
 		}

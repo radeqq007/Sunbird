@@ -188,25 +188,25 @@ func (ie *IfExpression) String() string {
 	return out.String()
 }
 
-// Var
-type VarExpression struct {
+// Let
+type LetExpression struct {
 	Token token.Token
 	Name  Expression
 	Value Expression
 }
 
-func (vs *VarExpression) expressionNode()      {}
-func (vs *VarExpression) TokenLiteral() string { return vs.Token.Literal }
+func (ls *LetExpression) expressionNode()      {}
+func (ls *LetExpression) TokenLiteral() string { return ls.Token.Literal }
 
-func (vs *VarExpression) String() string {
+func (ls *LetExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(vs.TokenLiteral() + " ")
-	out.WriteString(vs.Name.String())
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
 	out.WriteString(" = ")
 
-	if vs.Value != nil {
-		out.WriteString(vs.Value.String())
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
 	}
 
 	out.WriteString(";")

@@ -44,8 +44,8 @@ func (p *Parser) parseForStatement() *ast.ForStatement {
 
 	p.nextToken()
 
-	if p.curTokenIs(token.Var) {
-		stmt.Init = p.parseVarExpression()
+	if p.curTokenIs(token.Let) {
+		stmt.Init = p.parseLetExpression()
 	}
 
 	if !p.expectPeek(token.Semicolon) {
@@ -79,8 +79,8 @@ func (p *Parser) parseForStatement() *ast.ForStatement {
 	return stmt
 }
 
-func (p *Parser) parseVarExpression() ast.Expression {
-	exp := &ast.VarExpression{Token: p.curToken}
+func (p *Parser) parseLetExpression() ast.Expression {
+	exp := &ast.LetExpression{Token: p.curToken}
 
 	if !p.expectPeek(token.Ident) {
 		return nil
