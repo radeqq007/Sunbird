@@ -36,8 +36,14 @@ func abs(args ...object.Object) object.Object {
 		return err
 	}
 
+	if args[0].Type() == object.FloatObj {
+		return &object.Float{
+			Value: math.Abs(getFloat64(args[0])),
+		}
+	}
+
 	return &object.Integer{
-		Value: int64(args[0].(*object.Integer).Value),
+		Value: int64(math.Abs(getFloat64(args[0]))),
 	}
 }
 
