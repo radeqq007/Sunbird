@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"sunbird/internal/errors"
@@ -50,27 +49,6 @@ var builtins = map[string]*object.Builtin{
 			newElements := append(arr.Elements, args[1:]...)
 
 			return &object.Array{Elements: newElements}
-		},
-	},
-
-	"println": {
-		Fn: func(args ...object.Object) object.Object {
-			for _, arg := range args {
-				fmt.Print(arg.Inspect(), " ")
-			}
-			fmt.Println()
-
-			return nil
-		},
-	},
-
-	"print": {
-		Fn: func(args ...object.Object) object.Object {
-			for _, arg := range args {
-				fmt.Print(arg.Inspect(), " ")
-			}
-
-			return nil
 		},
 	},
 
