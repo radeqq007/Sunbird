@@ -16,6 +16,9 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.For:
 		return p.parseForStatement()
 
+	case token.While:
+		return p.parseWhileStatement()
+
 	case token.Import:
 		return p.parseImportStatement()
 
@@ -69,6 +72,22 @@ func (p *Parser) parseForStatement() *ast.ForStatement {
 		}
 		stmt.Update = p.parseAssignExpression(ident)
 	}
+
+	if !p.expectPeek(token.LBrace) {
+		return nil
+	}
+
+	stmt.Body = p.parseBlockStatement()
+
+	return stmt
+}
+
+func (p *Parser) parseWhileStatement() *ast.WhileStatement {
+	stmt := &ast.WhileStatement{Token: p.curToken}
+
+	p.nextToken()
+
+	stmt.Condition = p.parseExpression(LOWEST)
 
 	if !p.expectPeek(token.LBrace) {
 		return nil
