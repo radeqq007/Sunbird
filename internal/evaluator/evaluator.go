@@ -105,6 +105,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		return evalAssignment(node.Name, val, env)
 
+	case *ast.ConstExpression:
+		if env.Has(node.Name.String()) {
+			return errors.NewVariableReassignmentError(node.Token.Line, node.Token.Col, node.Name.String())
+		}
+
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return val
+		}
+		env.SetConst(node.Name.String(), val)
+		return val
+
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 

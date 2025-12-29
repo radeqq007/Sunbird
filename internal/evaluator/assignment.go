@@ -23,6 +23,10 @@ func evalAssignment(name ast.Expression, val object.Object, env *object.Environm
 }
 
 func evalIdentifierAssignment(node *ast.Identifier, val object.Object, env *object.Environment) object.Object {
+	if env.IsConst(node.Value) {
+		return errors.NewConstantReassignmentError(node.Token.Line, node.Token.Col, node.Value)
+	}
+
 	if env.Update(node.Value, val) {
 		return val
 	}
