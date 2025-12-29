@@ -23,7 +23,7 @@ func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) obj
 	}
 
 	// Bind module to environment
-	env.Set(name, module)
+	env.SetConst(name, module)
 
 	return NULL
 }

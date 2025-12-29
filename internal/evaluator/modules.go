@@ -38,14 +38,17 @@ func (mc *ModuleCache) loadModule(path string, env *object.Environment) (*object
 }
 
 func (mc *ModuleCache) loadFileModule(path string, env *object.Environment) (*object.Hash, error) {
-	fullPath := path
+	mainFileDir := ""
+	if len(os.Args) > 1 {
+		mainFileDir = filepath.Dir(os.Args[1]) // TODO: don't use os.Args
+	}
+
+	fullPath := filepath.Join(mainFileDir, path)
 	if !filepath.IsAbs(path) {
 		// Look relative to current directory
-		if _, err := os.Stat(path); err == nil {
-			fullPath = path
-		} else {
+		if _, err := os.Stat(fullPath); err != nil {
 			// Try with .sb extension
-			withExt := path + ".sb"
+			withExt := fullPath + ".sb"
 			if _, err := os.Stat(withExt); err == nil {
 				fullPath = withExt
 			} else {
