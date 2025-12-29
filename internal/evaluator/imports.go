@@ -1,6 +1,8 @@
 package evaluator
 
 import (
+	"path/filepath"
+	"strings"
 	"sunbird/internal/ast"
 	"sunbird/internal/errors"
 	"sunbird/internal/object"
@@ -20,6 +22,14 @@ func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) obj
 	name := path
 	if stmt.Alias != nil {
 		name = stmt.Alias.Value
+	} else {
+		// If it's a file path, extract filename without extension
+		base := filepath.Base(path)
+		ext := filepath.Ext(base)
+
+		if ext != "" {
+			name = strings.TrimSuffix(base, ext)
+		}
 	}
 
 	// Bind module to environment
