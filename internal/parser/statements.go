@@ -143,6 +143,25 @@ func (p *Parser) parseLetExpression() ast.Expression {
 	return exp
 }
 
+func (p *Parser) parseConstExpression() ast.Expression {
+	exp := &ast.ConstExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.Ident) {
+		return nil
+	}
+
+	exp.Name = p.parseIdentifier()
+
+	if !p.expectPeek(token.Assign) {
+		return nil
+	}
+
+	p.nextToken()
+	exp.Value = p.parseExpression(LOWEST)
+
+	return exp
+}
+
 func (p *Parser) validateDeclarationTarget(exp ast.Expression) bool {
 	switch exp.(type) {
 	case *ast.Identifier, *ast.PropertyExpression, *ast.IndexExpression:
