@@ -23,6 +23,8 @@ const (
 	BuiltinObj
 	ArrayObj
 	HashObj
+	BreakObj
+	ContinueObj
 )
 
 func (ot ObjectType) String() string {
@@ -47,6 +49,10 @@ func (ot ObjectType) String() string {
 		return "BUILTIN"
 	case ArrayObj:
 		return "ARRAY"
+	case BreakObj:
+		return "BREAK"
+	case ContinueObj:
+		return "CONTINUE"
 	default:
 		return "UNKNOWN"
 	}
@@ -96,6 +102,16 @@ type ReturnValue struct {
 
 func (rv *ReturnValue) Type() ObjectType { return ReturnValueObj }
 func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
+
+type Break struct{}
+
+func (b *Break) Type() ObjectType { return BreakObj }
+func (b *Break) Inspect() string  { return "break" }
+
+type Continue struct{}
+
+func (c *Continue) Type() ObjectType { return ContinueObj }
+func (c *Continue) Inspect() string  { return "continue" }
 
 type Error struct {
 	Message string
