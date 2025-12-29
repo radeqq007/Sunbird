@@ -7,9 +7,11 @@ import (
 )
 
 var (
-	NULL  = &object.Null{}
-	TRUE  = &object.Boolean{Value: true}
-	FALSE = &object.Boolean{Value: false}
+	NULL     = &object.Null{}
+	TRUE     = &object.Boolean{Value: true}
+	FALSE    = &object.Boolean{Value: false}
+	BREAK    = &object.Break{}
+	CONTINUE = &object.Continue{}
 )
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
@@ -22,6 +24,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
+
+	case *ast.BreakStatement:
+		return BREAK
+
+	case *ast.ContinueStatement:
+		return CONTINUE
 
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}

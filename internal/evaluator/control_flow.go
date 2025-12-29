@@ -55,9 +55,15 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 			return result
 		}
 
-		// handle return statements
-		if result != nil && result.Type() == object.ReturnValueObj {
-			return result
+		if result != nil {
+			switch result.Type() {
+			case object.ReturnValueObj:
+				return result
+			case object.BreakObj:
+				return NULL
+			case object.ContinueObj:
+				// Fallthrough to update
+			}
 		}
 
 		if fs.Update != nil {
@@ -91,9 +97,15 @@ func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.
 			return result
 		}
 
-		// handle return statements
-		if result != nil && result.Type() == object.ReturnValueObj {
-			return result
+		if result != nil {
+			switch result.Type() {
+			case object.ReturnValueObj:
+				return result
+			case object.BreakObj:
+				return NULL
+			case object.ContinueObj:
+				// Fallthrough to update
+			}
 		}
 	}
 
@@ -110,7 +122,7 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 
 		if result != nil {
 			rt := result.Type()
-			if rt == object.ReturnValueObj || rt == object.ErrorObj {
+			if rt == object.ReturnValueObj || rt == object.ErrorObj || rt == object.BreakObj || rt == object.ContinueObj {
 				return result
 			}
 		}
