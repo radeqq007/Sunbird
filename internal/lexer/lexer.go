@@ -15,18 +15,20 @@ type Lexer struct {
 }
 
 var keywords = map[string]token.TokenType{
-	"func":   token.Function,
-	"let":    token.Let,
-	"true":   token.True,
-	"false":  token.False,
-	"if":     token.If,
-	"else":   token.Else,
-	"return": token.Return,
-	"null":   token.Null,
-	"for":    token.For,
-	"while":  token.While,
-	"import": token.Import,
-	"as":     token.As,
+	"func":     token.Function,
+	"let":      token.Let,
+	"true":     token.True,
+	"false":    token.False,
+	"if":       token.If,
+	"else":     token.Else,
+	"return":   token.Return,
+	"null":     token.Null,
+	"for":      token.For,
+	"while":    token.While,
+	"import":   token.Import,
+	"as":       token.As,
+	"break":    token.Break,
+	"continue": token.Continue,
 }
 
 func New(input string) *Lexer {
