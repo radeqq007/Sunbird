@@ -61,6 +61,7 @@ const (
 	// Keywords
 	Function TokenType = "FUNC"
 	Let      TokenType = "LET"
+	Const    TokenType = "CONST"
 	True     TokenType = "TRUE"
 	False    TokenType = "FALSE"
 	If       TokenType = "IF"
