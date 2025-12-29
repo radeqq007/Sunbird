@@ -71,6 +71,8 @@ const (
 	While    TokenType = "WHILE"
 	Import   TokenType = "IMPORT"
 	As       TokenType = "AS"
+	Break    TokenType = "BREAK"
+	Continue TokenType = "CONTINUE"
 )
 
 func (t Token) String() string {
