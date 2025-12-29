@@ -12,6 +12,7 @@ const (
 	TypeMismatchError
 	UndefinedVariableError
 	DivisionByZeroError
+	ConstantReassignmentError
 	RuntimeError
 	IndexNotSupportedError
 	IndexOutOfBoundsError
@@ -40,6 +41,8 @@ func (ec ErrorCode) String() string {
 		return "UndefinedVariableError"
 	case DivisionByZeroError:
 		return "DivisionByZeroError"
+	case ConstantReassignmentError:
+		return "ConstantReassignmentError"
 	case RuntimeError:
 		return "RuntimeError"
 	case IndexNotSupportedError:
@@ -159,4 +162,8 @@ func NewDivisionByZeroError(line, col int) *object.Error {
 
 func NewRuntimeError(line, col int, format string, args ...interface{}) *object.Error {
 	return New(RuntimeError, line, col, format, args...)
+}
+
+func NewConstantReassignmentError(line, col int, identifier string) *object.Error {
+	return New(ConstantReassignmentError, line, col, "%s", identifier)
 }
