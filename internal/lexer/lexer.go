@@ -17,6 +17,7 @@ type Lexer struct {
 var keywords = map[string]token.TokenType{
 	"func":     token.Function,
 	"let":      token.Let,
+	"const":    token.Const,
 	"true":     token.True,
 	"false":    token.False,
 	"if":       token.If,
