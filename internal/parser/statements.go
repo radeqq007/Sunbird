@@ -19,12 +19,38 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.While:
 		return p.parseWhileStatement()
 
+	case token.Break:
+		return p.parseBreakStatement()
+
+	case token.Continue:
+		return p.parseContinueStatement()
+
 	case token.Import:
 		return p.parseImportStatement()
 
 	default:
 		return p.parseExpressionStatement()
 	}
+}
+
+func (p *Parser) parseBreakStatement() *ast.BreakStatement {
+	stmt := &ast.BreakStatement{Token: p.curToken}
+
+	if p.peekTokenIs(token.Semicolon) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseContinueStatement() *ast.ContinueStatement {
+	stmt := &ast.ContinueStatement{Token: p.curToken}
+
+	if p.peekTokenIs(token.Semicolon) {
+		p.nextToken()
+	}
+
+	return stmt
 }
 
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
