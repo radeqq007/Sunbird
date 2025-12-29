@@ -71,6 +71,35 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 	return result
 }
 
+func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.Object {
+	loopEnv := object.NewEnclosedEnvironment(env)
+
+	var result object.Object = NULL
+
+	for {
+		condition := Eval(ws.Condition, loopEnv)
+		if isError(condition) {
+			return condition
+		}
+
+		if !isTruthy(condition) {
+			break
+		}
+
+		result = Eval(ws.Body, loopEnv)
+		if isError(result) {
+			return result
+		}
+
+		// handle return statements
+		if result != nil && result.Type() == object.ReturnValueObj {
+			return result
+		}
+	}
+
+	return result
+}
+
 func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
 	blockEnv := object.NewEnclosedEnvironment(env)
 

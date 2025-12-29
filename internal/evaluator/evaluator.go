@@ -67,6 +67,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ForStatement:
 		return evalForStatement(node, env)
 
+	case *ast.WhileStatement:
+		return evalWhileStatement(node, env)
+
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
 		if isError(val) {
