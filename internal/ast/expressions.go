@@ -213,3 +213,29 @@ func (ls *LetExpression) String() string {
 
 	return out.String()
 }
+
+// Const
+type ConstExpression struct {
+	Token token.Token
+	Name  Expression
+	Value Expression
+}
+
+func (cs *ConstExpression) expressionNode()      {}
+func (cs *ConstExpression) TokenLiteral() string { return cs.Token.Literal }
+
+func (cs *ConstExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(cs.TokenLiteral() + " ")
+	out.WriteString(cs.Name.String())
+	out.WriteString(" = ")
+
+	if cs.Value != nil {
+		out.WriteString(cs.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
