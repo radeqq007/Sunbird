@@ -119,10 +119,16 @@ func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) 
 
 	if isError(tryResult) {
 		errObj := tryResult.(*object.Error)
-		errObj.Propagating = false
+		
+		caughtError := &object.Error{
+			Message:     errObj.Message,
+			Line:        errObj.Line,
+			Col:         errObj.Col,
+			Propagating: false,
+		}
 
 		catchEnv := object.NewEnclosedEnvironment(env)
-		catchEnv.Set(tcs.Param.Value, tryResult)
+		catchEnv.Set(tcs.Param.Value, caughtError)
 
 		result = Eval(tcs.Catch, catchEnv)
 	}
