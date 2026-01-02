@@ -114,9 +114,10 @@ func (c *Continue) Type() ObjectType { return ContinueObj }
 func (c *Continue) Inspect() string  { return "continue" }
 
 type Error struct {
-	Message string
-	Line    int
-	Col     int
+	Message     string
+	Line        int
+	Col         int
+	Propagating bool
 }
 
 func (e *Error) Type() ObjectType { return ErrorObj }
@@ -128,7 +129,7 @@ func (e *Error) Inspect() string {
 }
 
 func NewError(line, col int, format string, a ...interface{}) *Error {
-	return &Error{Message: fmt.Sprintf(format, a...), Line: line, Col: col}
+	return &Error{Message: fmt.Sprintf(format, a...), Line: line, Col: col, Propagating: true}
 }
 
 type Function struct {

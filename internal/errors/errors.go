@@ -73,7 +73,7 @@ func (ec ErrorCode) String() string {
 }
 
 func New(code ErrorCode, line, col int, format string, args ...interface{}) *object.Error {
-	return &object.Error{Line: line, Col: col, Message: fmt.Sprintf("%s: %s", code.String(), fmt.Sprintf(format, args...))}
+	return &object.Error{Line: line, Col: col, Message: fmt.Sprintf("%s: %s", code.String(), fmt.Sprintf(format, args...)), Propagating: true}
 }
 
 func ExpectType(line, col int, obj object.Object, expectedType object.ObjectType) *object.Error {

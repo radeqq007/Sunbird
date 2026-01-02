@@ -5,8 +5,8 @@ import (
 )
 
 func isError(obj object.Object) bool {
-	if obj != nil {
-		return obj.Type() == object.ErrorObj
+	if obj != nil && obj.Type() == object.ErrorObj {
+		return obj.(*object.Error).Propagating
 	}
 
 	return false

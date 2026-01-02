@@ -118,6 +118,9 @@ func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) 
 	result := tryResult
 
 	if isError(tryResult) {
+		errObj := tryResult.(*object.Error)
+		errObj.Propagating = false
+
 		catchEnv := object.NewEnclosedEnvironment(env)
 		catchEnv.Set(tcs.Param.Value, tryResult)
 
@@ -153,7 +156,7 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 
 		if result != nil {
 			rt := result.Type()
-			if rt == object.ReturnValueObj || rt == object.ErrorObj || rt == object.BreakObj || rt == object.ContinueObj {
+			if rt == object.ReturnValueObj || isError(result) || rt == object.BreakObj || rt == object.ContinueObj {
 				return result
 			}
 		}

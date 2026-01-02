@@ -218,7 +218,9 @@ func evalProgram(stmts []ast.Statement, env *object.Environment) object.Object {
 			return result.Value
 
 		case *object.Error:
-			return result
+			if result.Propagating {
+				return result
+			}
 		}
 	}
 
