@@ -85,6 +85,9 @@ const (
 	As       TokenType = "AS"
 	Break    TokenType = "BREAK"
 	Continue TokenType = "CONTINUE"
+	Try      TokenType = "TRY"
+	Catch    TokenType = "CATCH"
+	Finally  TokenType = "FINALLY"
 )
 
 func (t Token) String() string {
