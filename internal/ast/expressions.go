@@ -27,6 +27,7 @@ func (es *ExpressionStatement) String() string {
 type Identifier struct {
 	Token token.Token
 	Value string
+	Type  TypeAnnotation
 }
 
 func (i *Identifier) expressionNode()      {}
@@ -192,6 +193,7 @@ func (ie *IfExpression) String() string {
 type LetExpression struct {
 	Token token.Token
 	Name  Expression
+	Type  TypeAnnotation
 	Value Expression
 }
 
@@ -203,6 +205,12 @@ func (ls *LetExpression) String() string {
 
 	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.String())
+
+	if ls.Type != nil {
+		out.WriteString(": ")
+		out.WriteString(ls.Type.String())
+	}
+
 	out.WriteString(" = ")
 
 	if ls.Value != nil {
@@ -218,6 +226,7 @@ func (ls *LetExpression) String() string {
 type ConstExpression struct {
 	Token token.Token
 	Name  Expression
+	Type  TypeAnnotation
 	Value Expression
 }
 
@@ -229,6 +238,11 @@ func (cs *ConstExpression) String() string {
 
 	out.WriteString(cs.TokenLiteral() + " ")
 	out.WriteString(cs.Name.String())
+	if cs.Type != nil {
+		out.WriteString(": ")
+		out.WriteString(cs.Type.String())
+	}
+
 	out.WriteString(" = ")
 
 	if cs.Value != nil {

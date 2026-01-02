@@ -27,6 +27,12 @@ func evalIdentifierAssignment(node *ast.Identifier, val object.Object, env *obje
 		return errors.NewConstantReassignmentError(node.Token.Line, node.Token.Col, node.Value)
 	}
 
+	if t, ok := env.GetType(node.Value); ok && t != nil {
+		if err := checkType(t, val, node.Token.Line, node.Token.Col); err != nil {
+			return err
+		}
+	}
+
 	if env.Update(node.Value, val) {
 		return val
 	}

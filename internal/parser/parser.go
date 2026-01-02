@@ -146,3 +146,84 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 	return program
 }
+
+func (p *Parser) parseTypeAnnotation() ast.TypeAnnotation {
+	switch p.curToken.Type {
+	case token.TypeInt, token.TypeFloat, token.TypeString, token.TypeBool, token.TypeVoid:
+		t := &ast.SimpleType{
+			Token: p.curToken,
+			Name:  p.curToken.Literal,
+		}
+
+		if p.peekTokenIs(token.QuestionMark) {
+			p.nextToken()
+			return &ast.OptionalType{
+				Token:    p.curToken,
+				BaseType: t,
+			}
+		}
+
+		return t
+
+	case token.TypeArray:
+		t := &ast.ArrayType{Token: p.curToken}
+
+		if p.peekTokenIs(token.QuestionMark) {
+			p.nextToken()
+			return &ast.OptionalType{
+				Token:    p.curToken,
+				BaseType: t,
+			}
+		}
+		return t
+
+	case token.TypeHash:
+		t := &ast.HashType{Token: p.curToken}
+		if p.peekTokenIs(token.QuestionMark) {
+			p.nextToken()
+			return &ast.OptionalType{
+				Token:    p.curToken,
+				BaseType: t,
+			}
+		}
+		return t
+
+	case token.TypeFunc:
+		t := &ast.FunctionType{Token: p.curToken}
+		if p.peekTokenIs(token.QuestionMark) {
+			p.nextToken()
+			return &ast.OptionalType{
+				Token:    p.curToken,
+				BaseType: t,
+			}
+		}
+		return t
+
+	default:
+		return nil
+	}
+}
+
+func (p *Parser) parseTypeList(end token.TokenType) []ast.TypeAnnotation {
+	list := []ast.TypeAnnotation{}
+
+	if p.peekTokenIs(end) {
+		p.nextToken()
+		return list
+	}
+
+	p.nextToken()
+	list = append(list, p.parseTypeAnnotation())
+
+	for p.peekTokenIs(token.Comma) {
+		p.nextToken()
+		p.nextToken()
+		list = append(list, p.parseTypeAnnotation())
+	}
+
+	if !p.expectPeek(end) {
+		return nil
+	}
+
+	return list
+}

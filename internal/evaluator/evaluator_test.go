@@ -521,3 +521,57 @@ a + true;
 		}
 	}
 }
+func TestFunctionTypeChecking(t *testing.T) {
+	tests := []struct {
+		input           string
+		expectedMessage string
+	}{
+		{
+			"let identity = func(x: Int): Int { x; }; identity(5);",
+			"", // Should pass
+		},
+		{
+			"let identity = func(x: String): String { x; }; identity(5);",
+			"TypeError: expected String, got INTEGER",
+		},
+		{
+			"let add = func(a: Int, b: Int): Int { a + b; }; add(1, 2);",
+			"", // Should pass
+		},
+		{
+			"let add = func(a: Int, b: Int) { a + b; }; add('1', '2');",
+			"TypeError: expected Int, got STRING",
+		},
+		{
+			"let identity = func(x: Float) { x; }; identity(\"hello\");",
+			"TypeError: expected Float, got STRING",
+		},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		if tt.expectedMessage == "" {
+			if isError(evaluated) {
+				t.Errorf("expected no error, got=%q", evaluated.(*object.Error).Message)
+			}
+		} else {
+			errObj, ok := evaluated.(*object.Error)
+			if !ok {
+				t.Errorf("no error object returned. got=%T(%+v)",
+					evaluated, evaluated)
+				continue
+			}
+			if errObj.Message != tt.expectedMessage {
+				t.Errorf("wrong error message. expected=%q, got=%q",
+					tt.expectedMessage, errObj.Message)
+			}
+		}
+	}
+}
+
+func isError(obj object.Object) bool {
+	if obj != nil {
+		return obj.Type() == object.ErrorObj
+	}
+	return false
+}

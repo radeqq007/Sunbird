@@ -46,10 +46,11 @@ const (
 	And TokenType = "AND"
 
 	// Delimiter
-	Comma     TokenType = "COMMA"
-	Semicolon TokenType = "SEMICOLON"
-	Colon     TokenType = "COLON"
-	Dot       TokenType = "DOT"
+	Comma        TokenType = "COMMA"
+	Semicolon    TokenType = "SEMICOLON"
+	Colon        TokenType = "COLON"
+	Dot          TokenType = "DOT"
+	QuestionMark TokenType = "QUESTION_MARK"
 
 	LParen   TokenType = "LPAREN"
 	RParen   TokenType = "RPAREN"
@@ -57,6 +58,16 @@ const (
 	RBrace   TokenType = "RBRACE"
 	LBracket TokenType = "LBRACKET"
 	RBracket TokenType = "RBRACKET"
+
+	// Type keywords
+	TypeInt    TokenType = "TYPE_INT"
+	TypeFloat  TokenType = "TYPE_FLOAT"
+	TypeString TokenType = "TYPE_STRING"
+	TypeBool   TokenType = "TYPE_BOOL"
+	TypeVoid   TokenType = "TYPE_VOID"
+	TypeArray  TokenType = "TYPE_ARRAY"
+	TypeFunc   TokenType = "TYPE_FUNC"
+	TypeHash   TokenType = "TYPE_HASH"
 
 	// Keywords
 	Function TokenType = "FUNC"

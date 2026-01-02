@@ -133,6 +133,12 @@ func (p *Parser) parseLetExpression() ast.Expression {
 
 	exp.Name = p.parseIdentifier()
 
+	if p.peekTokenIs(token.Colon) {
+		p.nextToken()
+		p.nextToken()
+		exp.Type = p.parseTypeAnnotation()
+	}
+
 	if !p.expectPeek(token.Assign) {
 		return nil
 	}
@@ -151,6 +157,12 @@ func (p *Parser) parseConstExpression() ast.Expression {
 	}
 
 	exp.Name = p.parseIdentifier()
+
+	if p.peekTokenIs(token.Colon) {
+		p.nextToken()
+		p.nextToken()
+		exp.Type = p.parseTypeAnnotation()
+	}
 
 	if !p.expectPeek(token.Assign) {
 		return nil

@@ -106,6 +106,12 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 
 	lit.Parameters = p.parseFunctionParameters()
 
+	if p.peekTokenIs(token.Colon) {
+		p.nextToken()
+		p.nextToken()
+		lit.ReturnType = p.parseTypeAnnotation()
+	}
+
 	if !p.expectPeek(token.LBrace) {
 		return nil
 	}
@@ -126,6 +132,12 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 	p.nextToken()
 
 	ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	if p.peekTokenIs(token.Colon) {
+		p.nextToken()
+		p.nextToken()
+		ident.Type = p.parseTypeAnnotation()
+	}
+
 	identifiers = append(identifiers, ident)
 
 	for p.peekTokenIs(token.Comma) {
@@ -133,6 +145,11 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 		p.nextToken()
 
 		ident = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+		if p.peekTokenIs(token.Colon) {
+			p.nextToken()
+			p.nextToken()
+			ident.Type = p.parseTypeAnnotation()
+		}
 		identifiers = append(identifiers, ident)
 	}
 

@@ -133,6 +133,7 @@ func NewError(line, col int, format string, a ...interface{}) *Error {
 
 type Function struct {
 	Parameters []*ast.Identifier
+	ReturnType ast.TypeAnnotation
 	Body       *ast.BlockStatement
 	Env        *Environment
 }

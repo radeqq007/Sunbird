@@ -1,14 +1,18 @@
 package object
 
+import "sunbird/internal/ast"
+
 func NewEnvironment() *Environment {
 	s := make(map[string]Object)
 	c := make(map[string]bool)
-	return &Environment{store: s, constants: c}
+	t := make(map[string]ast.TypeAnnotation)
+	return &Environment{store: s, constants: c, types: t}
 }
 
 type Environment struct {
 	store     map[string]Object
 	constants map[string]bool
+	types     map[string]ast.TypeAnnotation
 	outer     *Environment
 }
 
@@ -21,10 +25,24 @@ func (e *Environment) Get(name string) (Object, bool) {
 	return obj, ok
 }
 
-func (e *Environment) SetConst(name string, val Object) Object {
+func (e *Environment) GetType(name string) (ast.TypeAnnotation, bool) {
+	t, ok := e.types[name]
+	if !ok && e.outer != nil {
+		t, ok = e.outer.GetType(name)
+	}
+
+	return t, ok
+}
+
+func (e *Environment) SetConstWithType(name string, val Object, t ast.TypeAnnotation) Object {
 	e.store[name] = val
 	e.constants[name] = true
+	e.types[name] = t
 	return val
+}
+
+func (e *Environment) SetConst(name string, val Object) Object {
+	return e.SetConstWithType(name, val, nil)
 }
 
 func (e *Environment) IsConst(name string) bool {
@@ -47,9 +65,14 @@ func (e *Environment) Has(name string) bool {
 	return ok
 }
 
-func (e *Environment) Set(name string, val Object) Object {
+func (e *Environment) SetWithType(name string, val Object, t ast.TypeAnnotation) Object {
 	e.store[name] = val
+	e.types[name] = t
 	return val
+}
+
+func (e *Environment) Set(name string, val Object) Object {
+	return e.SetWithType(name, val, nil)
 }
 
 func (e *Environment) Update(name string, val Object) bool {

@@ -13,7 +13,10 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 			return err
 		}
 
-		extendedEnv := extendFunctionEnv(fn, args)
+		extendedEnv, err := extendFunctionEnv(fn, args)
+		if err != nil {
+			return err
+		}
 
 		// set 'this' binding
 		if thisVal, ok := extendedEnv.Get("this"); ok {
@@ -21,7 +24,21 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 		}
 
 		evaluated := Eval(fn.Body, extendedEnv)
-		return unwrapReturnValue(evaluated)
+
+		if isError(evaluated) {
+			return evaluated
+		}
+
+		result := unwrapReturnValue(evaluated)
+
+		// Type check return value
+		if fn.ReturnType != nil {
+			if typeErr := checkType(fn.ReturnType, result, line, col); typeErr != nil {
+				return typeErr
+			}
+		}
+
+		return result
 
 	case *object.Builtin:
 		return fn.Fn(args...)
@@ -31,14 +48,19 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 	}
 }
 
-func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
+func extendFunctionEnv(fn *object.Function, args []object.Object) (*object.Environment, *object.Error) {
 	env := object.NewEnclosedEnvironment(fn.Env)
 
 	for i, param := range fn.Parameters {
-		env.Set(param.Value, args[i])
+		if param.Type != nil {
+			if err := checkType(param.Type, args[i], param.Token.Line, param.Token.Col); err != nil {
+				return nil, err
+			}
+		}
+		env.SetWithType(param.Value, args[i], param.Type)
 	}
 
-	return env
+	return env, nil
 }
 
 func unwrapReturnValue(obj object.Object) object.Object {

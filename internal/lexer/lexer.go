@@ -30,6 +30,14 @@ var keywords = map[string]token.TokenType{
 	"as":       token.As,
 	"break":    token.Break,
 	"continue": token.Continue,
+	"Int":      token.TypeInt,
+	"Float":    token.TypeFloat,
+	"String":   token.TypeString,
+	"Bool":     token.TypeBool,
+	"void":     token.TypeVoid,
+	"Array":    token.TypeArray,
+	"Func":     token.TypeFunc,
+	"Hash":     token.TypeHash,
 }
 
 func New(input string) *Lexer {
@@ -222,6 +230,9 @@ func (l *Lexer) NextToken() token.Token {
 
 	case '.':
 		tok = l.newToken(token.Dot, l.ch)
+
+	case '?':
+		tok = l.newToken(token.QuestionMark, l.ch)
 
 	case '"', '\'':
 		tok.Type = token.String

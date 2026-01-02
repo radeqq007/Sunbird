@@ -94,7 +94,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
-		env.Set(node.Name.String(), val)
+
+		if node.Type != nil {
+			if err := checkType(node.Type, val, node.Token.Line, node.Token.Col); err != nil {
+				return err
+			}
+		}
+
+		env.SetWithType(node.Name.String(), val, node.Type)
 		return val
 
 	case *ast.AssignExpression:
@@ -114,7 +121,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
-		env.SetConst(node.Name.String(), val)
+
+		if node.Type != nil {
+			if err := checkType(node.Type, val, node.Token.Line, node.Token.Col); err != nil {
+				return err
+			}
+		}
+
+		env.SetConstWithType(node.Name.String(), val, node.Type)
 		return val
 
 	case *ast.Identifier:
@@ -123,7 +137,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
-		return &object.Function{Parameters: params, Body: body, Env: env}
+		return &object.Function{Parameters: params, ReturnType: node.ReturnType, Body: body, Env: env}
 
 	case *ast.PropertyExpression:
 		return evalPropertyExpression(node, env)
