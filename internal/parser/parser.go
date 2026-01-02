@@ -29,7 +29,6 @@ const (
 	LOGICAL     // && or ||
 	EQUALS      // ==
 	LESSGREATER // >, <, <= or >=
-	PIPE        // |>
 	SUM         // +
 	PRODUCT     // *
 	PREFIX      // -X or !X
@@ -75,7 +74,6 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.And, p.parseInfixExpression)
 	p.registerInfix(token.LParen, p.parseCallExpression)
 	p.registerInfix(token.LBracket, p.parseIndexExpression)
-	p.registerInfix(token.Pipe, p.parseInfixExpression)
 	p.registerInfix(token.Dot, p.parsePropertyExpression)
 	p.registerInfix(token.Assign, p.parseAssignExpression)
 

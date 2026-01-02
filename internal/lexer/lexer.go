@@ -193,11 +193,6 @@ func (l *Lexer) NextToken() token.Token {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{Type: token.Or, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
-		} else if l.peekChar() == '>' {
-			ch := l.ch
-			l.readChar()
-
-			tok = token.Token{Type: token.Pipe, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
 		}
 
 	case '&':

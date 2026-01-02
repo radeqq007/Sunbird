@@ -29,7 +29,6 @@ const (
 	Modulo   TokenType = "MODULO"
 	Asterisk TokenType = "ASTERISK"
 	Slash    TokenType = "SLASH"
-	Pipe     TokenType = "PIPE"
 
 	// Comparison operators
 	Eq    TokenType = "EQ"
@@ -58,6 +57,7 @@ const (
 	RBrace   TokenType = "RBRACE"
 	LBracket TokenType = "LBRACKET"
 	RBracket TokenType = "RBRACKET"
+	Pipe     TokenType = "PIPE"
 
 	// Type keywords
 	TypeInt    TokenType = "TYPE_INT"

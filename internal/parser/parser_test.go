@@ -1091,35 +1091,3 @@ func TestForStatementParsing(t *testing.T) {
 		}
 	}
 }
-
-func TestPipeOperatorParsing(t *testing.T) {
-	input := "5 |> double"
-
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
-
-	if len(program.Statements) != 1 {
-		t.Fatalf("program.Statements does not contain 1 statement. got=%d",
-			len(program.Statements))
-	}
-
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
-	if !ok {
-		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
-			program.Statements[0])
-	}
-
-	exp, ok := stmt.Expression.(*ast.InfixExpression)
-	if !ok {
-		t.Fatalf("expression is not ast.InfixExpression. got=%T", stmt.Expression)
-	}
-
-	if exp.Operator != "|>" {
-		t.Fatalf("exp.Operator is not '|>'. got=%s", exp.Operator)
-	}
-
-	testIntegerLiteral(t, exp.Left, 5)
-	testIdentifier(t, exp.Right, "double")
-}
