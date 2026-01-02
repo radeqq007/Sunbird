@@ -112,6 +112,37 @@ func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.
 	return result
 }
 
+func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) object.Object {
+	tryResult := Eval(tcs.Try, env)
+
+	result := tryResult
+
+	if isError(tryResult) {
+		catchEnv := object.NewEnclosedEnvironment(env)
+		catchEnv.Set(tcs.Param.Value, tryResult)
+
+		result = Eval(tcs.Catch, catchEnv)
+	}
+
+	if tcs.Finally != nil {
+		finallyResult := Eval(tcs.Finally, env)
+		if isError(finallyResult) {
+			return finallyResult
+		}
+
+		// If finally produces a control flow change (Return, Break, Continue),
+		// it overrides the result from try/catch.
+		if finallyResult != nil {
+			rt := finallyResult.Type()
+			if rt == object.ReturnValueObj || rt == object.BreakObj || rt == object.ContinueObj {
+				return finallyResult
+			}
+		}
+	}
+
+	return result
+}
+
 func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
 	blockEnv := object.NewEnclosedEnvironment(env)
 
