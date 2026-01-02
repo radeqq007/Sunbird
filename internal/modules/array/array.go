@@ -71,7 +71,7 @@ func shift(args ...object.Object) object.Object {
 
 	array := args[0].(*object.Array)
 	if len(array.Elements) == 0 {
-		return object.NewError(0, 0, "array is empty")
+		return errors.NewRuntimeError(0, 0, "array is empty")
 	}
 
 	firstElement := array.Elements[0]
@@ -283,8 +283,9 @@ func clear(args ...object.Object) object.Object {
 		return err
 	}
 
-	if args[0].Type() != object.ArrayObj {
-		return object.NewError(0, 0, "argument must be an array, got %s", args[0].Type().String())
+	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
+	if err != nil {
+		return err
 	}
 
 	array := args[0].(*object.Array)
