@@ -128,10 +128,6 @@ func (e *Error) Inspect() string {
 	return e.Message
 }
 
-func NewError(line, col int, format string, a ...interface{}) *Error {
-	return &Error{Message: fmt.Sprintf(format, a...), Line: line, Col: col, Propagating: true}
-}
-
 type Function struct {
 	Parameters []*ast.Identifier
 	ReturnType ast.TypeAnnotation
