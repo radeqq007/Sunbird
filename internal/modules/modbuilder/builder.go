@@ -48,7 +48,6 @@ func (mb *ModuleBuilder) AddBoolean(name string, value bool) *ModuleBuilder {
 	return mb.AddValue(name, &object.Boolean{Value: value})
 }
 
-// Build the module hash
 func (mb *ModuleBuilder) Build() *object.Hash {
 	return &object.Hash{Pairs: mb.pairs}
 }
