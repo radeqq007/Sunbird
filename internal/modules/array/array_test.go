@@ -45,7 +45,7 @@ func TestPop(t *testing.T) {
 		},
 		{
 			input:     "import 'array'; let a = ['hi']; array.pop(a)",
-			wantValue: "hi",
+			wantValue: "\"hi\"",
 			wantArray: []string{},
 		},
 	}

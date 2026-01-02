@@ -30,7 +30,11 @@ func print(args ...object.Object) object.Object {
 		if i > 0 {
 			fmt.Print(" ")
 		}
-		fmt.Print(arg.Inspect())
+		if s, ok := arg.(*object.String); ok {
+			fmt.Print(s.Value)
+		} else {
+			fmt.Print(arg.Inspect())
+		}
 	}
 	return nil
 }
@@ -93,10 +97,22 @@ func printf(args ...object.Object) object.Object {
 		return err
 	}
 
-	format := args[0].Inspect()
+	var format string
+	if s, ok := args[0].(*object.String); ok {
+		format = s.Value
+	} else {
+		format = args[0].Inspect()
+	}
+
 
 	for _, arg := range args[1:] {
-		format = strings.Replace(format, "{}", arg.Inspect(), 1)
+		var val string
+		if s, ok := arg.(*object.String); ok {
+			val = s.Value
+		} else {
+			val = arg.Inspect()
+		}
+		format = strings.Replace(format, "{}", val, 1)
 	}
 
 	fmt.Print(format)
@@ -114,10 +130,21 @@ func sprintf(args ...object.Object) object.Object {
 		return err
 	}
 
-	format := args[0].Inspect()
+	var format string
+	if s, ok := args[0].(*object.String); ok {
+		format = s.Value
+	} else {
+		format = args[0].Inspect()
+	}
 
 	for _, arg := range args[1:] {
-		format = strings.Replace(format, "{}", arg.Inspect(), 1)
+		var val string
+		if s, ok := arg.(*object.String); ok {
+			val = s.Value
+		} else {
+			val = arg.Inspect()
+		}
+		format = strings.Replace(format, "{}", val, 1)
 	}
 
 	return &object.String{

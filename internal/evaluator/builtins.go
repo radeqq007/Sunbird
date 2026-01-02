@@ -70,6 +70,10 @@ var builtins = map[string]*object.Builtin{
 				return err
 			}
 
+			if s, ok := args[0].(*object.String); ok {
+				return s
+			}
+
 			return &object.String{Value: args[0].Inspect()}
 		},
 	},
@@ -199,7 +203,14 @@ var builtins = map[string]*object.Builtin{
 				return err
 			}
 
-			return errors.New(errors.RuntimeError, 0, 0, "%s", args[0].Inspect())
+			var msg string
+			if s, ok := args[0].(*object.String); ok {
+				msg = s.Value
+			} else {
+				msg = args[0].Inspect()
+			}
+
+			return errors.New(errors.RuntimeError, 0, 0, "%s", msg)
 		},
 	},
 }

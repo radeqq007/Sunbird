@@ -106,7 +106,13 @@ func fromObject(obj object.Object) any {
 	case *object.Hash:
 		m := make(map[string]any)
 		for _, pair := range o.Pairs {
-			m[pair.Key.Inspect()] = fromObject(pair.Value)
+			var key string
+			if s, ok := pair.Key.(*object.String); ok {
+				key = s.Value
+			} else {
+				key = pair.Key.Inspect()
+			}
+			m[key] = fromObject(pair.Value)
 		}
 		return m
 	default:

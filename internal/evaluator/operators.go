@@ -63,9 +63,15 @@ func evalInfixExpression(operator string, left, right object.Object, line, col i
 		return evalPipeExpression(left, right, line, col)
 
 	case operator == "==":
+		if left.Type() == object.StringObj && right.Type() == object.StringObj {
+			return nativeBoolToBooleanObject(left.(*object.String).Value == right.(*object.String).Value)
+		}
 		return nativeBoolToBooleanObject(left.Inspect() == right.Inspect())
 
 	case operator == "!=":
+		if left.Type() == object.StringObj && right.Type() == object.StringObj {
+			return nativeBoolToBooleanObject(left.(*object.String).Value != right.(*object.String).Value)
+		}
 		return nativeBoolToBooleanObject(left.Inspect() != right.Inspect())
 
 	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
@@ -158,8 +164,19 @@ func evalStringInfixExpression(operator string, left, right object.Object, line,
 		return errors.NewUnknownOperatorError(line, col, left, operator, right)
 	}
 
-	leftVal := left.Inspect()
-	rightVal := right.Inspect()
+	var leftVal, rightVal string
+
+	if s, ok := left.(*object.String); ok {
+		leftVal = s.Value
+	} else {
+		leftVal = left.Inspect()
+	}
+
+	if s, ok := right.(*object.String); ok {
+		rightVal = s.Value
+	} else {
+		rightVal = right.Inspect()
+	}
 
 	return &object.String{Value: leftVal + rightVal}
 }
