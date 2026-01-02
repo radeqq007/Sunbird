@@ -153,3 +153,29 @@ func (is *ImportStatement) String() string {
 	out.WriteString(";")
 	return out.String()
 }
+
+// Try Catch
+type TryCatchStatement struct {
+	Token   token.Token
+	Try     *BlockStatement
+	Catch   *BlockStatement
+	Finally *BlockStatement
+	Param   *Identifier
+}
+
+func (tcs *TryCatchStatement) statementNode()       {}
+func (tcs *TryCatchStatement) TokenLiteral() string { return tcs.Token.Literal }
+func (tcs *TryCatchStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString("try ")
+	out.WriteString(tcs.Try.String())
+	out.WriteString(" catch ")
+	out.WriteString(tcs.Param.String())
+	out.WriteString(" ")
+	out.WriteString(tcs.Catch.String())
+	if tcs.Finally != nil {
+		out.WriteString(" finally ")
+		out.WriteString(tcs.Finally.String())
+	}
+	return out.String()
+}

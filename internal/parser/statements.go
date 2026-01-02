@@ -28,6 +28,9 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.Import:
 		return p.parseImportStatement()
 
+	case token.Try:
+		return p.parseTryCatchStatement()
+
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -201,6 +204,44 @@ func (p *Parser) parseImportStatement() *ast.ImportStatement {
 
 	if p.peekTokenIs(token.Semicolon) {
 		p.nextToken() // skip the ;
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseTryCatchStatement() *ast.TryCatchStatement {
+	stmt := &ast.TryCatchStatement{Token: p.curToken}
+
+	if !p.expectPeek(token.LBrace) {
+		return nil
+	}
+
+	stmt.Try = p.parseBlockStatement()
+
+	if !p.expectPeek(token.Catch) {
+		return nil
+	}
+
+	if !p.expectPeek(token.Ident) {
+		return nil
+	}
+
+	stmt.Param = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	if !p.expectPeek(token.LBrace) {
+		return nil
+	}
+
+	stmt.Catch = p.parseBlockStatement()
+
+	if p.peekTokenIs(token.Finally) {
+		p.nextToken()
+
+		if !p.expectPeek(token.LBrace) {
+			return nil
+		}
+
+		stmt.Finally = p.parseBlockStatement()
 	}
 
 	return stmt
