@@ -90,14 +90,6 @@ func min(args ...object.Object) object.Object {
 		return err
 	}
 
-	if args[0].Type() != object.IntegerObj && args[0].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
-	}
-
-	if args[1].Type() != object.IntegerObj && args[1].Type() != object.FloatObj {
-		return object.NewError(0, 0, "argument must be an integer or float")
-	}
-
 	if args[0].Type() == object.FloatObj || args[1].Type() == object.FloatObj {
 		return &object.Float{
 			Value: math.Min(getFloat64(args[0]), getFloat64(args[1])),
