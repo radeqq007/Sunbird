@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"fmt"
+	"strings"
 	"sunbird/internal/token"
 )
 
@@ -77,19 +78,39 @@ func (l *Lexer) readIdentifier() string {
 
 func (l *Lexer) readString() (string, error) {
 	startingQuote := l.ch
-
 	l.readChar() // skip the starting quote
-
-	position := l.position
+	var result strings.Builder
 
 	for l.ch != startingQuote {
 		if l.ch == 0 {
 			return "", fmt.Errorf("unterminated string")
 		}
+
+		if l.ch == '\\' {
+			l.readChar()
+			switch l.ch {
+			case 'n':
+				result.WriteByte('\n')
+			case 't':
+				result.WriteByte('\t')
+			case 'r':
+				result.WriteByte('\r')
+			case '\\':
+				result.WriteByte('\\')
+			case startingQuote:
+				result.WriteByte(startingQuote)
+			default:
+				return "", fmt.Errorf("invalid escape sequence: %c", l.ch)
+			}
+			l.readChar()
+			continue
+		}
+
+		result.WriteByte(l.ch)
 		l.readChar()
 	}
 
-	return l.input[position:l.position], nil
+	return result.String(), nil
 }
 
 func (l *Lexer) readNumber() (string, token.TokenType) {
