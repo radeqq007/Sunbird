@@ -179,6 +179,9 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar() // skip the *
 
 			for l.ch != '*' && l.peekChar() != '/' {
+				if l.ch == 0 {
+					return token.Token{Type: token.Illegal, Literal: "unterminated comment", Line: l.line, Col: l.col}
+				}
 				l.readChar()
 			}
 
