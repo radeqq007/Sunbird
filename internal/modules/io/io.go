@@ -104,7 +104,6 @@ func printf(args ...object.Object) object.Object {
 		format = args[0].Inspect()
 	}
 
-
 	for _, arg := range args[1:] {
 		var val string
 		if s, ok := arg.(*object.String); ok {

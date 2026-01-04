@@ -48,12 +48,12 @@ func getRoute(args ...object.Object) object.Object {
 			newWriter(w),
 			newRequest(r),
 		}
-		
+
 		if object.ApplyFunction != nil {
 			object.ApplyFunction(callback, args)
 		}
 	})
-	
+
 	return &object.Null{}
 }
 
@@ -70,7 +70,7 @@ func listen(args ...object.Object) object.Object {
 
 	port := args[0].(*object.Integer).Value
 
-	errGo := http.ListenAndServe(":" + strconv.FormatInt(port, 10), nil)
+	errGo := http.ListenAndServe(":"+strconv.FormatInt(port, 10), nil)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
 	}
@@ -90,7 +90,7 @@ func newWriter(w http.ResponseWriter) object.Object {
 			if err != nil {
 				return err
 			}
-					
+
 			_, errGo := w.Write([]byte(args[0].(*object.String).Value))
 			if errGo != nil {
 				return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
@@ -135,7 +135,7 @@ func newWriter(w http.ResponseWriter) object.Object {
 				}
 
 				w.Header().Add(args[0].(*object.String).Value, args[1].(*object.String).Value)
-				
+
 				return &object.Null{}
 			}).
 			AddFunction("del", func(args ...object.Object) object.Object {
@@ -187,82 +187,82 @@ func newWriter(w http.ResponseWriter) object.Object {
 }
 
 func newRequest(r *http.Request) object.Object {
-	return &object.Null{}	
+	return &object.Null{}
 }
 
 var statusCodes = modbuilder.NewHashBuilder().
-		AddInteger("continue", http.StatusContinue).
-		AddInteger("switching_protocols", http.StatusSwitchingProtocols).
-		AddInteger("processing", http.StatusProcessing).
-		AddInteger("early_hints", http.StatusEarlyHints).
-		AddInteger("ok", http.StatusOK).
-		AddInteger("created", http.StatusCreated).
-		AddInteger("accepted", http.StatusAccepted).
-		AddInteger("non_authoritative_info", http.StatusNonAuthoritativeInfo).
-		AddInteger("no_content", http.StatusNoContent).
-		AddInteger("reset_content", http.StatusResetContent).
-		AddInteger("partial_content", http.StatusPartialContent).
-		AddInteger("multi_status", http.StatusMultiStatus).
-		AddInteger("already_reported", http.StatusAlreadyReported).
-		AddInteger("im_used", http.StatusIMUsed).
-		AddInteger("multiple_choices", http.StatusMultipleChoices).
-		AddInteger("moved_permanently", http.StatusMovedPermanently).
-		AddInteger("found", http.StatusFound).
-		AddInteger("see_other", http.StatusSeeOther).
-		AddInteger("not_modified", http.StatusNotModified).
-		AddInteger("use_proxy", http.StatusUseProxy).
-		AddInteger("temporary_redirect", http.StatusTemporaryRedirect).
-		AddInteger("permanent_redirect", http.StatusPermanentRedirect).
-		AddInteger("bad_request", http.StatusBadRequest).
-		AddInteger("unauthorized", http.StatusUnauthorized).
-		AddInteger("payment_required", http.StatusPaymentRequired).
-		AddInteger("forbidden", http.StatusForbidden).
-		AddInteger("not_found", http.StatusNotFound).
-		AddInteger("method_not_allowed", http.StatusMethodNotAllowed).
-		AddInteger("not_acceptable", http.StatusNotAcceptable).
-		AddInteger("proxy_auth_required", http.StatusProxyAuthRequired).
-		AddInteger("request_timeout", http.StatusRequestTimeout).
-		AddInteger("conflict", http.StatusConflict).
-		AddInteger("gone", http.StatusGone).
-		AddInteger("length_required", http.StatusLengthRequired).
-		AddInteger("precondition_failed", http.StatusPreconditionFailed).
-		AddInteger("payload_too_large", http.StatusRequestEntityTooLarge).
-		AddInteger("uri_too_long", http.StatusRequestURITooLong).
-		AddInteger("unsupported_media_type", http.StatusUnsupportedMediaType).
-		AddInteger("range_not_satisfiable", http.StatusRequestedRangeNotSatisfiable).
-		AddInteger("expectation_failed", http.StatusExpectationFailed).
-		AddInteger("im_a_teapot", http.StatusTeapot).
-		AddInteger("misdirected_request", http.StatusMisdirectedRequest).
-		AddInteger("unprocessable_entity", http.StatusUnprocessableEntity).
-		AddInteger("locked", http.StatusLocked).
-		AddInteger("failed_dependency", http.StatusFailedDependency).
-		AddInteger("too_early", http.StatusTooEarly).
-		AddInteger("upgrade_required", http.StatusUpgradeRequired).
-		AddInteger("precondition_required", http.StatusPreconditionRequired).
-		AddInteger("too_many_requests", http.StatusTooManyRequests).
-		AddInteger("request_header_fields_too_large", http.StatusRequestHeaderFieldsTooLarge).
-		AddInteger("unavailable_for_legal_reasons", http.StatusUnavailableForLegalReasons).
-		AddInteger("internal_server_error", http.StatusInternalServerError).
-		AddInteger("not_implemented", http.StatusNotImplemented).
-		AddInteger("bad_gateway", http.StatusBadGateway).
-		AddInteger("service_unavailable", http.StatusServiceUnavailable).
-		AddInteger("gateway_timeout", http.StatusGatewayTimeout).
-		AddInteger("http_version_not_supported", http.StatusHTTPVersionNotSupported).
-		AddInteger("variant_also_negotiates", http.StatusVariantAlsoNegotiates).
-		AddInteger("insufficient_storage", http.StatusInsufficientStorage).
-		AddInteger("loop_detected", http.StatusLoopDetected).
-		AddInteger("not_extended", http.StatusNotExtended).
-		AddInteger("network_authentication_required", http.StatusNetworkAuthenticationRequired).
-		Build()
+	AddInteger("continue", http.StatusContinue).
+	AddInteger("switching_protocols", http.StatusSwitchingProtocols).
+	AddInteger("processing", http.StatusProcessing).
+	AddInteger("early_hints", http.StatusEarlyHints).
+	AddInteger("ok", http.StatusOK).
+	AddInteger("created", http.StatusCreated).
+	AddInteger("accepted", http.StatusAccepted).
+	AddInteger("non_authoritative_info", http.StatusNonAuthoritativeInfo).
+	AddInteger("no_content", http.StatusNoContent).
+	AddInteger("reset_content", http.StatusResetContent).
+	AddInteger("partial_content", http.StatusPartialContent).
+	AddInteger("multi_status", http.StatusMultiStatus).
+	AddInteger("already_reported", http.StatusAlreadyReported).
+	AddInteger("im_used", http.StatusIMUsed).
+	AddInteger("multiple_choices", http.StatusMultipleChoices).
+	AddInteger("moved_permanently", http.StatusMovedPermanently).
+	AddInteger("found", http.StatusFound).
+	AddInteger("see_other", http.StatusSeeOther).
+	AddInteger("not_modified", http.StatusNotModified).
+	AddInteger("use_proxy", http.StatusUseProxy).
+	AddInteger("temporary_redirect", http.StatusTemporaryRedirect).
+	AddInteger("permanent_redirect", http.StatusPermanentRedirect).
+	AddInteger("bad_request", http.StatusBadRequest).
+	AddInteger("unauthorized", http.StatusUnauthorized).
+	AddInteger("payment_required", http.StatusPaymentRequired).
+	AddInteger("forbidden", http.StatusForbidden).
+	AddInteger("not_found", http.StatusNotFound).
+	AddInteger("method_not_allowed", http.StatusMethodNotAllowed).
+	AddInteger("not_acceptable", http.StatusNotAcceptable).
+	AddInteger("proxy_auth_required", http.StatusProxyAuthRequired).
+	AddInteger("request_timeout", http.StatusRequestTimeout).
+	AddInteger("conflict", http.StatusConflict).
+	AddInteger("gone", http.StatusGone).
+	AddInteger("length_required", http.StatusLengthRequired).
+	AddInteger("precondition_failed", http.StatusPreconditionFailed).
+	AddInteger("payload_too_large", http.StatusRequestEntityTooLarge).
+	AddInteger("uri_too_long", http.StatusRequestURITooLong).
+	AddInteger("unsupported_media_type", http.StatusUnsupportedMediaType).
+	AddInteger("range_not_satisfiable", http.StatusRequestedRangeNotSatisfiable).
+	AddInteger("expectation_failed", http.StatusExpectationFailed).
+	AddInteger("im_a_teapot", http.StatusTeapot).
+	AddInteger("misdirected_request", http.StatusMisdirectedRequest).
+	AddInteger("unprocessable_entity", http.StatusUnprocessableEntity).
+	AddInteger("locked", http.StatusLocked).
+	AddInteger("failed_dependency", http.StatusFailedDependency).
+	AddInteger("too_early", http.StatusTooEarly).
+	AddInteger("upgrade_required", http.StatusUpgradeRequired).
+	AddInteger("precondition_required", http.StatusPreconditionRequired).
+	AddInteger("too_many_requests", http.StatusTooManyRequests).
+	AddInteger("request_header_fields_too_large", http.StatusRequestHeaderFieldsTooLarge).
+	AddInteger("unavailable_for_legal_reasons", http.StatusUnavailableForLegalReasons).
+	AddInteger("internal_server_error", http.StatusInternalServerError).
+	AddInteger("not_implemented", http.StatusNotImplemented).
+	AddInteger("bad_gateway", http.StatusBadGateway).
+	AddInteger("service_unavailable", http.StatusServiceUnavailable).
+	AddInteger("gateway_timeout", http.StatusGatewayTimeout).
+	AddInteger("http_version_not_supported", http.StatusHTTPVersionNotSupported).
+	AddInteger("variant_also_negotiates", http.StatusVariantAlsoNegotiates).
+	AddInteger("insufficient_storage", http.StatusInsufficientStorage).
+	AddInteger("loop_detected", http.StatusLoopDetected).
+	AddInteger("not_extended", http.StatusNotExtended).
+	AddInteger("network_authentication_required", http.StatusNetworkAuthenticationRequired).
+	Build()
 
 var methods = modbuilder.NewHashBuilder().
-		AddString("get", http.MethodGet).
-		AddString("post", http.MethodPost).
-		AddString("put", http.MethodPut).
-		AddString("patch", http.MethodPatch).
-		AddString("delete", http.MethodDelete).
-		AddString("head", http.MethodHead).
-		AddString("options", http.MethodOptions).
-		AddString("connect", http.MethodConnect).
-		AddString("trace", http.MethodTrace).
-		Build()
+	AddString("get", http.MethodGet).
+	AddString("post", http.MethodPost).
+	AddString("put", http.MethodPut).
+	AddString("patch", http.MethodPatch).
+	AddString("delete", http.MethodDelete).
+	AddString("head", http.MethodHead).
+	AddString("options", http.MethodOptions).
+	AddString("connect", http.MethodConnect).
+	AddString("trace", http.MethodTrace).
+	Build()

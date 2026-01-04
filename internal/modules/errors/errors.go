@@ -20,7 +20,7 @@ var Module = modbuilder.NewModuleBuilder().
 	AddFunction("invalid_assignment_error", NewInvalidAssignmentError).
 	AddFunction("argument_error", NewArgumentError).
 	AddFunction("property_access_error", NewPropertyAccessError).
-  Build()
+	Build()
 
 func wrapError(args []object.Object, internalFunc func(int, int, string) *object.Error) object.Object {
 	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err != nil {

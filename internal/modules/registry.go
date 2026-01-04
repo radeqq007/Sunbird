@@ -19,8 +19,8 @@ var BuiltinModules = map[string]*object.Hash{
 	"string": str.Module,
 	"random": random.Module,
 	"errors": errors.Module,
-	"json": 	json.Module,
-	"http": 	http.Module,
+	"json":   json.Module,
+	"http":   http.Module,
 }
 
 func Get(name string) (*object.Hash, bool) {
