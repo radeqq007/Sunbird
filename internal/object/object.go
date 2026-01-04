@@ -9,6 +9,9 @@ import (
 	"sunbird/internal/ast"
 )
 
+// ApplyFunction is a hook to allow calling functions from modules
+var ApplyFunction func(fn Object, args []Object) Object
+
 type ObjectType uint8
 
 const (

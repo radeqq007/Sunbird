@@ -70,3 +70,9 @@ func unwrapReturnValue(obj object.Object) object.Object {
 
 	return obj
 }
+
+func init() {
+	object.ApplyFunction = func(fn object.Object, args []object.Object) object.Object {
+		return applyFunction(fn, args, 0, 0)
+	}
+}
