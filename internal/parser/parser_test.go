@@ -1038,18 +1038,18 @@ func TestParsingIndexExpressions(t *testing.T) {
 
 func TestForStatementParsing(t *testing.T) {
 	tests := []struct {
-		input          string
-		expectedInit   string
-		expectedCond   string
-		expectedUpdate string
-		expectedBody   string
+		input         string
+		expectedStart string
+		expectedEnd   string
+		expectedStep  string
+		expectedBody  string
 	}{
 		{
-			input:          "for let i = 0; i < 10; i = i + 1 { println(i); }",
-			expectedInit:   "let i = 0;",
-			expectedCond:   "(i < 10)",
-			expectedUpdate: "i = (i + 1);",
-			expectedBody:   "println(i)",
+			input:         "for i in 0..10 { io.println(i); }",
+			expectedStart: "0;",
+			expectedEnd:   "10",
+			expectedStep:  "1",
+			expectedBody:  "io.println(i)",
 		},
 	}
 
@@ -1070,19 +1070,19 @@ func TestForStatementParsing(t *testing.T) {
 				program.Statements[0])
 		}
 
-		if stmt.Init != nil && stmt.Init.String() != tt.expectedInit {
-			t.Errorf("init wrong. expected=%q, got=%q",
-				tt.expectedInit, stmt.Init.String())
+		if stmt.Iterable.(*ast.RangeExpression).Start.String() != tt.expectedStart {
+			t.Errorf("start wrong. expected=%q, got=%q",
+				tt.expectedStart, stmt.Iterable.(*ast.RangeExpression).Start.String())
 		}
 
-		if stmt.Condition != nil && stmt.Condition.String() != tt.expectedCond {
-			t.Errorf("condition wrong. expected=%q, got=%q",
-				tt.expectedCond, stmt.Condition.String())
+		if stmt.Iterable.(*ast.RangeExpression).End.String() != tt.expectedEnd {
+			t.Errorf("end wrong. expected=%q, got=%q",
+				tt.expectedEnd, stmt.Iterable.(*ast.RangeExpression).End.String())
 		}
 
-		if stmt.Update != nil && stmt.Update.String() != tt.expectedUpdate {
-			t.Errorf("update wrong. expected=%q, got=%q",
-				tt.expectedUpdate, stmt.Update.String())
+		if stmt.Iterable.(*ast.RangeExpression).Step.String() != tt.expectedStep {
+			t.Errorf("step wrong. expected=%q, got=%q",
+				tt.expectedStep, stmt.Iterable.(*ast.RangeExpression).Step.String())
 		}
 
 		if stmt.Body.String() != tt.expectedBody {
