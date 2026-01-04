@@ -70,7 +70,7 @@ io.println(sign) // -1
 
 For loops:
 ```ts
-for i in 1..5 {
+for let i = 0; i < 5; i = i + 1 {
     io.println(i)
 }
 ```
