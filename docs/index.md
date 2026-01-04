@@ -6,7 +6,7 @@ Sunbird is dynamically-typed (with optional type annotations), interpreted progr
 
 The documentation is structured as follows:
 
-- [Getting started](./getting-started.md)
+- [Getting started](./getting-started/)
 - [Language](./language/)
 - [Standard library](./std/)
 - [Guides](./guides/)
