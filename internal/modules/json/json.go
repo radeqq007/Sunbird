@@ -31,10 +31,10 @@ func parseJSON(args ...object.Object) object.Object {
 		return errors.NewRuntimeError(0, 0, errGo.Error())
 	}
 
-	return toObject(data)
+	return ToObject(data)
 }
 
-func toObject(val any) object.Object {
+func ToObject(val any) object.Object {
 	switch v := val.(type) {
 	case string:
 		return &object.String{Value: v}
@@ -51,7 +51,7 @@ func toObject(val any) object.Object {
 	case []any:
 		elements := make([]object.Object, len(v))
 		for i, el := range v {
-			elements[i] = toObject(el)
+			elements[i] = ToObject(el)
 		}
 		return &object.Array{Elements: elements}
 	case map[string]any:
@@ -61,7 +61,7 @@ func toObject(val any) object.Object {
 			hashKey := key.HashKey()
 			pairs[hashKey] = object.HashPair{
 				Key:   key,
-				Value: toObject(val),
+				Value: ToObject(val),
 			}
 		}
 		return &object.Hash{Pairs: pairs}
@@ -76,7 +76,7 @@ func stringify(args ...object.Object) object.Object {
 		return err
 	}
 
-	data := fromObject(args[0])
+	data := FromObject(args[0])
 	bytes, errGo := json.Marshal(data)
 	if errGo != nil {
 		return errors.NewRuntimeError(0, 0, errGo.Error())
@@ -85,7 +85,7 @@ func stringify(args ...object.Object) object.Object {
 	return &object.String{Value: string(bytes)}
 }
 
-func fromObject(obj object.Object) any {
+func FromObject(obj object.Object) any {
 	switch o := obj.(type) {
 	case *object.String:
 		return o.Value
@@ -100,7 +100,7 @@ func fromObject(obj object.Object) any {
 	case *object.Array:
 		elements := make([]any, len(o.Elements))
 		for i, el := range o.Elements {
-			elements[i] = fromObject(el)
+			elements[i] = FromObject(el)
 		}
 		return elements
 	case *object.Hash:
@@ -112,7 +112,7 @@ func fromObject(obj object.Object) any {
 			} else {
 				key = pair.Key.Inspect()
 			}
-			m[key] = fromObject(pair.Value)
+			m[key] = FromObject(pair.Value)
 		}
 		return m
 	default:
