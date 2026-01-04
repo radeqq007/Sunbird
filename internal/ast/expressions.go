@@ -253,3 +253,25 @@ func (cs *ConstExpression) String() string {
 
 	return out.String()
 }
+
+type RangeExpression struct {
+	Token token.Token
+	Start Expression
+	End   Expression
+	Step  Expression // 0..10:2 syntax, optional
+}
+
+func (re *RangeExpression) expressionNode()      {}
+func (re *RangeExpression) TokenLiteral() string { return re.Token.Literal }
+func (re *RangeExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(re.Start.String())
+	out.WriteString("..")
+	out.WriteString(re.End.String())
+	if re.Step != nil {
+		out.WriteString(":")
+		out.WriteString(re.Step.String())
+	}
+	return out.String()
+}

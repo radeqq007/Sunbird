@@ -177,3 +177,22 @@ func (p *Parser) parseIfExpression() ast.Expression {
 	}
 	return expression
 }
+
+func (p *Parser) parseRangeExpression(left ast.Expression) ast.Expression {
+	exp := &ast.RangeExpression{
+		Token: p.curToken,
+		Start: left,
+	}
+
+	precedence := p.curPrecedence()
+	p.nextToken()
+	exp.End = p.parseExpression(precedence)
+
+	if p.peekTokenIs(token.Colon) {
+		p.nextToken() // consume the ":"
+		p.nextToken()
+		exp.Step = p.parseExpression(precedence)
+	}
+
+	return exp
+}

@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"sunbird/internal/ast"
+	"sunbird/internal/errors"
 	"sunbird/internal/object"
 )
 
@@ -24,54 +25,102 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Object {
 	loopEnv := object.NewEnclosedEnvironment(env)
 
-	// This sucks but uhhh I don't know how to do it better
-	if assign, ok := fs.Init.(*ast.AssignExpression); ok {
-		loopEnv.Set(assign.Name.String(), NULL)
-	}
-
-	if fs.Init != nil {
-		initResult := Eval(fs.Init, loopEnv)
-		if isError(initResult) {
-			return initResult
-		}
+	iterable := Eval(fs.Iterable, loopEnv)
+	if isError(iterable) {
+		return iterable
 	}
 
 	var result object.Object = NULL
-
-	for {
-		if fs.Condition != nil {
-			condition := Eval(fs.Condition, loopEnv)
-			if isError(condition) {
-				return condition
-			}
-
-			if !isTruthy(condition) {
-				break
-			}
+	switch iter := iterable.(type) {
+	case *object.Range:
+		step := iter.Step
+		if step == 0 {
+			step = 1
 		}
 
-		result = Eval(fs.Body, loopEnv)
-		if isError(result) {
-			return result
-		}
+		if step > 0 {
+			for i := iter.Start; i < iter.End; i += step {
+				loopEnv.Set(fs.Variable.Value, &object.Integer{Value: i})
 
-		if result != nil {
-			switch result.Type() {
-			case object.ReturnValueObj:
+				result = Eval(fs.Body, loopEnv)
+				if isError(result) {
+					return result
+				}
+
+				if result != nil {
+					switch result.Type() {
+					case object.ReturnValueObj:
+						return result
+					case object.BreakObj:
+						return NULL
+					case object.ContinueObj:
+						continue
+					}
+				}
+			}
+		} else {
+			for i := iter.Start; i > iter.End; i += step {
+				loopEnv.Set(fs.Variable.Value, &object.Integer{Value: i})
+
+				result = Eval(fs.Body, loopEnv)
+				if isError(result) {
+					return result
+				}
+
+				if result != nil {
+					switch result.Type() {
+					case object.ReturnValueObj:
+						return result
+					case object.BreakObj:
+						return NULL
+					case object.ContinueObj:
+						continue
+					}
+				}
+			}
+		}
+	case *object.Array:
+		for _, element := range iter.Elements {
+			loopEnv.Set(fs.Variable.Value, element)
+
+			result = Eval(fs.Body, loopEnv)
+			if isError(result) {
 				return result
-			case object.BreakObj:
-				return NULL
-			case object.ContinueObj:
-				// Fallthrough to update
 			}
-		}
 
-		if fs.Update != nil {
-			updateResult := Eval(fs.Update, loopEnv)
-			if isError(updateResult) {
-				return updateResult
+			if result != nil {
+				switch result.Type() {
+				case object.ReturnValueObj:
+					return result
+				case object.BreakObj:
+					return NULL
+				case object.ContinueObj:
+					continue
+				}
 			}
 		}
+	case *object.String:
+		for _, element := range iter.Value {
+			loopEnv.Set(fs.Variable.Value, &object.String{Value: string(element)})
+
+			result = Eval(fs.Body, loopEnv)
+			if isError(result) {
+				return result
+			}
+
+			if result != nil {
+				switch result.Type() {
+				case object.ReturnValueObj:
+					return result
+				case object.BreakObj:
+					return NULL
+				case object.ContinueObj:
+					continue
+				}
+			}
+		}
+	default:
+		return errors.NewTypeError(fs.Token.Line, fs.Token.Col, "cannot iterate over %s", iterable.Type().String())
 	}
 
 	return result

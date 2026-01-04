@@ -203,6 +203,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return evalIndexExpression(left, index, node.Token.Line, node.Token.Col)
+
+	case *ast.RangeExpression:
+		return evalRangeExpression(node, env)
 	}
 	return nil
 }
@@ -277,4 +280,38 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	}
 
 	return FALSE
+}
+
+func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) object.Object {
+	start := Eval(node.Start, env)
+	if isError(start) {
+		return start
+	}
+
+	end := Eval(node.End, env)
+	if isError(end) {
+		return end
+	}
+
+	if start.Type() != object.IntegerObj || end.Type() != object.IntegerObj {
+		return errors.NewTypeError(node.Token.Line, node.Token.Col, "range values must be integers (got %s and %s)", start.Type(), end.Type())
+	}
+
+	startVal := start.(*object.Integer).Value
+	endVal := end.(*object.Integer).Value
+	stepVal := int64(1)
+
+	if node.Step != nil {
+		step := Eval(node.Step, env)
+		if isError(step) {
+			return step
+		}
+
+		if step.Type() != object.IntegerObj {
+			return errors.NewTypeError(node.Token.Line, node.Token.Col, "range step must be integer (got %s)", step.Type())
+		}
+		stepVal = step.(*object.Integer).Value
+	}
+
+	return &object.Range{Start: startVal, End: endVal, Step: stepVal}
 }

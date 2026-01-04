@@ -74,33 +74,19 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 func (p *Parser) parseForStatement() *ast.ForStatement {
 	stmt := &ast.ForStatement{Token: p.curToken}
 
-	p.nextToken()
-
-	if p.curTokenIs(token.Let) {
-		stmt.Init = p.parseLetExpression()
+	if !p.expectPeek(token.Ident) {
+		return nil
 	}
 
-	if !p.expectPeek(token.Semicolon) {
+	stmt.Variable = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	if !p.expectPeek(token.In) {
 		return nil
 	}
 
 	p.nextToken()
 
-	stmt.Condition = p.parseExpression(LOWEST)
-
-	if !p.expectPeek(token.Semicolon) {
-		return nil
-	}
-
-	p.nextToken()
-
-	if p.curTokenIs(token.Ident) {
-		ident := p.parseIdentifier()
-		if !p.expectPeek(token.Assign) {
-			return nil
-		}
-		stmt.Update = p.parseAssignExpression(ident)
-	}
+	stmt.Iterable = p.parseExpression(LOWEST)
 
 	if !p.expectPeek(token.LBrace) {
 		return nil

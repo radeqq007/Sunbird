@@ -28,6 +28,7 @@ const (
 	HashObj
 	BreakObj
 	ContinueObj
+	RangeObj
 )
 
 func (ot ObjectType) String() string {
@@ -231,4 +232,18 @@ func (s *String) HashKey() HashKey {
 
 func (i *Integer) HashKey() HashKey {
 	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
+}
+
+type Range struct {
+	Start int64
+	End   int64
+	Step  int64
+}
+
+func (r *Range) Type() ObjectType { return RangeObj }
+func (r *Range) Inspect() string {
+	if r.Step != 1 {
+		return fmt.Sprintf("%d..%d:%d", r.Start, r.End, r.Step)
+	}
+	return fmt.Sprintf("%d..%d", r.Start, r.End)
 }

@@ -42,6 +42,7 @@ var keywords = map[string]token.TokenType{
 	"Array":    token.TypeArray,
 	"Func":     token.TypeFunc,
 	"Hash":     token.TypeHash,
+	"in":       token.In,
 }
 
 func New(input string) *Lexer {
@@ -119,7 +120,8 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 		l.readChar()
 	}
 
-	if l.ch == '.' {
+	// this is kinda hacky, but it works
+	if l.ch == '.' && l.peekChar() != '.' {
 		l.readChar()
 
 		for isDigit(l.ch) {
@@ -251,7 +253,13 @@ func (l *Lexer) NextToken() token.Token {
 		tok = l.newToken(token.Colon, l.ch)
 
 	case '.':
-		tok = l.newToken(token.Dot, l.ch)
+		if l.peekChar() == '.' {
+			ch := l.ch
+			l.readChar()
+			tok = l.newToken(token.DotDot, ch)
+		} else {
+			tok = l.newToken(token.Dot, l.ch)
+		}
 
 	case '?':
 		tok = l.newToken(token.QuestionMark, l.ch)

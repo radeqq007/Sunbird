@@ -26,11 +26,10 @@ func (bs *BlockStatement) String() string {
 
 // For
 type ForStatement struct {
-	Token     token.Token
-	Init      Expression
-	Condition Expression
-	Update    Expression
-	Body      *BlockStatement
+	Token    token.Token
+	Variable *Identifier
+	Iterable Expression
+	Body     *BlockStatement
 }
 
 func (fs *ForStatement) statementNode()       {}
@@ -40,11 +39,9 @@ func (fs *ForStatement) String() string {
 	var out bytes.Buffer
 
 	out.WriteString("for ")
-	out.WriteString(fs.Init.String())
-	out.WriteString(" ")
-	out.WriteString(fs.Condition.String())
-	out.WriteString("; ")
-	out.WriteString(fs.Update.String())
+	out.WriteString(fs.Variable.String())
+	out.WriteString(" in ")
+	out.WriteString(fs.Iterable.String())
 	out.WriteString(" ")
 	out.WriteString(fs.Body.String())
 

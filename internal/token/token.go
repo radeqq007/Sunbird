@@ -49,6 +49,7 @@ const (
 	Semicolon    TokenType = "SEMICOLON"
 	Colon        TokenType = "COLON"
 	Dot          TokenType = "DOT"
+	DotDot       TokenType = "DOTDOT"
 	QuestionMark TokenType = "QUESTION_MARK"
 
 	LParen   TokenType = "LPAREN"
@@ -88,6 +89,7 @@ const (
 	Try      TokenType = "TRY"
 	Catch    TokenType = "CATCH"
 	Finally  TokenType = "FINALLY"
+	In       TokenType = "IN"
 )
 
 func (t Token) String() string {

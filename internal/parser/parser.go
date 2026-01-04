@@ -76,6 +76,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LBracket, p.parseIndexExpression)
 	p.registerInfix(token.Dot, p.parsePropertyExpression)
 	p.registerInfix(token.Assign, p.parseAssignExpression)
+	p.registerInfix(token.DotDot, p.parseRangeExpression)
 
 	// Read 2 tokens so curToken and peekToken are set
 	p.nextToken()
