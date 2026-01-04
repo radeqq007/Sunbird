@@ -17,14 +17,21 @@ var Module = modbuilder.NewModuleBuilder().
 func createServer(args ...object.Object) object.Object {
 	server := modbuilder.NewHashBuilder().
 		AddFunction("get", getRoute).
+		AddFunction("post", postRoute).
+		AddFunction("put", putRoute).
+		AddFunction("delete", deleteRoute).
+		AddFunction("patch", patchRoute).
+		AddFunction("head", headRoute).
+		AddFunction("options", optionsRoute).
+		AddFunction("connect", connectRoute).
+		AddFunction("trace", traceRoute).
 		AddFunction("listen", listen).
-		AddValue("status", statusCodes).
 		Build()
 
 	return server
 }
 
-func getRoute(args ...object.Object) object.Object {
+func route(method string, args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 	if err != nil {
 		return err
@@ -48,13 +55,48 @@ func getRoute(args ...object.Object) object.Object {
 			newWriter(w),
 			newRequest(r),
 		}
-
-		if object.ApplyFunction != nil {
+		if r.Method == method && object.ApplyFunction != nil {	
 			object.ApplyFunction(callback, args)
 		}
 	})
 
 	return &object.Null{}
+}
+
+func getRoute(args ...object.Object) object.Object {
+	return route(http.MethodGet, args...)
+}
+
+func postRoute(args ...object.Object) object.Object {
+	return route(http.MethodPost, args...)
+}
+
+func putRoute(args ...object.Object) object.Object {
+	return route(http.MethodPut, args...)
+}
+
+func deleteRoute(args ...object.Object) object.Object {
+	return route(http.MethodDelete, args...)
+}
+
+func patchRoute(args ...object.Object) object.Object {
+	return route(http.MethodPatch, args...)
+}
+
+func headRoute(args ...object.Object) object.Object {
+	return route(http.MethodHead, args...)
+}
+
+func optionsRoute(args ...object.Object) object.Object {
+	return route(http.MethodOptions, args...)
+}
+
+func connectRoute(args ...object.Object) object.Object {
+	return route(http.MethodConnect, args...)
+}
+
+func traceRoute(args ...object.Object) object.Object {
+	return route(http.MethodTrace, args...)
 }
 
 func listen(args ...object.Object) object.Object {
@@ -78,117 +120,6 @@ func listen(args ...object.Object) object.Object {
 	return &object.Null{}
 }
 
-func newWriter(w http.ResponseWriter) object.Object {
-	return modbuilder.NewHashBuilder().
-		AddFunction("send", func(args ...object.Object) object.Object {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err != nil {
-				return err
-			}
-
-			err = errors.ExpectType(0, 0, args[0], object.StringObj)
-			if err != nil {
-				return err
-			}
-
-			_, errGo := w.Write([]byte(args[0].(*object.String).Value))
-			if errGo != nil {
-				return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
-			}
-
-			return &object.Null{}
-		}).
-		AddValue("header", modbuilder.NewHashBuilder().
-			AddFunction("set", func(args ...object.Object) object.Object {
-				err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-				if err != nil {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringObj)
-				if err != nil {
-					return err
-				}
-
-				err = errors.ExpectType(1, 0, args[1], object.StringObj)
-				if err != nil {
-					return err
-				}
-
-				w.Header().Set(args[0].(*object.String).Value, args[1].(*object.String).Value)
-				return &object.Null{}
-			}).
-			AddFunction("add", func(args ...object.Object) object.Object {
-				err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-				if err != nil {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringObj)
-				if err != nil {
-					return err
-				}
-
-				err = errors.ExpectType(1, 0, args[1], object.StringObj)
-				if err != nil {
-					return err
-				}
-
-				w.Header().Add(args[0].(*object.String).Value, args[1].(*object.String).Value)
-
-				return &object.Null{}
-			}).
-			AddFunction("del", func(args ...object.Object) object.Object {
-				err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-				if err != nil {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringObj)
-				if err != nil {
-					return err
-				}
-
-				w.Header().Del(args[0].(*object.String).Value)
-
-				return &object.Null{}
-			}).
-			AddFunction("get", func(args ...object.Object) object.Object {
-				err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-				if err != nil {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringObj)
-				if err != nil {
-					return err
-				}
-
-				return &object.String{Value: w.Header().Get(args[0].(*object.String).Value)}
-			}).
-			Build(),
-		).
-		AddFunction("status", func(args ...object.Object) object.Object {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err != nil {
-				return err
-			}
-
-			err = errors.ExpectType(0, 0, args[0], object.IntegerObj)
-			if err != nil {
-				return err
-			}
-
-			w.WriteHeader(int(args[0].(*object.Integer).Value))
-
-			return &object.Null{}
-		}).
-		Build()
-}
-
-func newRequest(r *http.Request) object.Object {
-	return &object.Null{}
-}
 
 var statusCodes = modbuilder.NewHashBuilder().
 	AddInteger("continue", http.StatusContinue).
