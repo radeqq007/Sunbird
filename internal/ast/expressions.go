@@ -154,6 +154,29 @@ func (ae *AssignExpression) String() string {
 	return out.String()
 }
 
+type CompoundAssignExpression struct {
+	Token    token.Token // the token.ASSIGN token
+	Name     Expression  // The identifier or property expression being assigned to
+	Operator string
+	Value    Expression
+}
+
+func (cae *CompoundAssignExpression) expressionNode()      {}
+func (cae *CompoundAssignExpression) TokenLiteral() string { return cae.Token.Literal }
+func (cae *CompoundAssignExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(cae.Name.String())
+	out.WriteString(" ")
+	out.WriteString(cae.Operator)
+	out.WriteString("=")
+	out.WriteString(" ")
+	out.WriteString(cae.Value.String())
+	out.WriteString(";")
+
+	return out.String()
+}
+
 type IfExpression struct {
 	Token       token.Token
 	Condition   Expression
