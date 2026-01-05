@@ -22,6 +22,7 @@ io.print("hello", "world")
 io.print("hello", 123)
 io.print("hello", true)
 io.print("hello", 123, true)
+io.print("hello", [1, 2, 3], { "a": 123 })
 ```
 
 ## println
@@ -30,6 +31,7 @@ println behaves the same as `print`, however it will print a newline at the end.
 ```ts
 io.println("hello world")
 io.println(123)
+io.println("hello!", [1, 2, 3], { "a": 123 })
 ```
 
 ## read
@@ -75,3 +77,53 @@ io.printf("hello {}", "world")
 io.printf("hello {}", 123)
 io.printf("hello {} {}", "world", 123)
 ```
+
+# printfn
+
+`printfn` is a function that prints a formatted string to the console with a newline at the end.
+
+The format string uses curly braces `{}` to mark where arguments should be inserted.
+
+```ts
+io.printfn("hello {}", "world")
+io.printfn("hello {} {}", "world", 123)
+```
+
+# sprintf
+
+`sprintf` is a function that returns a formatted string.
+
+The format string uses curly braces `{}` to mark where arguments should be inserted.
+
+```ts
+io.sprintf("hello {} {}", "world", 123)
+```
+
+The function returns a string.
+
+## clear
+
+`clear` is a function that clears the console.
+
+```ts
+io.clear()
+```
+
+## beep
+
+`beep` is a function that emits a beep sound.
+
+```ts
+io.beep()
+```
+
+## args
+
+`args` is an array of command line arguments.
+
+```ts
+let args_array = io.args
+let first_arg = io.args[0]
+```
+
+The array is of strings.
