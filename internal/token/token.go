@@ -22,13 +22,18 @@ const (
 	String TokenType = "STRING"
 
 	// Operators
-	Assign   TokenType = "ASSIGN"
-	Plus     TokenType = "PLUS"
-	Minus    TokenType = "MINUS"
-	Bang     TokenType = "BANG"
-	Modulo   TokenType = "MODULO"
-	Asterisk TokenType = "ASTERISK"
-	Slash    TokenType = "SLASH"
+	Assign        TokenType = "ASSIGN"
+	Plus          TokenType = "PLUS"
+	PlusEqual     TokenType = "PLUS_EQUAL"
+	MinusEqual    TokenType = "MINUS_EQUAL"
+	AsteriskEqual TokenType = "ASTERISK_EQUAL"
+	SlashEqual    TokenType = "SLASH_EQUAL"
+	ModuloEqual   TokenType = "MODULO_EQUAL"
+	Minus         TokenType = "MINUS"
+	Bang          TokenType = "BANG"
+	Modulo        TokenType = "MODULO"
+	Asterisk      TokenType = "ASTERISK"
+	Slash         TokenType = "SLASH"
 
 	// Comparison operators
 	Eq    TokenType = "EQ"
