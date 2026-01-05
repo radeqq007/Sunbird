@@ -167,3 +167,7 @@ func NewRuntimeError(line, col int, format string, args ...interface{}) *object.
 func NewConstantReassignmentError(line, col int, identifier string) *object.Error {
 	return New(ConstantReassignmentError, line, col, "%s", identifier)
 }
+
+func NewArgumentError(line, col int, format string, args ...interface{}) *object.Error {
+	return New(ArgumentError, line, col, format, args...)
+}
