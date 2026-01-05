@@ -6,7 +6,6 @@ import (
 	"sunbird/internal/token"
 )
 
-// Expression
 type ExpressionStatement struct {
 	Token      token.Token
 	Expression Expression
@@ -23,7 +22,6 @@ func (es *ExpressionStatement) String() string {
 	return ""
 }
 
-// Identifier
 type Identifier struct {
 	Token token.Token
 	Value string
@@ -34,7 +32,6 @@ func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
 func (i *Identifier) String() string       { return i.Value }
 
-// Prefix
 type PrefixExpression struct {
 	Token    token.Token
 	Operator string
@@ -55,7 +52,6 @@ func (pe *PrefixExpression) String() string {
 	return out.String()
 }
 
-// Infix
 type InfixExpression struct {
 	Token    token.Token
 	Left     Expression
@@ -78,7 +74,6 @@ func (oe *InfixExpression) String() string {
 	return out.String()
 }
 
-// Index
 type IndexExpression struct {
 	Token token.Token // The '[' token
 	Left  Expression
@@ -99,7 +94,6 @@ func (ie *IndexExpression) String() string {
 	return out.String()
 }
 
-// Function Call
 type CallExpression struct {
 	Token     token.Token
 	Function  Expression
@@ -123,7 +117,6 @@ func (ce *CallExpression) String() string {
 	return out.String()
 }
 
-// Property
 type PropertyExpression struct {
 	Token    token.Token
 	Object   Expression
@@ -142,7 +135,6 @@ func (pe *PropertyExpression) String() string {
 	return out.String()
 }
 
-// Assigment
 type AssignExpression struct {
 	Token token.Token // the token.ASSIGN token
 	Name  Expression  // The identifier or property expression being assigned to
@@ -162,7 +154,6 @@ func (ae *AssignExpression) String() string {
 	return out.String()
 }
 
-// If
 type IfExpression struct {
 	Token       token.Token
 	Condition   Expression
@@ -189,7 +180,6 @@ func (ie *IfExpression) String() string {
 	return out.String()
 }
 
-// Let
 type LetExpression struct {
 	Token token.Token
 	Name  Expression
@@ -222,7 +212,6 @@ func (ls *LetExpression) String() string {
 	return out.String()
 }
 
-// Const
 type ConstExpression struct {
 	Token token.Token
 	Name  Expression

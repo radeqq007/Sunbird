@@ -5,7 +5,6 @@ import (
 	"sunbird/internal/token"
 )
 
-// Block
 type BlockStatement struct {
 	Token      token.Token
 	Statements []Statement
@@ -24,7 +23,6 @@ func (bs *BlockStatement) String() string {
 	return out.String()
 }
 
-// For
 type ForStatement struct {
 	Token    token.Token
 	Variable *Identifier
@@ -106,7 +104,6 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
-// Property Assign
 type PropertyAssignStatement struct {
 	Statement
 	Token    token.Token // identifier
@@ -130,7 +127,6 @@ func (pas *PropertyAssignStatement) String() string {
 	return out.String()
 }
 
-// Import
 type ImportStatement struct {
 	Token token.Token
 	Path  *StringLiteral
@@ -151,7 +147,6 @@ func (is *ImportStatement) String() string {
 	return out.String()
 }
 
-// Try Catch
 type TryCatchStatement struct {
 	Token   token.Token
 	Try     *BlockStatement

@@ -6,7 +6,6 @@ import (
 	"sunbird/internal/token"
 )
 
-// Array
 type ArrayLiteral struct {
 	Token    token.Token // the '[' token
 	Elements []Expression
@@ -30,7 +29,6 @@ func (al *ArrayLiteral) String() string {
 	return out.String()
 }
 
-// Float
 type FloatLiteral struct {
 	Token token.Token
 	Value float64
@@ -40,7 +38,6 @@ func (fl *FloatLiteral) expressionNode()      {}
 func (fl *FloatLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FloatLiteral) String() string       { return fl.Token.Literal }
 
-// Integer
 type IntegerLiteral struct {
 	Token token.Token
 	Value int64
@@ -50,7 +47,6 @@ func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
-// String
 type StringLiteral struct {
 	Token token.Token
 	Value string
@@ -60,7 +56,6 @@ func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
 func (sl *StringLiteral) String() string       { return sl.Token.Literal }
 
-// Boolean
 type Boolean struct {
 	Token token.Token
 	Value bool
@@ -70,7 +65,6 @@ func (b *Boolean) expressionNode()      {}
 func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
 func (b *Boolean) String() string       { return b.Token.Literal }
 
-// Null
 type NullLiteral struct {
 	Token token.Token
 }
@@ -79,7 +73,6 @@ func (nl *NullLiteral) expressionNode()      {}
 func (nl *NullLiteral) TokenLiteral() string { return nl.Token.Literal }
 func (nl *NullLiteral) String() string       { return nl.Token.Literal }
 
-// Hash
 type HashLiteral struct {
 	Token token.Token // the '{' token
 	Pairs []HashPair
@@ -107,7 +100,6 @@ func (hl *HashLiteral) String() string {
 	return out.String()
 }
 
-// Function
 type FunctionLiteral struct {
 	Token      token.Token
 	Parameters []*Identifier
