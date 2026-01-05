@@ -90,11 +90,11 @@ func read(args ...object.Object) object.Object {
 }
 
 func printf(args ...object.Object) object.Object {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
-		return err
+	if len(args) < 1 {
+		return errors.NewArgumentError(0, 0, "expected minimum 1 argument, got %v", len(args))
 	}
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
+
+	err := errors.ExpectType(0, 0, args[0], object.StringObj)
 	if err != nil {
 		return err
 	}
