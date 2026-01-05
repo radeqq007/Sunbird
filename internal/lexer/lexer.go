@@ -38,7 +38,7 @@ var keywords = map[string]token.TokenType{
 	"Float":    token.TypeFloat,
 	"String":   token.TypeString,
 	"Bool":     token.TypeBool,
-	"void":     token.TypeVoid,
+	"Void":     token.TypeVoid,
 	"Array":    token.TypeArray,
 	"Func":     token.TypeFunc,
 	"Hash":     token.TypeHash,
