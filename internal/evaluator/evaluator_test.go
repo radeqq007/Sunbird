@@ -215,27 +215,27 @@ func TestErrorHandling(t *testing.T) {
 	}{
 		{
 			"5 + true;",
-			"TypeMismatchError: INTEGER + BOOLEAN",
+			"TypeMismatchError: Integer + Boolean",
 		},
 		{
 			"5 + true; 5;",
-			"TypeMismatchError: INTEGER + BOOLEAN",
+			"TypeMismatchError: Integer + Boolean",
 		},
 		{
 			"-true",
-			"UnknownOperatorError: -BOOLEAN",
+			"UnknownOperatorError: -Boolean",
 		},
 		{
 			"true + false;",
-			"UnknownOperatorError: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: Boolean + Boolean",
 		},
 		{
 			"5; true + false; 5",
-			"UnknownOperatorError: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: Boolean + Boolean",
 		},
 		{
 			"if 10 > 1 { true + false; }",
-			"UnknownOperatorError: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: Boolean + Boolean",
 		},
 		{
 			`
@@ -247,7 +247,7 @@ func TestErrorHandling(t *testing.T) {
       return 1;
     }
     `,
-			"UnknownOperatorError: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: Boolean + Boolean",
 		},
 		{
 			"foobar",
@@ -376,12 +376,12 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`len("")`, 0},
 		{`len("sunbird")`, 7},
 		{`len("hello world")`, 11},
-		{`len(1)`, "TypeError: expected one of STRING, ARRAY, got INTEGER"},
+		{`len(1)`, "TypeError: expected one of String, Array, got Integer"},
 		{`len("one", "two")`, "ArgumentError: expected 1 arguments, got 2"},
 		{`len([1, 2, 3])`, 3},
 		{`len([])`, 0},
 		{`append([], 1)`, []int64{1}},
-		{`append(1, 1)`, "TypeError: expected ARRAY, got INTEGER"},
+		{`append(1, 1)`, "TypeError: expected Array, got Integer"},
 		{`append([1, 2, 3], 4)`, []int64{1, 2, 3, 4}},
 		{`append([1, 2, 3], 4, 5, 6)`, []int64{1, 2, 3, 4, 5, 6}},
 	}
@@ -465,7 +465,7 @@ func TestErrorLineNumbers(t *testing.T) {
 		{
 			"5 + true;",
 			1, 3,
-			"TypeMismatchError: INTEGER + BOOLEAN",
+			"TypeMismatchError: Integer + Boolean",
 		},
 		{
 			"foobar",
@@ -475,12 +475,12 @@ func TestErrorLineNumbers(t *testing.T) {
 		{
 			"-true",
 			1, 1,
-			"UnknownOperatorError: -BOOLEAN",
+			"UnknownOperatorError: -Boolean",
 		},
 		{
 			"if (10 > 1) { true + false; }",
 			1, 20,
-			"UnknownOperatorError: BOOLEAN + BOOLEAN",
+			"UnknownOperatorError: Boolean + Boolean",
 		},
 		{
 			`
@@ -488,7 +488,7 @@ let a = 5;
 a + true;
 `,
 			3, 3,
-			"TypeMismatchError: INTEGER + BOOLEAN",
+			"TypeMismatchError: Integer + Boolean",
 		},
 	}
 
@@ -532,7 +532,7 @@ func TestFunctionTypeChecking(t *testing.T) {
 		},
 		{
 			"let identity = func(x: String): String { x; }; identity(5);",
-			"TypeError: expected String, got INTEGER",
+			"TypeError: expected String, got Integer",
 		},
 		{
 			"let add = func(a: Int, b: Int): Int { a + b; }; add(1, 2);",
@@ -540,11 +540,11 @@ func TestFunctionTypeChecking(t *testing.T) {
 		},
 		{
 			"let add = func(a: Int, b: Int) { a + b; }; add('1', '2');",
-			"TypeError: expected Int, got STRING",
+			"TypeError: expected Int, got String",
 		},
 		{
 			"let identity = func(x: Float) { x; }; identity(\"hello\");",
-			"TypeError: expected Float, got STRING",
+			"TypeError: expected Float, got String",
 		},
 	}
 
