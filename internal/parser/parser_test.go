@@ -1045,11 +1045,18 @@ func TestForStatementParsing(t *testing.T) {
 		expectedBody  string
 	}{
 		{
-			input:         "for i in 0..10 { io.println(i); }",
-			expectedStart: "0;",
+			input:         "for i in 0..10 { io.println(i) }",
+			expectedStart: "0",
 			expectedEnd:   "10",
 			expectedStep:  "1",
-			expectedBody:  "io.println(i)",
+			expectedBody:  "(io.println)(i)",
+		},
+		{
+			input:         "for i in 0..10:2 { io.println(i) }",
+			expectedStart: "0",
+			expectedEnd:   "10",
+			expectedStep:  "2",
+			expectedBody:  "(io.println)(i)",
 		},
 	}
 
@@ -1066,23 +1073,35 @@ func TestForStatementParsing(t *testing.T) {
 
 		stmt, ok := program.Statements[0].(*ast.ForStatement)
 		if !ok {
-			t.Fatalf("program.Statements[0] is not ast.ForStatement. got=%T",
-				program.Statements[0])
+			t.Fatalf("program.Statements[0] is not ast.ForStatement. got=%T", program.Statements[0])
+		}
+		if stmt == nil {
+			t.Fatalf("program.Statements[0] is nil")
 		}
 
-		if stmt.Iterable.(*ast.RangeExpression).Start.String() != tt.expectedStart {
+		rangeExp, ok := stmt.Iterable.(*ast.RangeExpression)
+		if !ok {
+			t.Fatalf("stmt.Iterable is not ast.RangeExpression. got=%T", stmt.Iterable)
+		}
+
+		if rangeExp.Start.String() != tt.expectedStart {
 			t.Errorf("start wrong. expected=%q, got=%q",
-				tt.expectedStart, stmt.Iterable.(*ast.RangeExpression).Start.String())
+				tt.expectedStart, rangeExp.Start.String())
 		}
 
-		if stmt.Iterable.(*ast.RangeExpression).End.String() != tt.expectedEnd {
+		if rangeExp.End.String() != tt.expectedEnd {
 			t.Errorf("end wrong. expected=%q, got=%q",
-				tt.expectedEnd, stmt.Iterable.(*ast.RangeExpression).End.String())
+				tt.expectedEnd, rangeExp.End.String())
 		}
 
-		if stmt.Iterable.(*ast.RangeExpression).Step.String() != tt.expectedStep {
+		step := "1"
+		if rangeExp.Step != nil {
+			step = rangeExp.Step.String()
+		}
+
+		if step != tt.expectedStep {
 			t.Errorf("step wrong. expected=%q, got=%q",
-				tt.expectedStep, stmt.Iterable.(*ast.RangeExpression).Step.String())
+				tt.expectedStep, step)
 		}
 
 		if stmt.Body.String() != tt.expectedBody {
