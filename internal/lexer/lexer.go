@@ -152,10 +152,22 @@ func (l *Lexer) NextToken() token.Token {
 		}
 
 	case '+':
-		tok = l.newToken(token.Plus, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = l.newToken(token.PlusEqual, ch)
+		} else {
+			tok = l.newToken(token.Plus, l.ch)
+		}
 
 	case '-':
-		tok = l.newToken(token.Minus, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = l.newToken(token.MinusEqual, ch)
+		} else {
+			tok = l.newToken(token.Minus, l.ch)
+		}
 
 	case ';':
 		tok = l.newToken(token.Semicolon, l.ch)
@@ -190,11 +202,22 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar() // skip the *
 			l.readChar() // skip the /
 			return l.NextToken()
+		} else if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = l.newToken(token.SlashEqual, ch)
+		} else {
+			tok = l.newToken(token.Slash, l.ch)
 		}
-		tok = l.newToken(token.Slash, l.ch)
 
 	case '*':
-		tok = l.newToken(token.Asterisk, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = l.newToken(token.AsteriskEqual, ch)
+		} else {
+			tok = l.newToken(token.Asterisk, l.ch)
+		}
 
 	case '<':
 		if l.peekChar() == '=' {
