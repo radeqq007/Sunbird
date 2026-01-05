@@ -80,7 +80,7 @@ While loops:
 let i = 0
 while i < 5 {
     io.println(i)
-    i = i + 1
+    i += 1
 }
 ```
 
