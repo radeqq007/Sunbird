@@ -63,7 +63,7 @@ func newRequest(r *http.Request) object.Object {
 				return errors.NewRuntimeError(0, 0, errGo.Error())
 			}
 			defer r.Body.Close()
-			
+
 			bodyString := string(byteData)
 			bodyCache = &bodyString
 			return &object.String{Value: bodyString}

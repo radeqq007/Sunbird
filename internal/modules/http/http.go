@@ -55,7 +55,7 @@ func route(method string, args ...object.Object) object.Object {
 			newWriter(w),
 			newRequest(r),
 		}
-		if r.Method == method && object.ApplyFunction != nil {	
+		if r.Method == method && object.ApplyFunction != nil {
 			object.ApplyFunction(callback, args)
 		}
 	})
@@ -119,7 +119,6 @@ func listen(args ...object.Object) object.Object {
 
 	return &object.Null{}
 }
-
 
 var statusCodes = modbuilder.NewHashBuilder().
 	AddInteger("continue", http.StatusContinue).
