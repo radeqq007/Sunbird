@@ -40,7 +40,7 @@ if a > b {
     io.println("a is equal to b")
 }
 
-for 0..10 {
+for i in 0..10 {
     io.println(i)
 }
 
