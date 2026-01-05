@@ -12,7 +12,7 @@ import (
 
 func newRequest(r *http.Request) object.Object {
 	var bodyCache *string
-	var bodyJsonCache object.Object
+	var bodyJSONCache object.Object
 
 	// defer r.Body.Close()
 	return modbuilder.NewHashBuilder().
@@ -74,8 +74,8 @@ func newRequest(r *http.Request) object.Object {
 				return err
 			}
 
-			if bodyJsonCache != nil {
-				return bodyJsonCache
+			if bodyJSONCache != nil {
+				return bodyJSONCache
 			}
 
 			if bodyCache == nil {
@@ -93,9 +93,9 @@ func newRequest(r *http.Request) object.Object {
 			if errgo != nil {
 				return errors.NewRuntimeError(0, 0, errgo.Error())
 			}
-			bodyJsonCache = json.ToObject(data)
+			bodyJSONCache = json.ToObject(data)
 
-			return bodyJsonCache
+			return bodyJSONCache
 		}).
 		AddFunction("method", func(args ...object.Object) object.Object {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)

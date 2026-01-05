@@ -56,7 +56,7 @@ func CreateModule(pairs map[object.HashKey]object.HashPair) *object.Hash {
 	return &object.Hash{Pairs: pairs}
 }
 
-// Just a NewModuleBuilder() wrapper, but it makes creating hash objects more descriptive
+// NewHashBuilder is just a NewModuleBuilder() wrapper, but it makes creating hash objects more descriptive
 func NewHashBuilder() *ModuleBuilder {
 	return NewModuleBuilder()
 }

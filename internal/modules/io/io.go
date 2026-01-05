@@ -11,21 +11,23 @@ import (
 	"sunbird/internal/object"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("print", print).
-	AddFunction("println", println).
-	AddFunction("readln", readln).
-	AddFunction("read", read).
-	AddFunction("printf", printf).
-	AddFunction("sprintf", sprintf).
-	AddFunction("clear", clear).
-	AddFunction("beep", beep).
-	AddValue("args", getArgsArray()).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("print", printObject).
+		AddFunction("println", printlnObject).
+		AddFunction("readln", readln).
+		AddFunction("read", read).
+		AddFunction("printf", printf).
+		AddFunction("sprintf", sprintf).
+		AddFunction("clear", clearScreen).
+		AddFunction("beep", beep).
+		AddValue("args", getArgsArray()).
+		Build()
+}
 
 var stdin = bufio.NewReader(os.Stdin)
 
-func print(args ...object.Object) object.Object {
+func printObject(args ...object.Object) object.Object {
 	for i, arg := range args {
 		if i > 0 {
 			fmt.Print(" ")
@@ -39,8 +41,8 @@ func print(args ...object.Object) object.Object {
 	return nil
 }
 
-func println(args ...object.Object) object.Object {
-	print(args...)
+func printlnObject(args ...object.Object) object.Object {
+	printObject(args...)
 	fmt.Print("\n")
 	return nil
 }
@@ -51,7 +53,7 @@ func readln(args ...object.Object) object.Object {
 		if err != nil {
 			return err
 		}
-		print(args[0])
+		printObject(args[0])
 	}
 
 	input, err := stdin.ReadString('\n')
@@ -74,7 +76,7 @@ func read(args ...object.Object) object.Object {
 		if err != nil {
 			return err
 		}
-		print(args[0])
+		printObject(args[0])
 	}
 
 	input, err := stdin.ReadString(' ')
@@ -151,7 +153,7 @@ func sprintf(args ...object.Object) object.Object {
 	}
 }
 
-func clear(args ...object.Object) object.Object {
+func clearScreen(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
 	if err != nil {
 		return err

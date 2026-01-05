@@ -6,21 +6,23 @@ import (
 	"sunbird/internal/object"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("type_error", NewTypeError).
-	AddFunction("runtime_error", NewRuntimeError).
-	AddFunction("import_error", NewImportError).
-	AddFunction("division_by_zero_error", NewDivisionByZeroError).
-	AddFunction("constant_reassignment_error", NewConstantReassignmentError).
-	AddFunction("index_not_supported_error", NewIndexNotSupportedError).
-	AddFunction("index_out_of_bounds_error", NewIndexOutOfBoundsError).
-	AddFunction("key_error", NewKeyError).
-	AddFunction("variable_reassignment_error", NewVariableReassignmentError).
-	AddFunction("not_callable_error", NewNotCallableError).
-	AddFunction("invalid_assignment_error", NewInvalidAssignmentError).
-	AddFunction("argument_error", NewArgumentError).
-	AddFunction("property_access_error", NewPropertyAccessError).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("type_error", NewTypeError).
+		AddFunction("runtime_error", NewRuntimeError).
+		AddFunction("import_error", NewImportError).
+		AddFunction("division_by_zero_error", NewDivisionByZeroError).
+		AddFunction("constant_reassignment_error", NewConstantReassignmentError).
+		AddFunction("index_not_supported_error", NewIndexNotSupportedError).
+		AddFunction("index_out_of_bounds_error", NewIndexOutOfBoundsError).
+		AddFunction("key_error", NewKeyError).
+		AddFunction("variable_reassignment_error", NewVariableReassignmentError).
+		AddFunction("not_callable_error", NewNotCallableError).
+		AddFunction("invalid_assignment_error", NewInvalidAssignmentError).
+		AddFunction("argument_error", NewArgumentError).
+		AddFunction("property_access_error", NewPropertyAccessError).
+		Build()
+}
 
 func wrapError(args []object.Object, internalFunc func(int, int, string) *object.Error) object.Object {
 	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err != nil {

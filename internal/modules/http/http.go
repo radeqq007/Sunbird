@@ -8,11 +8,13 @@ import (
 	"sunbird/internal/object"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("create_server", createServer).
-	AddValue("status", statusCodes).
-	AddValue("methods", methods).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("create_server", createServer).
+		AddValue("status", statusCodes).
+		AddValue("methods", methods).
+		Build()
+}
 
 func createServer(args ...object.Object) object.Object {
 	server := modbuilder.NewHashBuilder().

@@ -13,6 +13,7 @@ import (
 )
 
 func init() {
+	//nolint:reassign // standard way to override flag.Usage
 	flag.Usage = func() {
 		fmt.Println("Usage: sunbird [options]")
 		fmt.Println("Options:")

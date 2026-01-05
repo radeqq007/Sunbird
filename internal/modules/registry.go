@@ -13,14 +13,14 @@ import (
 )
 
 var BuiltinModules = map[string]*object.Hash{
-	"math":   math.Module,
-	"io":     io.Module,
-	"array":  array.Module,
-	"string": str.Module,
-	"random": random.Module,
-	"errors": errors.Module,
-	"json":   json.Module,
-	"http":   http.Module,
+	"math":   math.New(),
+	"io":     io.New(),
+	"array":  array.New(),
+	"string": str.New(),
+	"random": random.New(),
+	"errors": errors.New(),
+	"json":   json.New(),
+	"http":   http.New(),
 }
 
 func Get(name string) (*object.Hash, bool) {

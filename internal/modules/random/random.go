@@ -8,14 +8,16 @@ import (
 	"time"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("int", randInt).
-	AddFunction("float", randFloat).
-	AddFunction("bool", randBool).
-	AddFunction("shuffle", shuffle).
-	AddFunction("choice", choice).
-	AddFunction("seed", newSeed).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("int", randInt).
+		AddFunction("float", randFloat).
+		AddFunction("bool", randBool).
+		AddFunction("shuffle", shuffle).
+		AddFunction("choice", choice).
+		AddFunction("seed", newSeed).
+		Build()
+}
 
 var seed = time.Now().UnixNano()
 
@@ -116,8 +118,9 @@ func shuffle(args ...object.Object) object.Object {
 		return err
 	}
 
-	shuffled := make([]object.Object, len(args[0].(*object.Array).Elements))
-	copy(shuffled, args[0].(*object.Array).Elements)
+	arr, _ := args[0].(*object.Array)
+	shuffled := make([]object.Object, len(arr.Elements))
+	copy(shuffled, arr.Elements)
 
 	for i := range shuffled {
 		j := r.Intn(i + 1)

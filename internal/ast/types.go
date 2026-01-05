@@ -11,7 +11,7 @@ type TypeAnnotation interface {
 	typeAnnotation()
 }
 
-// strings, ints, bools etc.
+// SimpleType is for strings, ints, bools etc.
 type SimpleType struct {
 	Token token.Token
 	Name  string
@@ -69,7 +69,7 @@ func (ft *FunctionType) String() string {
 	return out.String()
 }
 
-// optional types like int?
+// OptionalType is for optional types like int?
 type OptionalType struct {
 	Token    token.Token
 	BaseType TypeAnnotation

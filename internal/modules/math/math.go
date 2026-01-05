@@ -7,23 +7,25 @@ import (
 	"sunbird/internal/object"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("abs", abs).
-	AddFunction("max", max).
-	AddFunction("min", min).
-	AddFunction("pow", pow).
-	AddFunction("sqrt", sqrt).
-	AddFunction("floor", floor).
-	AddFunction("ceil", ceil).
-	AddFunction("round", round).
-	AddFunction("sign", sign).
-	AddFunction("clamp", clamp).
-	AddFunction("sin", sin).
-	AddFunction("cos", cos).
-	AddFunction("tan", tan).
-	AddFloat("PI", math.Pi).
-	AddFloat("E", math.E).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("abs", abs).
+		AddFunction("max", max).
+		AddFunction("min", min).
+		AddFunction("pow", pow).
+		AddFunction("sqrt", sqrt).
+		AddFunction("floor", floor).
+		AddFunction("ceil", ceil).
+		AddFunction("round", round).
+		AddFunction("sign", sign).
+		AddFunction("clamp", clamp).
+		AddFunction("sin", sin).
+		AddFunction("cos", cos).
+		AddFunction("tan", tan).
+		AddFloat("PI", math.Pi).
+		AddFloat("E", math.E).
+		Build()
+}
 
 func abs(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)

@@ -72,6 +72,7 @@ func unwrapReturnValue(obj object.Object) object.Object {
 }
 
 func init() {
+	//nolint:reassign // necessary to break circular import with evaluator
 	object.ApplyFunction = func(fn object.Object, args []object.Object) object.Object {
 		return applyFunction(fn, args, 0, 0)
 	}

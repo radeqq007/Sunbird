@@ -7,10 +7,12 @@ import (
 	"sunbird/internal/object"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("parse", parseJSON).
-	AddFunction("stringify", stringify).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("parse", parseJSON).
+		AddFunction("stringify", stringify).
+		Build()
+}
 
 func parseJSON(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)

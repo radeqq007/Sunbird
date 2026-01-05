@@ -198,6 +198,8 @@ linters:
         - os.WriteFile
         - prometheus.ExponentialBuckets.*
         - prometheus.LinearBuckets
+        - errors.ExpectNumberOfArguments
+        - r.Intn
 
     nakedret:
       max-func-lines: 0

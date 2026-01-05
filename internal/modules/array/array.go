@@ -6,19 +6,21 @@ import (
 	"sunbird/internal/object"
 )
 
-var Module = modbuilder.NewModuleBuilder().
-	AddFunction("push", push).
-	AddFunction("pop", pop).
-	AddFunction("shift", shift).
-	AddFunction("unshift", unshift).
-	AddFunction("reverse", reverse).
-	AddFunction("indexOf", indexOf).
-	AddFunction("slice", slice).
-	AddFunction("clear", clear).
-	AddFunction("join", join).
-	AddFunction("concat", concat).
-	AddFunction("contains", contains).
-	Build()
+func New() *object.Hash {
+	return modbuilder.NewModuleBuilder().
+		AddFunction("push", push).
+		AddFunction("pop", pop).
+		AddFunction("shift", shift).
+		AddFunction("unshift", unshift).
+		AddFunction("reverse", reverse).
+		AddFunction("indexOf", indexOf).
+		AddFunction("slice", slice).
+		AddFunction("clear", clearArray).
+		AddFunction("join", join).
+		AddFunction("concat", concat).
+		AddFunction("contains", contains).
+		Build()
+}
 
 func push(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
@@ -277,7 +279,7 @@ func concat(args ...object.Object) object.Object {
 	return &object.Array{Elements: result}
 }
 
-func clear(args ...object.Object) object.Object {
+func clearArray(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 	if err != nil {
 		return err
