@@ -34,29 +34,29 @@ const (
 func (ot ObjectType) String() string {
 	switch ot {
 	case StringObj:
-		return "STRING"
+		return "String"
 	case IntegerObj:
-		return "INTEGER"
+		return "Integer"
 	case FloatObj:
-		return "FLOAT"
+		return "Float"
 	case BooleanObj:
-		return "BOOLEAN"
+		return "Boolean"
 	case NullObj:
-		return "NULL"
+		return "Null"
 	case FunctionObj:
-		return "FUNCTION"
+		return "Function"
 	case ReturnValueObj:
-		return "RETURN_VALUE"
+		return "ReturnValue"
 	case ErrorObj:
-		return "ERROR"
+		return "Error"
 	case BuiltinObj:
-		return "BUILTIN"
+		return "Builtin"
 	case ArrayObj:
-		return "ARRAY"
+		return "Array"
 	case BreakObj:
-		return "BREAK"
+		return "Break"
 	case ContinueObj:
-		return "CONTINUE"
+		return "Continue"
 	default:
 		return "UNKNOWN"
 	}
