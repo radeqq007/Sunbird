@@ -18,6 +18,7 @@ func New() *object.Hash {
 		AddFunction("readln", readln).
 		AddFunction("read", read).
 		AddFunction("printf", printf).
+		AddFunction("printfn", printfn).
 		AddFunction("sprintf", sprintf).
 		AddFunction("clear", clearScreen).
 		AddFunction("beep", beep).
@@ -117,6 +118,38 @@ func printf(args ...object.Object) object.Object {
 	}
 
 	fmt.Print(format)
+
+	return nil
+}
+
+func printfn(args ...object.Object) object.Object {
+	if len(args) < 1 {
+		return errors.NewArgumentError(0, 0, "expected minimum 1 argument, got %v", len(args))
+	}
+
+	err := errors.ExpectType(0, 0, args[0], object.StringObj)
+	if err != nil {
+		return err
+	}
+
+	var format string
+	if s, ok := args[0].(*object.String); ok {
+		format = s.Value
+	} else {
+		format = args[0].Inspect()
+	}
+
+	for _, arg := range args[1:] {
+		var val string
+		if s, ok := arg.(*object.String); ok {
+			val = s.Value
+		} else {
+			val = arg.Inspect()
+		}
+		format = strings.Replace(format, "{}", val, 1)
+	}
+
+	fmt.Println(format)
 
 	return nil
 }
