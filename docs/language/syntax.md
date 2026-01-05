@@ -39,14 +39,14 @@ if x > 0 {
 
 For loops are used to execute code repeatedly.
 ```ts
-for 0..10 {
+for i in 0..10 {
   io.println(i)
 }
 ```
 
 To define a step you can use the `:` operator after the range.
 ```ts
-for 0..10:2 {
+for i in 0..10:2 {
   io.println(i)
 }
 ```
@@ -91,7 +91,7 @@ let x: Int = 5
 let y: Float = 10.5
 let z: String = "Hello"
 let a: Bool = true
-let b: void = null
+let b: Void = null
 ```
 
 If you try to assign a value of a different type to a variable, you will get a runtime error.

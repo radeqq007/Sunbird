@@ -70,7 +70,7 @@ io.println(sign) // -1
 
 For loops:
 ```ts
-for 1..10 {
+for i in 1..10 {
     io.println(i)
 }
 ```
