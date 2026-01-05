@@ -99,3 +99,17 @@ func evalIndexExpressionAssignment(node *ast.IndexExpression, val object.Object,
 		return errors.NewIndexNotSupportedError(node.Token.Line, node.Token.Col, left)
 	}
 }
+
+func evalCompoundAssignExpression(node *ast.CompoundAssignExpression, val object.Object, env *object.Environment) object.Object {
+	currentVal := Eval(node.Name, env)
+	if isError(currentVal) {
+		return currentVal
+	}
+
+	newVal := evalInfixExpression(node.Operator, currentVal, val, node.Token.Line, node.Token.Col)
+	if isError(newVal) {
+		return newVal
+	}
+
+	return evalAssignment(node.Name, newVal, env)
+}
