@@ -22,7 +22,7 @@ func NewModuleCache() *ModuleCache {
 	}
 }
 
-func (mc *ModuleCache) loadModule(path string, env *object.Environment) (*object.Hash, error) {
+func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
 	if module, ok := mc.modules[path]; ok {
 		return module, nil
 	}
@@ -34,10 +34,10 @@ func (mc *ModuleCache) loadModule(path string, env *object.Environment) (*object
 	}
 
 	// Load from file
-	return mc.loadFileModule(path, env)
+	return mc.loadFileModule(path)
 }
 
-func (mc *ModuleCache) loadFileModule(path string, env *object.Environment) (*object.Hash, error) {
+func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 	mainFileDir := ""
 	if len(os.Args) > 1 {
 		mainFileDir = filepath.Dir(os.Args[1]) // TODO: don't use os.Args

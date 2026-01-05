@@ -13,7 +13,7 @@ var moduleCache = NewModuleCache()
 func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) object.Object {
 	path := stmt.Path.Value
 
-	module, err := moduleCache.loadModule(path, env)
+	module, err := moduleCache.loadModule(path)
 	if err != nil {
 		return errors.NewImportError(stmt.Token.Line, stmt.Token.Col, err.Error())
 	}
