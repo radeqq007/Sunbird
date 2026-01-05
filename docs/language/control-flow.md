@@ -62,6 +62,39 @@ Output:
 8
 ```
 
+You can also loop over arrays and strings.
+```ts
+let array = [1, 2, 3, 4, 5]
+for i in array {
+  io.println(i)
+}
+```
+
+Output:
+```
+1
+2
+3
+4
+5
+```
+
+```ts
+let string = "hello"
+for char in string {
+  io.println(char)
+}
+```
+
+Output:
+```
+h
+e
+l
+l
+o
+```
+
 ## While loops
 While loops are used to execute code repeatedly while a condition is true.
 ```ts
