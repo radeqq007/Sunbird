@@ -22,24 +22,29 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 
 // Infix
 var precedences = map[token.TokenType]int{
-	token.Assign:   ASSIGN,
-	token.Or:       LOGICAL,
-	token.And:      LOGICAL,
-	token.Eq:       EQUALS,
-	token.NotEq:    EQUALS,
-	token.LT:       LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.LE:       LESSGREATER,
-	token.GE:       LESSGREATER,
-	token.DotDot:   LESSGREATER,
-	token.Plus:     SUM,
-	token.Minus:    SUM,
-	token.Slash:    PRODUCT,
-	token.Asterisk: PRODUCT,
-	token.Modulo:   PRODUCT,
-	token.LParen:   CALL,
-	token.LBracket: INDEX,
-	token.Dot:      PROPERTY,
+	token.Assign:        ASSIGN,
+	token.PlusEqual:     ASSIGN,
+	token.MinusEqual:    ASSIGN,
+	token.SlashEqual:    ASSIGN,
+	token.AsteriskEqual: ASSIGN,
+	token.ModuloEqual:   ASSIGN,
+	token.Or:            LOGICAL,
+	token.And:           LOGICAL,
+	token.Eq:            EQUALS,
+	token.NotEq:         EQUALS,
+	token.LT:            LESSGREATER,
+	token.GT:            LESSGREATER,
+	token.LE:            LESSGREATER,
+	token.GE:            LESSGREATER,
+	token.DotDot:        LESSGREATER,
+	token.Plus:          SUM,
+	token.Minus:         SUM,
+	token.Slash:         PRODUCT,
+	token.Asterisk:      PRODUCT,
+	token.Modulo:        PRODUCT,
+	token.LParen:        CALL,
+	token.LBracket:      INDEX,
+	token.Dot:           PROPERTY,
 }
 
 func (p *Parser) peekPrecedence() int {
@@ -97,4 +102,23 @@ func (p *Parser) validateAssignmentTarget(exp ast.Expression) bool {
 		return true
 	}
 	return false
+}
+
+func (p *Parser) parseCompoundAssignExpression(left ast.Expression) ast.Expression {
+	exp := &ast.CompoundAssignExpression{
+		Token: p.curToken,
+		Name:  left,
+	}
+
+	if !p.validateAssignmentTarget(left) {
+		p.errors = append(p.errors, fmt.Sprintf("invalid assignment target: %s", left.String()))
+		return nil
+	}
+
+	exp.Operator = p.curToken.Literal
+	precedence := p.curPrecedence()
+	p.nextToken()
+	exp.Value = p.parseExpression(precedence)
+
+	return exp
 }
