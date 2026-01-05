@@ -127,38 +127,6 @@ func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment)
 	return evalHashIndexExpression(hash, key, pe.Token.Line, pe.Token.Col)
 }
 
-func evalPropertyAssignment(stmt *ast.PropertyAssignStatement, env *object.Environment) object.Object {
-	obj := Eval(stmt.Object, env)
-	if isError(obj) {
-		return obj
-	}
-
-	if obj == nil {
-		return errors.NewUndefinedVariableError(stmt.Token.Line, stmt.Token.Col, stmt.Object.String())
-	}
-
-	hash, ok := obj.(*object.Hash)
-	if !ok {
-		return errors.NewNonObjectPropertyAccessError(stmt.Token.Line, stmt.Token.Col, obj)
-	}
-
-	value := Eval(stmt.Value, env)
-	if isError(value) {
-		return value
-	}
-
-	key := &object.String{Value: stmt.Property.Value}
-	hashKey := key.HashKey()
-
-	if hash.Pairs == nil {
-		hash.Pairs = make(map[object.HashKey]object.HashPair)
-	}
-
-	hash.Pairs[hashKey] = object.HashPair{Key: key, Value: value}
-
-	return value
-}
-
 func evalMethodCall(obj *object.Hash, method object.Object, args []object.Object, line, col int) object.Object {
 	fn, ok := method.(*object.Function)
 	if !ok {
