@@ -27,9 +27,39 @@ let a = if b > 0 { 1 } else { 0 }
 ## For loops
 For loops are used to execute code repeatedly.
 ```ts
-for let i = 0; i < 10; i = i + 1 {
+for 0..10 {
   io.println(i)
 }
+```
+
+Output:
+```
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
+
+To define a step you can use the `:` operator after the range.
+```ts
+for 0..10:2 {
+  io.println(i)
+}
+```
+
+Output:
+```
+0
+2
+4
+6
+8
 ```
 
 ## While loops
@@ -46,7 +76,7 @@ Break and continue are used to control the flow of loops.
 
 Continue will skip the rest of the loop body and continue to the next iteration.
 ```ts
-for let i = 0; i < 10; i = i + 1 {
+for 0..10 {
   if i % 2 == 0 {
     continue
   }
@@ -56,7 +86,7 @@ for let i = 0; i < 10; i = i + 1 {
 
 Break will exit the loop.
 ```ts
-for let i = 0; i < 10; i = i + 1 {
+for 0..10 {
   if i == 5 {
     break
   }

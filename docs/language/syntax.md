@@ -39,13 +39,30 @@ if x > 0 {
 
 For loops are used to execute code repeatedly.
 ```ts
-for let i = 0; i < 10; i = i + 1 {
+for 0..10 {
   io.println(i)
 }
 ```
 
+To define a step you can use the `:` operator after the range.
+```ts
+for 0..10:2 {
+  io.println(i)
+}
+```
+
+Output:
+```
+0
+2
+4
+6
+8
+```
+
 While loops are used to execute code repeatedly while a condition is true.
 ```ts
+let x = 10
 while x > 0 {
   io.println(x)
   x = x - 1

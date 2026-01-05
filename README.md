@@ -38,7 +38,7 @@ if a > b {
     io.println("a is equal to b")
 }
 
-for let i = 0; i < 10; i = i + 1 {
+for 0..10 {
     io.println(i)
 }
 
