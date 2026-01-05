@@ -210,13 +210,13 @@ func (h *Hash) Type() ObjectType { return HashObj }
 func (h *Hash) Inspect() string {
 	var out bytes.Buffer
 
-	out.WriteString("{")
+	pairs := []string{}
 	for _, pair := range h.Pairs {
-		out.WriteString(pair.Key.Inspect())
-		out.WriteString(": ")
-		out.WriteString(pair.Value.Inspect())
-		out.WriteString(", ")
+		pairs = append(pairs, pair.Key.Inspect()+": "+pair.Value.Inspect())
 	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
 	out.WriteString("}")
 
 	return out.String()
