@@ -276,7 +276,6 @@ func sign(args ...object.Object) object.Object {
 	} else {
 		return &object.Integer{Value: 0}
 	}
-
 }
 
 func sin(args ...object.Object) object.Object {
