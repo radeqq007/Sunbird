@@ -30,10 +30,10 @@ let name: String = "Bojack"
 let is_adult: Bool = true
 ```
 
-`void` for null.
+`Void` for null.
 
 ```ts
-let x: void = null
+let x: Void = null
 ```
 
 ## Data structures
