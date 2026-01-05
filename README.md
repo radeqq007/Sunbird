@@ -73,7 +73,7 @@ let a: Int = 1
 let b: Float = 2.0
 let c: String = "hello"
 let d: Bool = true
-let e: void = null
+let e: Void = null
 let f: Array = [1, 2, 3]
 let g: Func = func(a: Int, b: Int): Int {
   return a + b
