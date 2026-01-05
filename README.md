@@ -27,6 +27,8 @@ add(a, b)
 
 ### Control flow
 ```ts
+import "io"
+
 let a = 1
 let b = 2
 
@@ -44,7 +46,7 @@ for 0..10 {
 
 while a <= b {
     io.println(a)
-    a = a + 1
+    a += 1
 
     if a == 1 {
       continue
