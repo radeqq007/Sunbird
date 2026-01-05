@@ -57,8 +57,10 @@ func (ot ObjectType) String() string {
 		return "Break"
 	case ContinueObj:
 		return "Continue"
+	case RangeObj:
+		return "Range"
 	default:
-		return "UNKNOWN"
+		return "Unknown"
 	}
 }
 
