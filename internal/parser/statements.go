@@ -163,14 +163,6 @@ func (p *Parser) parseConstExpression() ast.Expression {
 	return exp
 }
 
-func (p *Parser) validateDeclarationTarget(exp ast.Expression) bool {
-	switch exp.(type) {
-	case *ast.Identifier, *ast.PropertyExpression, *ast.IndexExpression:
-		return true
-	}
-	return false
-}
-
 func (p *Parser) parseImportStatement() *ast.ImportStatement {
 	stmt := &ast.ImportStatement{Token: p.curToken}
 
