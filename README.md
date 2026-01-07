@@ -6,7 +6,7 @@ For detailed language reference, standard library docs, and guides, see the [`do
 
 ## Overview
 
-### Hello world in sunbird
+### Hello world in Sunbird
 ```ts
 import "io"
 
