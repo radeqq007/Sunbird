@@ -191,9 +191,10 @@ func (ao *Array) Inspect() string {
 	return out.String()
 }
 
+// Hash is just an object in sunbird
 type Hash struct {
 	Pairs map[HashKey]HashPair
-	Proto *Hash // Prototype link for inheritance
+	Proto *Hash
 }
 
 type HashKey struct {
