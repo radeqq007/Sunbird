@@ -239,14 +239,20 @@ func clamp(args ...object.Object) object.Object {
 		return err
 	}
 
-	if args[0].Type() == object.FloatObj || args[1].Type() == object.FloatObj || args[2].Type() == object.FloatObj {
+	if args[0].Type() == object.FloatObj || args[1].Type() == object.FloatObj ||
+		args[2].Type() == object.FloatObj {
 		return &object.Float{
-			Value: math.Max(getFloat64(args[0]), math.Min(getFloat64(args[1]), getFloat64(args[2]))),
+			Value: math.Max(
+				getFloat64(args[0]),
+				math.Min(getFloat64(args[1]), getFloat64(args[2])),
+			),
 		}
 	}
 
 	return &object.Integer{
-		Value: int64(math.Max(getFloat64(args[0]), math.Min(getFloat64(args[1]), getFloat64(args[2])))),
+		Value: int64(
+			math.Max(getFloat64(args[0]), math.Min(getFloat64(args[1]), getFloat64(args[2]))),
+		),
 	}
 }
 
@@ -262,20 +268,24 @@ func sign(args ...object.Object) object.Object {
 	}
 
 	if args[0].Type() == object.FloatObj {
-		if getFloat64(args[0]) > 0 {
+		floatVar := getFloat64(args[0])
+		switch {
+		case floatVar > 0:
 			return &object.Float{Value: 1}
-		} else if getFloat64(args[0]) < 0 {
+		case floatVar < 0:
 			return &object.Float{Value: -1}
-		} else {
+		default:
 			return &object.Float{Value: 0}
 		}
 	}
 
-	if getFloat64(args[0]) > 0 {
+	floatVar := getFloat64(args[0])
+	switch {
+	case floatVar > 0:
 		return &object.Integer{Value: 1}
-	} else if getFloat64(args[0]) < 0 {
+	case floatVar < 0:
 		return &object.Integer{Value: -1}
-	} else {
+	default:
 		return &object.Integer{Value: 0}
 	}
 }

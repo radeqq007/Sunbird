@@ -73,17 +73,33 @@ func (ec ErrorCode) String() string {
 }
 
 func New(code ErrorCode, line, col int, format string, args ...interface{}) *object.Error {
-	return &object.Error{Line: line, Col: col, Message: fmt.Sprintf("%s: %s", code.String(), fmt.Sprintf(format, args...)), Propagating: true}
+	return &object.Error{
+		Line:        line,
+		Col:         col,
+		Message:     fmt.Sprintf("%s: %s", code.String(), fmt.Sprintf(format, args...)),
+		Propagating: true,
+	}
 }
 
 func ExpectType(line, col int, obj object.Object, expectedType object.ObjectType) *object.Error {
 	if obj.Type() != expectedType {
-		return New(TypeError, line, col, "expected %s, got %s", expectedType.String(), obj.Type().String())
+		return New(
+			TypeError,
+			line,
+			col,
+			"expected %s, got %s",
+			expectedType.String(),
+			obj.Type().String(),
+		)
 	}
 	return nil
 }
 
-func ExpectOneOfTypes(line, col int, obj object.Object, expectedTypes ...object.ObjectType) *object.Error {
+func ExpectOneOfTypes(
+	line, col int,
+	obj object.Object,
+	expectedTypes ...object.ObjectType,
+) *object.Error {
 	for _, expectedType := range expectedTypes {
 		if obj.Type() == expectedType {
 			return nil
@@ -94,7 +110,14 @@ func ExpectOneOfTypes(line, col int, obj object.Object, expectedTypes ...object.
 	for i, t := range expectedTypes {
 		typeNames[i] = t.String()
 	}
-	return New(TypeError, line, col, "expected one of %s, got %s", strings.Join(typeNames, ", "), obj.Type().String())
+	return New(
+		TypeError,
+		line,
+		col,
+		"expected one of %s, got %s",
+		strings.Join(typeNames, ", "),
+		obj.Type().String(),
+	)
 }
 
 func ExpectNumberOfArguments(line, col int, expected int, args []object.Object) *object.Error {
@@ -132,7 +155,12 @@ func NewTypeError(line, col int, format string, args ...interface{}) *object.Err
 	return New(TypeError, line, col, format, args...)
 }
 
-func NewTypeMismatchError(line, col int, left object.ObjectType, operator string, right object.ObjectType) *object.Error {
+func NewTypeMismatchError(
+	line, col int,
+	left object.ObjectType,
+	operator string,
+	right object.ObjectType,
+) *object.Error {
 	return New(TypeMismatchError, line, col, "%s %s %s", left.String(), operator, right.String())
 }
 
@@ -148,11 +176,28 @@ func NewImportError(line, col int, message string) *object.Error {
 	return New(ImportError, line, col, "%s", message)
 }
 
-func NewUnknownOperatorError(line, col int, left object.Object, operator string, right object.Object) *object.Error {
-	return New(UnknownOperatorError, line, col, "%s %s %s", left.Type().String(), operator, right.Type().String())
+func NewUnknownOperatorError(
+	line, col int,
+	left object.Object,
+	operator string,
+	right object.Object,
+) *object.Error {
+	return New(
+		UnknownOperatorError,
+		line,
+		col,
+		"%s %s %s",
+		left.Type().String(),
+		operator,
+		right.Type().String(),
+	)
 }
 
-func NewUnknownPrefixOperatorError(line, col int, operator string, right object.Object) *object.Error {
+func NewUnknownPrefixOperatorError(
+	line, col int,
+	operator string,
+	right object.Object,
+) *object.Error {
 	return New(UnknownOperatorError, line, col, "%s%s", operator, right.Type().String())
 }
 

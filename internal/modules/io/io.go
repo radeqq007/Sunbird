@@ -212,8 +212,9 @@ func getArgsArray(args ...object.Object) object.Object {
 	}
 
 	var elements []object.Object
-	if len(os.Args) > 2 {
-		osArgs := os.Args[2:]
+	userScriptIndex := 2
+	if len(os.Args) > userScriptIndex {
+		osArgs := os.Args[userScriptIndex:]
 		for _, arg := range osArgs {
 			elements = append(elements, &object.String{Value: arg})
 		}

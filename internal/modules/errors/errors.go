@@ -24,7 +24,10 @@ func New() *object.Hash {
 		Build()
 }
 
-func wrapError(args []object.Object, internalFunc func(int, int, string) *object.Error) object.Object {
+func wrapError(
+	args []object.Object,
+	internalFunc func(int, int, string) *object.Error,
+) object.Object {
 	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err != nil {
 		return err
 	}
@@ -48,9 +51,7 @@ func NewRuntimeError(args ...object.Object) object.Object {
 }
 
 func NewImportError(args ...object.Object) object.Object {
-	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.NewImportError(l, c, m)
-	})
+	return wrapError(args, errors.NewImportError)
 }
 
 func NewDivisionByZeroError(args ...object.Object) object.Object {
@@ -63,9 +64,7 @@ func NewDivisionByZeroError(args ...object.Object) object.Object {
 }
 
 func NewConstantReassignmentError(args ...object.Object) object.Object {
-	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.NewConstantReassignmentError(l, c, m)
-	})
+	return wrapError(args, errors.NewConstantReassignmentError)
 }
 
 func NewIndexNotSupportedError(args ...object.Object) object.Object {
@@ -87,9 +86,7 @@ func NewKeyError(args ...object.Object) object.Object {
 }
 
 func NewVariableReassignmentError(args ...object.Object) object.Object {
-	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.NewVariableReassignmentError(l, c, m)
-	})
+	return wrapError(args, errors.NewVariableReassignmentError)
 }
 
 func NewNotCallableError(args ...object.Object) object.Object {
@@ -99,9 +96,7 @@ func NewNotCallableError(args ...object.Object) object.Object {
 }
 
 func NewInvalidAssignmentError(args ...object.Object) object.Object {
-	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.NewInvalidAssignmentTargetError(l, c, m)
-	})
+	return wrapError(args, errors.NewInvalidAssignmentTargetError)
 }
 
 func NewArgumentError(args ...object.Object) object.Object {

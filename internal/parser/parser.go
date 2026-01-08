@@ -132,7 +132,12 @@ func (p *Parser) peekError(t token.TokenType) {
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
-	msg := fmt.Sprintf("no prefix parse function for %s found (at line %d, col %d)", t, p.curToken.Line, p.curToken.Col)
+	msg := fmt.Sprintf(
+		"no prefix parse function for %s found (at line %d, col %d)",
+		t,
+		p.curToken.Line,
+		p.curToken.Col,
+	)
 	p.errors = append(p.errors, msg)
 }
 

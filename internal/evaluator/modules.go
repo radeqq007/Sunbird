@@ -49,7 +49,7 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 		if _, err := os.Stat(fullPath); err != nil {
 			// Try with .sb extension
 			withExt := fullPath + ".sb"
-			if _, err := os.Stat(withExt); err == nil {
+			if _, err = os.Stat(withExt); err == nil {
 				fullPath = withExt
 			} else {
 				return nil, fmt.Errorf("module not found: %s", path)

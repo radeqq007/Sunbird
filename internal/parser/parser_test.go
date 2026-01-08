@@ -43,7 +43,11 @@ let foobar = 32.1;
 	for i, tt := range tests {
 		stmt, ok := program.Statements[i].(*ast.ExpressionStatement)
 		if !ok {
-			t.Fatalf("program.Statements[%d] is not ast.ExpressionStatement. got=%T", i, program.Statements[i])
+			t.Fatalf(
+				"program.Statements[%d] is not ast.ExpressionStatement. got=%T",
+				i,
+				program.Statements[i],
+			)
 		}
 		if !testLetExpression(t, stmt.Expression, tt.expectedIdentifier) {
 			return
@@ -86,7 +90,10 @@ func TestAssignStatement(t *testing.T) {
 
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
-		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+		t.Fatalf(
+			"program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0],
+		)
 	}
 
 	assignExp, ok := stmt.Expression.(*ast.AssignExpression)

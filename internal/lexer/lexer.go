@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sunbird/internal/token"
@@ -84,7 +85,7 @@ func (l *Lexer) readString() (string, error) {
 
 	for l.ch != startingQuote {
 		if l.ch == 0 {
-			return "", fmt.Errorf("unterminated string")
+			return "", errors.New("unterminated string")
 		}
 
 		if l.ch == '\\' {
@@ -146,7 +147,12 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.Eq, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
+			tok = token.Token{
+				Type:    token.Eq,
+				Literal: string(ch) + string(l.ch),
+				Line:    startLine,
+				Col:     startCol,
+			}
 		} else {
 			tok = l.newToken(token.Assign, l.ch)
 		}
@@ -176,7 +182,12 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.NotEq, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
+			tok = token.Token{
+				Type:    token.NotEq,
+				Literal: string(ch) + string(l.ch),
+				Line:    startLine,
+				Col:     startCol,
+			}
 		} else {
 			tok = l.newToken(token.Bang, l.ch)
 		}
@@ -223,7 +234,12 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.LE, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
+			tok = token.Token{
+				Type:    token.LE,
+				Literal: string(ch) + string(l.ch),
+				Line:    startLine,
+				Col:     startCol,
+			}
 		} else {
 			tok = l.newToken(token.LT, l.ch)
 		}
@@ -232,7 +248,12 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.GE, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
+			tok = token.Token{
+				Type:    token.GE,
+				Literal: string(ch) + string(l.ch),
+				Line:    startLine,
+				Col:     startCol,
+			}
 		} else {
 			tok = l.newToken(token.GT, l.ch)
 		}
@@ -241,14 +262,24 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '|' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.Or, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
+			tok = token.Token{
+				Type:    token.Or,
+				Literal: string(ch) + string(l.ch),
+				Line:    startLine,
+				Col:     startCol,
+			}
 		}
 
 	case '&':
 		if l.peekChar() == '&' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.And, Literal: string(ch) + string(l.ch), Line: startLine, Col: startCol}
+			tok = token.Token{
+				Type:    token.And,
+				Literal: string(ch) + string(l.ch),
+				Line:    startLine,
+				Col:     startCol,
+			}
 		}
 
 	case '(':

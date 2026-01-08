@@ -211,7 +211,8 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 
 		if result != nil {
 			rt := result.Type()
-			if rt == object.ReturnValueObj || isError(result) || rt == object.BreakObj || rt == object.ContinueObj {
+			if rt == object.ReturnValueObj || isError(result) || rt == object.BreakObj ||
+				rt == object.ContinueObj {
 				return result
 			}
 		}

@@ -15,11 +15,23 @@ func TestPush(t *testing.T) {
 	}{
 		{
 			input: "import 'array'; let a = [1, 2]; array.push(a, 3); a",
-			want:  object.Array{Elements: []object.Object{&object.Integer{Value: 1}, &object.Integer{Value: 2}, &object.Integer{Value: 3}}},
+			want: object.Array{
+				Elements: []object.Object{
+					&object.Integer{Value: 1},
+					&object.Integer{Value: 2},
+					&object.Integer{Value: 3},
+				},
+			},
 		},
 		{
 			input: "import 'array'; let a = [1, 2]; array.push(a, 'abc'); a",
-			want:  object.Array{Elements: []object.Object{&object.Integer{Value: 1}, &object.Integer{Value: 2}, &object.String{Value: "abc"}}},
+			want: object.Array{
+				Elements: []object.Object{
+					&object.Integer{Value: 1},
+					&object.Integer{Value: 2},
+					&object.String{Value: "abc"},
+				},
+			},
 		},
 		{
 			input: "import 'array'; let a = []; array.push(a, true); a",
@@ -131,7 +143,12 @@ func TestSlice(t *testing.T) {
 		}
 		for i, wantStr := range tt.want {
 			if array.Elements[i].Inspect() != wantStr {
-				t.Errorf("element %d wrong. want=%s, got=%s", i, wantStr, array.Elements[i].Inspect())
+				t.Errorf(
+					"element %d wrong. want=%s, got=%s",
+					i,
+					wantStr,
+					array.Elements[i].Inspect(),
+				)
 			}
 		}
 	}
@@ -198,12 +215,21 @@ func testArrayObject(t *testing.T, obj object.Object, expected object.Array) {
 	}
 
 	if len(array.Elements) != len(expected.Elements) {
-		t.Errorf("array has wrong number of elements. want=%d, got=%d", len(expected.Elements), len(array.Elements))
+		t.Errorf(
+			"array has wrong number of elements. want=%d, got=%d",
+			len(expected.Elements),
+			len(array.Elements),
+		)
 	}
 
 	for i, a := range array.Elements {
 		if a.Inspect() != expected.Elements[i].Inspect() {
-			t.Errorf("element %d is not equal. want=%+v, got=%+v", i, expected.Elements[i].Inspect(), a.Inspect())
+			t.Errorf(
+				"element %d is not equal. want=%+v, got=%+v",
+				i,
+				expected.Elements[i].Inspect(),
+				a.Inspect(),
+			)
 		}
 	}
 }

@@ -127,7 +127,12 @@ func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment)
 	return evalHashIndexExpression(hash, key, pe.Token.Line, pe.Token.Col)
 }
 
-func evalMethodCall(obj *object.Hash, method object.Object, args []object.Object, line, col int) object.Object {
+func evalMethodCall(
+	obj *object.Hash,
+	method object.Object,
+	args []object.Object,
+	line, col int,
+) object.Object {
 	fn, ok := method.(*object.Function)
 	if !ok {
 		// Not a function, just call normally

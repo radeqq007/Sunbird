@@ -53,12 +53,12 @@ func route(method string, args ...object.Object) object.Object {
 	callback := args[1].(*object.Function)
 
 	http.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
-		args := []object.Object{
+		funcArgs := []object.Object{
 			newWriter(w),
 			newRequest(r),
 		}
 		if r.Method == method && object.ApplyFunction != nil {
-			object.ApplyFunction(callback, args)
+			object.ApplyFunction(callback, funcArgs)
 		}
 	})
 

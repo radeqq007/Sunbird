@@ -48,7 +48,10 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 	}
 }
 
-func extendFunctionEnv(fn *object.Function, args []object.Object) (*object.Environment, *object.Error) {
+func extendFunctionEnv(
+	fn *object.Function,
+	args []object.Object,
+) (*object.Environment, *object.Error) {
 	env := object.NewEnclosedEnvironment(fn.Env)
 
 	for i, param := range fn.Parameters {

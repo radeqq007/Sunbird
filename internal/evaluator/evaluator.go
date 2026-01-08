@@ -155,27 +155,30 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.CallExpression:
 		// Check if it's an object method call
-		if propExpr, ok := node.Function.(*ast.PropertyExpression); ok {
-			obj := Eval(propExpr.Object, env)
-			if isError(obj) {
-				return obj
+		propExpr, ok := node.Function.(*ast.PropertyExpression)
+		if !ok {
+			return nil
+		}
+
+		obj := Eval(propExpr.Object, env)
+		if isError(obj) {
+			return obj
+		}
+
+		var hash *object.Hash
+		if hash, ok = obj.(*object.Hash); ok {
+			key := &object.String{Value: propExpr.Property.Value}
+			method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
+			if isError(method) {
+				return method
 			}
 
-			hash, ok := obj.(*object.Hash)
-			if ok {
-				key := &object.String{Value: propExpr.Property.Value}
-				method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
-				if isError(method) {
-					return method
-				}
-
-				args := evalExpressions(node.Arguments, env)
-				if len(args) == 1 && isError(args[0]) {
-					return args[0]
-				}
-
-				return evalMethodCall(hash, method, args, node.Token.Line, node.Token.Col)
+			args := evalExpressions(node.Arguments, env)
+			if len(args) == 1 && isError(args[0]) {
+				return args[0]
 			}
+
+			return evalMethodCall(hash, method, args, node.Token.Line, node.Token.Col)
 		}
 
 		// Regular function call
@@ -302,7 +305,13 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 	}
 
 	if start.Type() != object.IntegerObj || end.Type() != object.IntegerObj {
-		return errors.NewTypeError(node.Token.Line, node.Token.Col, "range values must be integers (got %s and %s)", start.Type(), end.Type())
+		return errors.NewTypeError(
+			node.Token.Line,
+			node.Token.Col,
+			"range values must be integers (got %s and %s)",
+			start.Type(),
+			end.Type(),
+		)
 	}
 
 	startVal := start.(*object.Integer).Value
@@ -316,7 +325,12 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 		}
 
 		if step.Type() != object.IntegerObj {
-			return errors.NewTypeError(node.Token.Line, node.Token.Col, "range step must be integer (got %s)", step.Type())
+			return errors.NewTypeError(
+				node.Token.Line,
+				node.Token.Col,
+				"range step must be integer (got %s)",
+				step.Type(),
+			)
 		}
 		stepVal = step.(*object.Integer).Value
 	}

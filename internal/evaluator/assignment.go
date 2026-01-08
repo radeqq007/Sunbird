@@ -22,7 +22,11 @@ func evalAssignment(name ast.Expression, val object.Object, env *object.Environm
 	}
 }
 
-func evalIdentifierAssignment(node *ast.Identifier, val object.Object, env *object.Environment) object.Object {
+func evalIdentifierAssignment(
+	node *ast.Identifier,
+	val object.Object,
+	env *object.Environment,
+) object.Object {
 	if env.IsConst(node.Value) {
 		return errors.NewConstantReassignmentError(node.Token.Line, node.Token.Col, node.Value)
 	}
@@ -40,7 +44,11 @@ func evalIdentifierAssignment(node *ast.Identifier, val object.Object, env *obje
 	return errors.NewUndefinedVariableError(node.Token.Line, node.Token.Col, node.Value)
 }
 
-func evalPropertyExpressionAssignment(node *ast.PropertyExpression, val object.Object, env *object.Environment) object.Object {
+func evalPropertyExpressionAssignment(
+	node *ast.PropertyExpression,
+	val object.Object,
+	env *object.Environment,
+) object.Object {
 	obj := Eval(node.Object, env)
 	if isError(obj) {
 		return obj
@@ -60,7 +68,11 @@ func evalPropertyExpressionAssignment(node *ast.PropertyExpression, val object.O
 	return val
 }
 
-func evalIndexExpressionAssignment(node *ast.IndexExpression, val object.Object, env *object.Environment) object.Object {
+func evalIndexExpressionAssignment(
+	node *ast.IndexExpression,
+	val object.Object,
+	env *object.Environment,
+) object.Object {
 	left := Eval(node.Left, env)
 	if isError(left) {
 		return left
@@ -100,7 +112,11 @@ func evalIndexExpressionAssignment(node *ast.IndexExpression, val object.Object,
 	}
 }
 
-func evalCompoundAssignExpression(node *ast.CompoundAssignExpression, val object.Object, env *object.Environment) object.Object {
+func evalCompoundAssignExpression(
+	node *ast.CompoundAssignExpression,
+	val object.Object,
+	env *object.Environment,
+) object.Object {
 	currentVal := Eval(node.Name, env)
 	if isError(currentVal) {
 		return currentVal
