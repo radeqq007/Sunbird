@@ -156,29 +156,28 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.CallExpression:
 		// Check if it's an object method call
 		propExpr, ok := node.Function.(*ast.PropertyExpression)
-		if !ok {
-			return nil
-		}
+		if ok {
 
-		obj := Eval(propExpr.Object, env)
-		if isError(obj) {
-			return obj
-		}
-
-		var hash *object.Hash
-		if hash, ok = obj.(*object.Hash); ok {
-			key := &object.String{Value: propExpr.Property.Value}
-			method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
-			if isError(method) {
-				return method
+			obj := Eval(propExpr.Object, env)
+			if isError(obj) {
+				return obj
 			}
 
-			args := evalExpressions(node.Arguments, env)
-			if len(args) == 1 && isError(args[0]) {
-				return args[0]
-			}
+			var hash *object.Hash
+			if hash, ok = obj.(*object.Hash); ok {
+				key := &object.String{Value: propExpr.Property.Value}
+				method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
+				if isError(method) {
+					return method
+				}
 
-			return evalMethodCall(hash, method, args, node.Token.Line, node.Token.Col)
+				args := evalExpressions(node.Arguments, env)
+				if len(args) == 1 && isError(args[0]) {
+					return args[0]
+				}
+
+				return evalMethodCall(hash, method, args, node.Token.Line, node.Token.Col)
+			}
 		}
 
 		// Regular function call
