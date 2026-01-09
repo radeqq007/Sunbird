@@ -4,6 +4,7 @@ import (
 	gojson "encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"sunbird/internal/errors"
 	"sunbird/internal/modules/json"
 	"sunbird/internal/modules/modbuilder"
@@ -112,6 +113,77 @@ func newRequest(r *http.Request) object.Object {
 			}
 
 			return &object.String{Value: r.URL.String()}
+		}).
+		AddFunction("header", func(args ...object.Object) object.Object {
+			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+			if err != nil {
+				return err
+			}
+
+			err = errors.ExpectType(0, 0, args[0], object.StringObj)
+			if err != nil {
+				return err
+			}
+
+			header := r.Header.Get(args[0].(*object.String).Value)
+
+			if header == "" {
+				return &object.Null{}
+			}
+
+			return &object.String{Value: header}
+		}).
+		AddFunction("headers", func(args ...object.Object) object.Object {
+			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+			if err != nil {
+				return err
+			}
+
+			pairs := make(map[object.HashKey]object.HashPair)
+			for key, values := range r.Header {
+				keyObj := &object.String{Value: key}
+				hashKey := keyObj.HashKey()
+
+				valueObj := &object.String{Value: strings.Join(values, ", ")}
+				pairs[hashKey] = object.HashPair{Key: keyObj, Value: valueObj}
+			}
+
+			return &object.Hash{
+				Pairs: pairs,
+			}
+		}).
+		AddFunction("cookie", func(args ...object.Object) object.Object {
+			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+			if err != nil {
+				return err
+			}
+			err = errors.ExpectType(0, 0, args[0], object.StringObj)
+			if err != nil {
+				return err
+			}
+
+			cookie, errGo := r.Cookie(args[0].(*object.String).Value)
+			if errGo != nil {
+				return &object.Null{}
+			}
+
+			return &object.String{Value: cookie.Value}
+		}).
+		AddFunction("cookies", func(args ...object.Object) object.Object {
+			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+			if err != nil {
+				return err
+			}
+
+			pairs := make(map[object.HashKey]object.HashPair)
+			for _, cookie := range r.Cookies() {
+				keyObj := &object.String{Value: cookie.Name}
+				hashKey := keyObj.HashKey()
+				valueObj := &object.String{Value: cookie.Value}
+				pairs[hashKey] = object.HashPair{Key: keyObj, Value: valueObj}
+			}
+
+			return &object.Hash{Pairs: pairs}
 		}).
 		Build()
 }

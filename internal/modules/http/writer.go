@@ -140,5 +140,91 @@ func newWriter(w http.ResponseWriter) object.Object {
 
 			return &object.Null{}
 		}).
+		AddFunction("set_cookie", func(args ...object.Object) object.Object {
+			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+			if err != nil {
+				err = errors.ExpectNumberOfArguments(0, 0, 3, args)
+				if err != nil {
+					return err
+				}
+			}
+
+			err = errors.ExpectType(0, 0, args[0], object.StringObj)
+			if err != nil {
+				return err
+			}
+			err = errors.ExpectType(1, 0, args[1], object.StringObj)
+			if err != nil {
+				return err
+			}
+
+			cookie := &http.Cookie{
+				Name:  args[0].(*object.String).Value,
+				Value: args[1].(*object.String).Value,
+				Path:  "/",
+			}
+
+			// Parse options if provided
+			if len(args) == 3 {
+				err = errors.ExpectType(2, 0, args[2], object.HashObj)
+				if err != nil {
+					return err
+				}
+
+				options := args[2].(*object.Hash)
+
+				// MaxAge
+				if pair, ok := options.Pairs[(&object.String{Value: "max_age"}).HashKey()]; ok {
+					if intVal, ok := pair.Value.(*object.Integer); ok {
+						cookie.MaxAge = int(intVal.Value)
+					}
+				}
+
+				// Domain
+				if pair, ok := options.Pairs[(&object.String{Value: "domain"}).HashKey()]; ok {
+					if strVal, ok := pair.Value.(*object.String); ok {
+						cookie.Domain = strVal.Value
+					}
+				}
+
+				// Path
+				if pair, ok := options.Pairs[(&object.String{Value: "path"}).HashKey()]; ok {
+					if strVal, ok := pair.Value.(*object.String); ok {
+						cookie.Path = strVal.Value
+					}
+				}
+
+				// Secure
+				if pair, ok := options.Pairs[(&object.String{Value: "secure"}).HashKey()]; ok {
+					if boolVal, ok := pair.Value.(*object.Boolean); ok {
+						cookie.Secure = boolVal.Value
+					}
+				}
+
+				// HttpOnly
+				if pair, ok := options.Pairs[(&object.String{Value: "http_only"}).HashKey()]; ok {
+					if boolVal, ok := pair.Value.(*object.Boolean); ok {
+						cookie.HttpOnly = boolVal.Value
+					}
+				}
+
+				// SameSite
+				if pair, ok := options.Pairs[(&object.String{Value: "same_site"}).HashKey()]; ok {
+					if strVal, ok := pair.Value.(*object.String); ok {
+						switch strVal.Value {
+						case "strict":
+							cookie.SameSite = http.SameSiteStrictMode
+						case "lax":
+							cookie.SameSite = http.SameSiteLaxMode
+						case "none":
+							cookie.SameSite = http.SameSiteNoneMode
+						}
+					}
+				}
+			}
+
+			http.SetCookie(w, cookie)
+			return &object.Null{}
+		}).
 		Build()
 }
