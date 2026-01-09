@@ -102,6 +102,7 @@ It gets passed as the first argument to the route handler.
 It has the following methods:
 - `send`: sends a string to the response
 - `json`: sends a JSON object to the response
+- `set_cookie`: sets a cookie
 - `header`: object that provides methods for setting, adding, deleting, and getting headers
 - `status`: sets the status code of the response
 
@@ -125,13 +126,33 @@ server.get("/", func(w, r) {
 })
 ```
 
-### writer.header
+### writer.set_cookie
 
-`writer.header` is an object that provides methods for setting, adding, deleting, and getting headers.
+`writer.set_cookie` is a function that sets a cookie.
+
+It takes two arguments:
+- `name`: the name of the cookie
+- `value`: the value of the cookie
+
+and a third optional argument:
+- `options`: an object that can contain: `max_age`, `domain`, `path`, `secure`, `http_only`, `same_site`
 
 ```ts
 server.get("/", func(w, r) {
-    w.header.set("Content-Type", "application/json")
+    w.set_cookie("name", "value")
+})
+```
+
+```ts
+server.get("/", func(w, r) {
+    w.set_cookie("name", "value", {
+        "max_age": 3600,         // Cookie expiration time in seconds
+        "domain": "example.com", // Cookie domain
+        "path": "/",             // Cookie path
+        "secure": true,          // Only send over HTTPS
+        "http_only": true,       // Not accessible via JavaScript
+        "same_site": "strict"    // CSRF protection ("strict", "lax", or "none")
+    })
 })
 ```
 
