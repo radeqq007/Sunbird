@@ -25,6 +25,7 @@ const (
 	ParseError
 	PropertyAccessOnNonObjectError
 	UnknownOperatorError
+	FeatureNotImplementedError
 )
 
 type ErrorCode int
@@ -67,6 +68,8 @@ func (ec ErrorCode) String() string {
 		return "PropertyAccessOnNonObjectError"
 	case UnknownOperatorError:
 		return "UnknownOperatorError"
+	case FeatureNotImplementedError:
+		return "FeatureNotImplementedError"
 	default:
 		return "UnknownError"
 	}
@@ -215,4 +218,8 @@ func NewConstantReassignmentError(line, col int, identifier string) *object.Erro
 
 func NewArgumentError(line, col int, format string, args ...interface{}) *object.Error {
 	return New(ArgumentError, line, col, format, args...)
+}
+
+func NewFeatureNotImplementedError(line, col int, feature string) *object.Error {
+	return New(FeatureNotImplementedError, line, col, "%s", feature)
 }
