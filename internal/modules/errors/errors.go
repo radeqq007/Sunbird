@@ -21,6 +21,7 @@ func New() *object.Hash {
 		AddFunction("invalid_assignment_error", NewInvalidAssignmentError).
 		AddFunction("argument_error", NewArgumentError).
 		AddFunction("property_access_error", NewPropertyAccessError).
+		AddFunction("feature_not_implemented_error", NewFeatureNotImplementedError).
 		Build()
 }
 
@@ -115,4 +116,8 @@ func NewUnknownOperatorError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
 		return errors.New(errors.UnknownOperatorError, l, c, m)
 	})
+}
+
+func NewFeatureNotImplementedError(args ...object.Object) object.Object {
+	return wrapError(args, errors.NewFeatureNotImplementedError)
 }
