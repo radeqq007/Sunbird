@@ -140,7 +140,13 @@ func newWriter(w http.ResponseWriter) object.Object {
 
 			return &object.Null{}
 		}).
-		AddFunction("set_cookie", func(args ...object.Object) object.Object {
+		AddValue("cookie", cookieHash(w)).
+		Build()
+}
+
+func cookieHash(w http.ResponseWriter) object.Object {
+	h := modbuilder.NewHashBuilder().
+		AddFunction("set", func(args ...object.Object) object.Object {
 			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 			if err != nil {
 				err = errors.ExpectNumberOfArguments(0, 0, 3, args)
@@ -226,5 +232,29 @@ func newWriter(w http.ResponseWriter) object.Object {
 			http.SetCookie(w, cookie)
 			return &object.Null{}
 		}).
+		AddFunction("delete", func(args ...object.Object) object.Object {
+			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+			if err != nil {
+				return err
+			}
+
+			err = errors.ExpectType(0, 0, args[0], object.StringObj)
+			if err != nil {
+				return err
+			}
+
+			cookie := &http.Cookie{
+				Name:  args[0].(*object.String).Value,
+				Value: "",
+				Path:  "/",
+				MaxAge: -1,
+			}
+
+			http.SetCookie(w, cookie)
+
+			return &object.Null{}
+		}).
 		Build()
+	
+		return h
 }
