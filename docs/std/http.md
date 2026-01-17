@@ -102,7 +102,7 @@ It gets passed as the first argument to the route handler.
 It has the following methods:
 - `send`: sends a string to the response
 - `json`: sends a JSON object to the response
-- `set_cookie`: sets a cookie
+- `cookie`: object that contains functions for handling cookies
 - `header`: object that provides methods for setting, adding, deleting, and getting headers
 - `status`: sets the status code of the response
 
