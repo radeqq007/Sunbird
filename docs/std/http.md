@@ -126,9 +126,13 @@ server.get("/", func(w, r) {
 })
 ```
 
-### writer.set_cookie
+### writer.cookie
 
-`writer.set_cookie` is a function that sets a cookie.
+`writer.cookie` is an object that contains functions for handling cookies.
+
+#### writer.cookie.set()
+
+`writer.cookie.set()` is a function that sets a cookie.
 
 It takes two arguments:
 - `name`: the name of the cookie
@@ -145,7 +149,7 @@ server.get("/", func(w, r) {
 
 ```ts
 server.get("/", func(w, r) {
-    w.set_cookie("name", "value", {
+    w.cookie.set("name", "value", {
         "max_age": 3600,         // Cookie expiration time in seconds
         "domain": "example.com", // Cookie domain
         "path": "/",             // Cookie path
@@ -153,6 +157,16 @@ server.get("/", func(w, r) {
         "http_only": true,       // Not accessible via JavaScript
         "same_site": "strict"    // CSRF protection ("strict", "lax", or "none")
     })
+})
+```
+
+#### writer.cookie.delete()
+
+`writer.cookie.delete` is a function that deletes a cookie.
+
+```ts
+server.get("/", func(w, r) {
+    w.cookie.delete("name")
 })
 ```
 
