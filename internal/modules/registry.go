@@ -3,6 +3,7 @@ package modules
 import (
 	"sunbird/internal/modules/array"
 	"sunbird/internal/modules/errors"
+	"sunbird/internal/modules/fs"
 	"sunbird/internal/modules/http"
 	"sunbird/internal/modules/io"
 	"sunbird/internal/modules/json"
@@ -21,6 +22,7 @@ var BuiltinModules = map[string]*object.Hash{
 	"errors": errors.New(),
 	"json":   json.New(),
 	"http":   http.New(),
+	"fs":			fs.New(),
 }
 
 func Get(name string) (*object.Hash, bool) {
