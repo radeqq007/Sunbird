@@ -82,9 +82,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalTryCatchStatement(node, env)
 
 	case *ast.ReturnStatement:
-		val := Eval(node.ReturnValue, env)
-		if isError(val) {
-			return val
+		var val object.Object
+		if node.ReturnValue != nil {
+			val = Eval(node.ReturnValue, env)
+			if isError(val) {
+				return val
+			}
+		} else {
+			val = NULL
 		}
 		return &object.ReturnValue{Value: val}
 

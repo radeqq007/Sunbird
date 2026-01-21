@@ -59,9 +59,10 @@ func (p *Parser) parseContinueStatement() *ast.ContinueStatement {
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 
-	p.nextToken()
-
-	stmt.ReturnValue = p.parseExpression(LOWEST)
+	if !p.peekTokenIs(token.Semicolon) && !p.peekTokenIs(token.RBrace) {
+		p.nextToken()
+		stmt.ReturnValue = p.parseExpression(LOWEST)
+	}
 
 	// Skip semicolon if present
 	if p.peekTokenIs(token.Semicolon) {
