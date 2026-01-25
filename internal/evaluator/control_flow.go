@@ -128,11 +128,9 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 }
 
 func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.Object {
-	loopEnv := object.NewEnclosedEnvironment(env)
-
 	var result object.Object = NULL
-
 	for {
+		loopEnv := object.NewEnclosedEnvironment(env)
 		condition := Eval(ws.Condition, loopEnv)
 		if isError(condition) {
 			return condition
