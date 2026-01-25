@@ -35,7 +35,7 @@ func push(args ...object.Object) object.Object {
 
 	array := args[0].(*object.Array)
 	array.Elements = append(array.Elements, args[1])
-	return nil
+	return &object.Null{}
 }
 
 func pop(args ...object.Object) object.Object {
@@ -95,7 +95,7 @@ func unshift(args ...object.Object) object.Object {
 
 	array := args[0].(*object.Array)
 	array.Elements = append([]object.Object{args[1]}, array.Elements...)
-	return nil
+	return &object.Null{}
 }
 
 func reverse(args ...object.Object) object.Object {
@@ -117,7 +117,7 @@ func reverse(args ...object.Object) object.Object {
 	}
 
 	array.Elements = reversed
-	return nil
+	return &object.Null{}
 }
 
 func join(args ...object.Object) object.Object {
@@ -292,5 +292,5 @@ func clearArray(args ...object.Object) object.Object {
 
 	array := args[0].(*object.Array)
 	array.Elements = []object.Object{} // should this be set to nil?
-	return nil
+	return &object.Null{}
 }
