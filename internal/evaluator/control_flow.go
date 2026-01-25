@@ -7,16 +7,17 @@ import (
 )
 
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
-	condition := Eval(ie.Condition, env)
+	ifEnv := object.NewEnclosedEnvironment(env)
+	condition := Eval(ie.Condition, ifEnv)
 	if isError(condition) {
 		return condition
 	}
 
 	switch {
 	case isTruthy(condition):
-		return Eval(ie.Consequence, env)
+		return Eval(ie.Consequence, ifEnv)
 	case ie.Alternative != nil:
-		return Eval(ie.Alternative, env)
+		return Eval(ie.Alternative, ifEnv)
 	default:
 		return NULL
 	}
