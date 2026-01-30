@@ -1,7 +1,7 @@
 package random
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"sunbird/internal/errors"
 	"sunbird/internal/modules/modbuilder"
 	"sunbird/internal/object"
@@ -19,9 +19,9 @@ func New() *object.Hash {
 		Build()
 }
 
-var seed = time.Now().UnixNano()
+var seed uint64 = uint64(time.Now().UnixNano())
 
-var r = rand.New(rand.NewSource(seed))
+var r = rand.New(rand.NewPCG(seed, seed))
 
 func newSeed(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
@@ -34,8 +34,8 @@ func newSeed(args ...object.Object) object.Object {
 		return err
 	}
 
-	seed = args[0].(*object.Integer).Value
-	r = rand.New(rand.NewSource(seed))
+	seed = uint64(args[0].(*object.Integer).Value)
+	r = rand.New(rand.NewPCG(seed, seed))
 
 	return &object.Null{}
 }
@@ -59,7 +59,7 @@ func randInt(args ...object.Object) object.Object {
 	min := args[0].(*object.Integer).Value
 	max := args[1].(*object.Integer).Value
 
-	return &object.Integer{Value: r.Int63n(max-min) + min}
+	return &object.Integer{Value: r.Int64N(max-(min)) + min}
 }
 
 func randFloat(args ...object.Object) object.Object {
@@ -90,7 +90,7 @@ func randBool(args ...object.Object) object.Object {
 		return err
 	}
 
-	return &object.Boolean{Value: r.Intn(2) == 1}
+	return &object.Boolean{Value: r.Int64N(2) == 1}
 }
 
 func choice(args ...object.Object) object.Object {
@@ -104,7 +104,7 @@ func choice(args ...object.Object) object.Object {
 		return err
 	}
 
-	return args[0].(*object.Array).Elements[r.Intn(len(args[0].(*object.Array).Elements))]
+	return args[0].(*object.Array).Elements[r.Int64N(int64(len(args[0].(*object.Array).Elements)))]
 }
 
 func shuffle(args ...object.Object) object.Object {
@@ -123,7 +123,7 @@ func shuffle(args ...object.Object) object.Object {
 	copy(shuffled, arr.Elements)
 
 	for i := range shuffled {
-		j := r.Intn(i + 1)
+		j := r.Int64N(int64(i + 1))
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	}
 
