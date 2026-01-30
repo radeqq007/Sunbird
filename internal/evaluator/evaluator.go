@@ -308,18 +308,21 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 		return end
 	}
 
-	if start.Type() != object.IntegerObj || end.Type() != object.IntegerObj {
-		return errors.NewTypeError(
-			node.Token.Line,
-			node.Token.Col,
-			"range values must be integers (got %s and %s)",
-			start.Type(),
-			end.Type(),
-		)
+	err := errors.ExpectType(node.Token.Line, node.Token.Col, start, object.IntegerObj)
+	if err != nil {
+		return err
 	}
 
-	startVal := start.(*object.Integer).Value
-	endVal := end.(*object.Integer).Value
+	err = errors.ExpectType(node.Token.Line, node.Token.Col, end, object.IntegerObj)
+	if err != nil {
+		return err
+	}
+
+	startObj, _ := start.(*object.Integer)
+	startVal := startObj.Value
+
+	endObj := end.(*object.Integer)
+	endVal := endObj.Value
 	stepVal := int64(1)
 
 	if node.Step != nil {
@@ -328,15 +331,13 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 			return step
 		}
 
-		if step.Type() != object.IntegerObj {
-			return errors.NewTypeError(
-				node.Token.Line,
-				node.Token.Col,
-				"range step must be integer (got %s)",
-				step.Type(),
-			)
+		err = errors.ExpectType(node.Token.Line, node.Token.Col, step, object.IntegerObj)
+		if err != nil {
+			return err
 		}
-		stepVal = step.(*object.Integer).Value
+
+		stepObj, _ := step.(*object.Integer)
+		stepVal = stepObj.Value
 	}
 
 	return &object.Range{Start: startVal, End: endVal, Step: stepVal}
