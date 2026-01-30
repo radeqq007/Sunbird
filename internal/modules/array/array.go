@@ -33,7 +33,7 @@ func push(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	array.Elements = append(array.Elements, args[1])
 	return &object.Null{}
 }
@@ -49,7 +49,7 @@ func pop(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	if len(array.Elements) == 0 {
 		return errors.NewRuntimeError(0, 0, "array is empty")
 	}
@@ -71,7 +71,7 @@ func shift(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	if len(array.Elements) == 0 {
 		return errors.NewRuntimeError(0, 0, "array is empty")
 	}
@@ -93,7 +93,7 @@ func unshift(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	array.Elements = append([]object.Object{args[1]}, array.Elements...)
 	return &object.Null{}
 }
@@ -109,7 +109,7 @@ func reverse(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 
 	reversed := make([]object.Object, len(array.Elements))
 	for i, v := range array.Elements {
@@ -136,7 +136,7 @@ func join(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	separator := args[1].(*object.String)
 
 	result := ""
@@ -176,7 +176,7 @@ func slice(args ...object.Object) object.Object {
 		}
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	start := args[1].(*object.Integer).Value
 	end := int64(len(array.Elements))
 
@@ -218,7 +218,7 @@ func indexOf(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	value := args[1]
 
 	for i, v := range array.Elements {
@@ -241,7 +241,7 @@ func contains(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	value := args[1]
 
 	for _, v := range array.Elements {
@@ -269,7 +269,7 @@ func concat(args ...object.Object) object.Object {
 		return err
 	}
 
-	arr1 := args[0].(*object.Array)
+	arr1, _ := args[0].(*object.Array)
 	arr2 := args[1].(*object.Array)
 
 	result := make([]object.Object, len(arr1.Elements)+len(arr2.Elements))
@@ -290,7 +290,7 @@ func clearArray(args ...object.Object) object.Object {
 		return err
 	}
 
-	array := args[0].(*object.Array)
+	array, _ := args[0].(*object.Array)
 	array.Elements = []object.Object{} // should this be set to nil?
 	return &object.Null{}
 }
