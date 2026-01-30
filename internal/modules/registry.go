@@ -22,7 +22,7 @@ var BuiltinModules = map[string]*object.Hash{
 	"errors": errors.New(),
 	"json":   json.New(),
 	"http":   http.New(),
-	"fs":			fs.New(),
+	"fs":     fs.New(),
 }
 
 func Get(name string) (*object.Hash, bool) {

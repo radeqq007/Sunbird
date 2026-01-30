@@ -1,6 +1,7 @@
 package array
 
 import (
+	"strings"
 	"sunbird/internal/errors"
 	"sunbird/internal/modules/modbuilder"
 	"sunbird/internal/object"
@@ -139,15 +140,14 @@ func join(args ...object.Object) object.Object {
 	array, _ := args[0].(*object.Array)
 	separator := args[1].(*object.String)
 
-	result := ""
+	var b strings.Builder
 	for i, v := range array.Elements {
 		if i > 0 {
-			result += separator.Value
+			b.WriteString(separator.Value)
 		}
-		result += v.Inspect()
+		b.WriteString(v.Inspect())
 	}
-
-	return &object.String{Value: result}
+	return &object.String{Value: b.String()}
 }
 
 func slice(args ...object.Object) object.Object {

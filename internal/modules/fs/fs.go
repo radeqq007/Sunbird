@@ -19,7 +19,7 @@ func New() *object.Hash {
 		AddFunction("list_dir", listDir).
 		AddFunction("create_dir", createDir).
 		AddFunction("rename", rename).
-		AddFunction("copy", copy).
+		AddFunction("copy", copyFile).
 		Build()
 }
 
@@ -36,7 +36,6 @@ func getFullPath(requestedPath string) string {
 	}
 	return fullPath
 }
-
 
 func readFile(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
@@ -66,7 +65,7 @@ func writeFile(args ...object.Object) object.Object {
 	err = errors.ExpectType(0, 0, args[0], object.StringObj)
 	if err != nil {
 		return err
-	}	
+	}
 
 	err = errors.ExpectType(0, 1, args[1], object.StringObj)
 	if err != nil {
@@ -87,7 +86,7 @@ func appendFile(args ...object.Object) object.Object {
 	err = errors.ExpectType(0, 0, args[0], object.StringObj)
 	if err != nil {
 		return err
-	}	
+	}
 
 	err = errors.ExpectType(0, 1, args[1], object.StringObj)
 	if err != nil {
@@ -231,7 +230,7 @@ func rename(args ...object.Object) object.Object {
 	return &object.Null{}
 }
 
-func copy(args ...object.Object) object.Object {
+func copyFile(args ...object.Object) object.Object {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 	if err != nil {
 		return err
@@ -247,7 +246,9 @@ func copy(args ...object.Object) object.Object {
 		return err
 	}
 
-	data, errGo := os.ReadFile(getFullPath(args[0].(*object.String).Value))
+	strObj, _ := args[0].(*object.String)
+
+	data, errGo := os.ReadFile(getFullPath(strObj.Value))
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
 	}

@@ -321,7 +321,7 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 	startObj, _ := start.(*object.Integer)
 	startVal := startObj.Value
 
-	endObj := end.(*object.Integer)
+	endObj, _ := end.(*object.Integer)
 	endVal := endObj.Value
 	stepVal := int64(1)
 

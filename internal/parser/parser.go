@@ -213,26 +213,27 @@ func (p *Parser) parseTypeAnnotation() ast.TypeAnnotation {
 	}
 }
 
-func (p *Parser) parseTypeList(end token.TokenType) []ast.TypeAnnotation {
-	list := []ast.TypeAnnotation{}
+// NOTE: This will be used some day
+// func (p *Parser) parseTypeList(end token.TokenType) []ast.TypeAnnotation {
+// 	list := []ast.TypeAnnotation{}
 
-	if p.peekTokenIs(end) {
-		p.nextToken()
-		return list
-	}
+// 	if p.peekTokenIs(end) {
+// 		p.nextToken()
+// 		return list
+// 	}
 
-	p.nextToken()
-	list = append(list, p.parseTypeAnnotation())
+// 	p.nextToken()
+// 	list = append(list, p.parseTypeAnnotation())
 
-	for p.peekTokenIs(token.Comma) {
-		p.nextToken()
-		p.nextToken()
-		list = append(list, p.parseTypeAnnotation())
-	}
+// 	for p.peekTokenIs(token.Comma) {
+// 		p.nextToken()
+// 		p.nextToken()
+// 		list = append(list, p.parseTypeAnnotation())
+// 	}
 
-	if !p.expectPeek(end) {
-		return nil
-	}
+// 	if !p.expectPeek(end) {
+// 		return nil
+// 	}
 
-	return list
-}
+// 	return list
+// }

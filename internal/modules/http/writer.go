@@ -244,9 +244,9 @@ func cookieHash(w http.ResponseWriter) object.Object {
 			}
 
 			cookie := &http.Cookie{
-				Name:  args[0].(*object.String).Value,
-				Value: "",
-				Path:  "/",
+				Name:   args[0].(*object.String).Value,
+				Value:  "",
+				Path:   "/",
 				MaxAge: -1,
 			}
 
@@ -255,6 +255,6 @@ func cookieHash(w http.ResponseWriter) object.Object {
 			return &object.Null{}
 		}).
 		Build()
-	
-		return h
+
+	return h
 }

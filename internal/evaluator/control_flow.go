@@ -166,7 +166,7 @@ func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) 
 	result := tryResult
 
 	if isError(tryResult) {
-		errObj := tryResult.(*object.Error)
+		errObj, _ := tryResult.(*object.Error)
 
 		caughtError := &object.Error{
 			Message:     errObj.Message,

@@ -6,7 +6,8 @@ import (
 
 func isError(obj object.Object) bool {
 	if obj != nil && obj.Type() == object.ErrorObj {
-		return obj.(*object.Error).Propagating
+		errObj := obj.(*object.Error)
+		return errObj.Propagating
 	}
 
 	return false

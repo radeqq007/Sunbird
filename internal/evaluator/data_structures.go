@@ -54,7 +54,8 @@ func evalArrayIndexExpression(left, index object.Object, line, col int) object.O
 		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
-	idx := index.(*object.Integer).Value
+	idxObj, _ := index.(*object.Integer)
+	idx := idxObj.Value
 	maxIdx := int64(len(array.Elements) - 1)
 
 	if idx > maxIdx {
@@ -97,7 +98,8 @@ func evalStringIndexExpression(left, index object.Object, line, col int) object.
 		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
-	idx := index.(*object.Integer).Value
+	idxObj, _ := index.(*object.Integer)
+	idx := idxObj.Value
 	maxIdx := int64(len(str.Value) - 1)
 
 	if idx > maxIdx {

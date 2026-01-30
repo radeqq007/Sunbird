@@ -44,7 +44,7 @@ var builtins = map[string]*object.Builtin{
 				return err
 			}
 
-			arr := args[0].(*object.Array)
+			arr, _ := args[0].(*object.Array)
 
 			newElements := append(arr.Elements, args[1:]...)
 

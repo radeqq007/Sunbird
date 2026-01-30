@@ -185,7 +185,7 @@ func TestIdentifierExpression(t *testing.T) {
 
 	ident, ok := stmt.Expression.(*ast.Identifier)
 	if !ok {
-		t.Errorf("ident.Value not %s. got=%s ", "foobar", ident.Value)
+		t.Errorf("ident.Value not %s. got=%s ", "foobar", stmt.Expression.String())
 	}
 
 	if ident.TokenLiteral() != "foobar" {
