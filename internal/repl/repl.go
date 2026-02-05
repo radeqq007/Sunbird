@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sunbird/internal/evaluator"
 	"sunbird/internal/lexer"
+	"sunbird/internal/modules"
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
 
@@ -62,6 +63,29 @@ func Start(in io.Reader, out io.Writer) {
 	}
 
 	completer := func(d prompt.Document) []prompt.Suggest {
+		word := d.GetWordBeforeCursor()
+		textBefore := d.TextBeforeCursor()
+
+		// Avoid suggesting keywords after a dot (.)
+		if strings.HasSuffix(textBefore, ".") {
+			return []prompt.Suggest{}
+		}
+
+		// Suggest defined modules after 'import' keyword
+		if strings.HasSuffix(textBefore, "import ") {
+			var moduleSuggestions []prompt.Suggest
+			for mod := range modules.BuiltinModules {
+				moduleSuggestions = append(moduleSuggestions, prompt.Suggest{Text: "\"" + mod + "\"", Description: "Imported module"})
+			}
+			return prompt.FilterHasPrefix(moduleSuggestions, word, true)
+		} else if strings.HasSuffix(textBefore, "import \"") {
+			var moduleSuggestions []prompt.Suggest
+			for mod := range modules.BuiltinModules {
+				moduleSuggestions = append(moduleSuggestions, prompt.Suggest{Text: mod + "\"", Description: "Imported module"})
+			}
+			return prompt.FilterHasPrefix(moduleSuggestions, word, true)
+		}
+
 		return prompt.FilterHasPrefix(keywords, d.GetWordBeforeCursor(), true)
 	}
 
