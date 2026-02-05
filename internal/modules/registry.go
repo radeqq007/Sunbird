@@ -10,6 +10,7 @@ import (
 	"sunbird/internal/modules/math"
 	"sunbird/internal/modules/random"
 	"sunbird/internal/modules/str"
+	"sunbird/internal/modules/time"
 	"sunbird/internal/object"
 )
 
@@ -23,6 +24,7 @@ var BuiltinModules = map[string]*object.Hash{
 	"json":   json.New(),
 	"http":   http.New(),
 	"fs":     fs.New(),
+	"time":   time.New(),
 }
 
 func Get(name string) (*object.Hash, bool) {
