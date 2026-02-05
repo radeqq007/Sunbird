@@ -14,7 +14,7 @@ func New() *object.Hash {
 		AddFunction("shift", shift).
 		AddFunction("unshift", unshift).
 		AddFunction("reverse", reverse).
-		AddFunction("indexOf", indexOf).
+		AddFunction("index_of", indexOf).
 		AddFunction("slice", slice).
 		AddFunction("clear", clearArray).
 		AddFunction("join", join).
