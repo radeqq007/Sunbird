@@ -72,16 +72,11 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		// Suggest defined modules after 'import' keyword
+		// TODO: suggest module names also after 'import "' etc.
 		if strings.HasSuffix(textBefore, "import ") {
 			var moduleSuggestions []prompt.Suggest
 			for mod := range modules.BuiltinModules {
 				moduleSuggestions = append(moduleSuggestions, prompt.Suggest{Text: "\"" + mod + "\"", Description: "Imported module"})
-			}
-			return prompt.FilterHasPrefix(moduleSuggestions, word, true)
-		} else if strings.HasSuffix(textBefore, "import \"") {
-			var moduleSuggestions []prompt.Suggest
-			for mod := range modules.BuiltinModules {
-				moduleSuggestions = append(moduleSuggestions, prompt.Suggest{Text: mod + "\"", Description: "Imported module"})
 			}
 			return prompt.FilterHasPrefix(moduleSuggestions, word, true)
 		}
@@ -90,7 +85,7 @@ func Start(in io.Reader, out io.Writer) {
 	}
 
 	// highlight := func(input string) []prompt. {
-		// return sunbirdLexer(input)
+	// return sunbirdLexer(input)
 	// }
 
 	p := prompt.New(
