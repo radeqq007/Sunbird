@@ -188,7 +188,36 @@ func handleTidy() {
 }
 
 func printHelp() {
+	help := `Sunbird - A dynamically-typed programming language
 
+Usage:
+  sunbird [command] [arguments]
+
+Commands:
+  init                Initialize a new Sunbird project
+  install, i          Install dependencies from sunbird.toml
+  get <package>       Download and install a specific package
+  update              Update all dependencies
+  tidy                Remove unused dependencies
+  run <file>          Run a Sunbird file with package resolution
+  help, -h, --help    Show this help message
+  version, -v         Show version information
+
+Running files:
+  sunbird <file.sb>   Run a Sunbird file directly (without package resolution)
+  sunbird             Start interactive REPL
+
+Examples:
+  sunbird init
+  sunbird get github.com/user/package@v1.0.0
+  sunbird install
+  sunbird run main.sb
+  sunbird main.sb
+
+For more information, visit: https://github.com/radeqq007/sunbird
+`
+
+	fmt.Println(help)
 }
 
 func printVersion() {
