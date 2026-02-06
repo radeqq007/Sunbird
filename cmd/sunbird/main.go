@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -9,23 +8,12 @@ import (
 	"sunbird/internal/lexer"
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
+	"sunbird/internal/pkg"
 	"sunbird/internal/repl"
 )
 
-func init() {
-	//nolint:reassign // standard way to override flag.Usage
-	flag.Usage = func() {
-		fmt.Println("Usage: sunbird [options]")
-		fmt.Println("Options:")
-		flag.PrintDefaults()
-	}
-}
-
 func main() {
-	flag.Parse()
-
-	args := flag.Args()
-	if len(args) == 0 {
+	if len(os.Args) < 2 {
 		fmt.Println("Welcome to the sunbird programming language!")
 		fmt.Printf("Type in 'exit' to exit.\n")
 		repl.Start(os.Stdin, os.Stdout)
@@ -33,48 +21,176 @@ func main() {
 		os.Exit(0)
 	}
 
-	if len(args) >= 1 {
-		src, err := os.Open(args[0])
-		if err != nil {
-			fmt.Printf("Error: %s\n", err)
-			os.Exit(1)
-		}
-		defer func() {
-			_ = src.Close()
-		}()
+	command := os.Args[1]
 
-		content, err := io.ReadAll(src)
-		if err != nil {
-			fmt.Printf("Error: %s\n", err)
+	switch command {
+	case "init":
+		handleInit()
+	case "install", "i":
+		handleInstall()
+	case "get":
+		handleGet()
+	case "update":
+		handleUpdate()
+	case "tidy":
+		handleTidy()
+	case "run":
+		handleRun()
+	case "help", "-h", "--help":
+		printHelp()
+	case "version", "-v", "--version":
+		printVersion()
+	}
 
-			_ = src.Close() // Close file before exiting
-			os.Exit(1)
-		}
+	os.Exit(0)
+}
 
-		l := lexer.New(string(content))
-		p := parser.New(l)
+func handleRun() {
+	var filePath string
 
-		program := p.ParseProgram()
-
-		if len(p.Errors()) != 0 {
-			fmt.Println("Parser errors:")
-			for _, msg := range p.Errors() {
-				fmt.Printf("\t%s\n", msg)
-			}
-			os.Exit(1)
-		}
-
-		env := object.NewEnvironment()
-
-		evaluated := evaluator.Eval(program, env)
-
-		if evaluated != nil {
-			if errObj, ok := evaluated.(*object.Error); ok {
-				fmt.Println(errObj.Inspect())
+	if len(os.Args) >= 3 {
+		filePath = os.Args[2]
+	} else {
+		config, err := pkg.LoadConfig("sunbird.toml")
+		if err == nil && config.Package.Main != "" {
+			filePath = config.Package.Main
+		} else {
+			filePath, err = findMainFile()
+			if err != nil {
+				fmt.Println("Error: No file specified and no main file found")
+				fmt.Println("Usage: sunbird run [file.sb]")
 				os.Exit(1)
 			}
 		}
-
-		os.Exit(0)
 	}
+
+	runFile(filePath)
+}
+
+func findMainFile() (string, error) {
+	candidates := []string{
+		"main.sb",
+		"src/main.sb",
+		"index.sb",
+		"src/index.sb",
+	}
+
+	for _, candidate := range candidates {
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate, nil
+		}
+	}
+
+	return "", fmt.Errorf("no main file found")
+}
+
+func runFile(path string) {
+	src, err := os.Open(path)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		os.Exit(1)
+	}
+	defer func() {
+		_ = src.Close()
+	}()
+
+	content, err := io.ReadAll(src)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+
+		_ = src.Close() // Close file before exiting
+		os.Exit(1)
+	}
+
+	l := lexer.New(string(content))
+	p := parser.New(l)
+
+	program := p.ParseProgram()
+
+	if len(p.Errors()) != 0 {
+		fmt.Println("Parser errors:")
+		for _, msg := range p.Errors() {
+			fmt.Printf("\t%s\n", msg)
+		}
+		os.Exit(1)
+	}
+
+	env := object.NewEnvironment()
+
+	evaluated := evaluator.Eval(program, env)
+
+	if evaluated != nil {
+		if errObj, ok := evaluated.(*object.Error); ok {
+			fmt.Println(errObj.Inspect())
+			os.Exit(1)
+		}
+	}
+}
+
+func handleInit() {
+	fmt.Println("Initializing new project...")
+
+	if _, err := os.Stat("sunbird.toml"); err == nil {
+		fmt.Println("Error: sunbird.toml already exists")
+		os.Exit(1)
+	}
+
+	template := `[package]
+name = "my-project"
+version = "0.1.0"
+description = "A Sunbird project"
+authors = ["Your Name <you@example.com>"]
+main = "./src/main.sb"
+
+[dependencies]
+# example = { git = "https://github.com/user/repo", version = "1.0.0" }
+`
+
+	err := os.WriteFile("sunbird.toml", []byte(template), 0644)
+	if err != nil {
+		fmt.Printf("Error creating sunbird.toml: %s\n", err)
+		os.Exit(1)
+	}
+
+	os.Mkdir("src", 0755)
+
+	mainTemplate := `import "io"
+
+io.println("Hello, sunbird!")
+`
+
+	err = os.WriteFile("./src/main.sb", []byte(mainTemplate), 0644)
+	if err != nil {
+		fmt.Printf("Error creating main.sb: %s\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("✓ Created sunbird.toml")
+	fmt.Println("✓ Created main.sb")
+	fmt.Println("✓ Created src/ directory")
+	fmt.Println("\nProject initialized successfully!")
+}
+
+func handleInstall() {
+
+}
+
+func handleGet() {
+
+}
+
+func handleUpdate() {
+
+}
+
+func handleTidy() {
+
+}
+
+func printHelp() {
+
+}
+
+func printVersion() {
+
 }

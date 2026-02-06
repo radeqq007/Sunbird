@@ -5,6 +5,7 @@ go 1.22.2
 require github.com/c-bata/go-prompt v0.2.6
 
 require (
+	github.com/BurntSushi/toml v1.6.0 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
