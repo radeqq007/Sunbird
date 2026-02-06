@@ -126,19 +126,11 @@ func (p *Parser) Errors() []string {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead (at line %d, col %d)",
-		t, p.peekToken.Type, p.peekToken.Line, p.peekToken.Col)
-	p.errors = append(p.errors, msg)
+	p.newError("expected next token to be %s, got %s instead", t, p.peekToken.Type)
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
-	msg := fmt.Sprintf(
-		"no prefix parse function for %s found (at line %d, col %d)",
-		t,
-		p.curToken.Line,
-		p.curToken.Col,
-	)
-	p.errors = append(p.errors, msg)
+	p.newError("no prefix parse function for %s found", t)
 }
 
 func (p *Parser) ParseProgram() *ast.Program {
@@ -211,6 +203,11 @@ func (p *Parser) parseTypeAnnotation() ast.TypeAnnotation {
 	default:
 		return nil
 	}
+}
+
+func (p *Parser) newError(format string, a ...any) {
+	msg := fmt.Sprintf(format+" (at line %d, col %d)", append(a, p.peekToken.Line, p.peekToken.Col)...)
+	p.errors = append(p.errors, msg)
 }
 
 // NOTE: This will be used some day
