@@ -28,8 +28,8 @@ func main() {
 		handleInit()
 	case "install", "i":
 		handleInstall()
-	case "get":
-		handleGet()
+	case "add":
+		handleAdd()
 	case "update":
 		handleUpdate()
 	case "tidy":
@@ -175,7 +175,7 @@ func handleInstall() {
 
 }
 
-func handleGet() {
+func handleAdd() {
 
 }
 
