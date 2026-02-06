@@ -4,7 +4,7 @@ In order to get the Sunbird interpreter up and running you need to compile it fr
 ```sh
 git clone https://github.com/radeqq007/sunbird.git
 cd sunbird
-go build ./cmd/sunbird -o sunbird
+go build -o sunbird ./cmd/sunbird
 ```
 
 After that you should be able to run the interpreter by typing `./sunbird` in the terminal.
