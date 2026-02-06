@@ -176,7 +176,15 @@ func handleInstall() {
 }
 
 func handleAdd() {
-
+	pkgManager, err := pkg.NewPackageManager()
+	if err != nil {
+		fmt.Printf("Error adding dependency: %s\n", err)
+	}
+	url := os.Args[2]
+	err = pkgManager.Add(url)
+	if err != nil {
+		fmt.Printf("Error adding dependency: %s\n", err)
+	}
 }
 
 func handleUpdate() {
