@@ -117,7 +117,7 @@ func (l *Lexer) readString() (string, error) {
 
 func (l *Lexer) readNumber() (string, token.TokenType) {
 	position := l.position
-	for isDigit(l.ch) {
+	for isDigit(l.ch) || l.ch == '_' {
 		l.readChar()
 	}
 
@@ -125,7 +125,7 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 	if l.ch == '.' && l.peekChar() != '.' {
 		l.readChar()
 
-		for isDigit(l.ch) {
+		for isDigit(l.ch) || l.ch == '_' {
 			l.readChar()
 		}
 		return l.input[position:l.position], token.Float
