@@ -50,7 +50,7 @@ func readFile(args ...object.Object) object.Object {
 
 	data, errGo := os.ReadFile(getFullPath(args[0].(*object.String).Value))
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.String{Value: string(data)}
@@ -96,13 +96,13 @@ func appendFile(args ...object.Object) object.Object {
 	// os.WriteFile(getFullPath(args[0].(*object.String).Value), []byte(args[1].(*object.String).Value), 0644)
 	file, errGo := os.OpenFile(getFullPath(args[0].(*object.String).Value), os.O_APPEND|os.O_WRONLY, 0644)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 	defer file.Close()
 
 	_, errGo = file.WriteString(args[1].(*object.String).Value)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.Null{}
@@ -121,7 +121,7 @@ func removeFile(args ...object.Object) object.Object {
 
 	errGo := os.Remove(getFullPath(args[0].(*object.String).Value))
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.Null{}
@@ -144,7 +144,7 @@ func exists(args ...object.Object) object.Object {
 			return &object.Boolean{Value: false}
 		}
 		// Other errors (permissions, etc.)
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.Boolean{Value: true}
@@ -163,7 +163,7 @@ func isDir(args ...object.Object) object.Object {
 
 	info, errGo := os.Stat(getFullPath(args[0].(*object.String).Value))
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.Boolean{Value: info.IsDir()}
@@ -182,7 +182,7 @@ func listDir(args ...object.Object) object.Object {
 
 	entries, errGo := os.ReadDir(getFullPath(args[0].(*object.String).Value))
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	var result []object.Object
@@ -250,12 +250,12 @@ func copyFile(args ...object.Object) object.Object {
 
 	data, errGo := os.ReadFile(getFullPath(strObj.Value))
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	errGo = os.WriteFile(getFullPath(args[1].(*object.String).Value), data, 0644)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.Null{}
