@@ -30,7 +30,7 @@ func parseJSON(args ...object.Object) object.Object {
 	var data any
 	errGo := json.Unmarshal([]byte(val), &data)
 	if errGo != nil {
-		return errors.NewRuntimeError(0, 0, errGo.Error())
+		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 	}
 
 	return ToObject(data)
@@ -81,7 +81,7 @@ func stringify(args ...object.Object) object.Object {
 	data := FromObject(args[0])
 	bytes, errGo := json.Marshal(data)
 	if errGo != nil {
-		return errors.NewRuntimeError(0, 0, errGo.Error())
+		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 	}
 
 	return &object.String{Value: string(bytes)}
