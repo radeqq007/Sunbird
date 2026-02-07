@@ -24,7 +24,7 @@ func newWriter(w http.ResponseWriter) object.Object {
 
 			_, errGo := w.Write([]byte(args[0].(*object.String).Value))
 			if errGo != nil {
-				return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+				return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 			}
 
 			return &object.Null{}
@@ -43,14 +43,14 @@ func newWriter(w http.ResponseWriter) object.Object {
 			data := json.FromObject(args[0])
 			bytes, errGo := gojson.Marshal(data)
 			if errGo != nil {
-				return errors.NewRuntimeError(0, 0, errGo.Error())
+				return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 			}
 
 			w.Header().Set("Content-Type", "application/json")
 
 			_, errGo = w.Write(bytes)
 			if errGo != nil {
-				return errors.NewRuntimeError(0, 0, errGo.Error())
+				return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 			}
 
 			return &object.Null{}
