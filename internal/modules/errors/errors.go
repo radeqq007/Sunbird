@@ -114,7 +114,7 @@ func NewPropertyAccessError(args ...object.Object) object.Object {
 
 func NewUnknownOperatorError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.UnknownOperatorError, l, c, m)
+		return errors.New(errors.UnknownOperatorError, l, c, "%s", m)
 	})
 }
 
