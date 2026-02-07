@@ -61,7 +61,7 @@ func newRequest(r *http.Request) object.Object {
 
 			byteData, errGo := io.ReadAll(r.Body)
 			if errGo != nil {
-				return errors.NewRuntimeError(0, 0, errGo.Error())
+				return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 			}
 			defer r.Body.Close()
 
@@ -82,7 +82,7 @@ func newRequest(r *http.Request) object.Object {
 			if bodyCache == nil {
 				byteData, errGo := io.ReadAll(r.Body)
 				if errGo != nil {
-					return errors.NewRuntimeError(0, 0, errGo.Error())
+					return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 				}
 				defer r.Body.Close()
 				bodyString := string(byteData)
@@ -90,9 +90,9 @@ func newRequest(r *http.Request) object.Object {
 			}
 
 			var data any
-			errgo := gojson.Unmarshal([]byte(*bodyCache), &data)
-			if errgo != nil {
-				return errors.NewRuntimeError(0, 0, errgo.Error())
+			errGo := gojson.Unmarshal([]byte(*bodyCache), &data)
+			if errGo != nil {
+				return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 			}
 			bodyJSONCache = json.ToObject(data)
 
