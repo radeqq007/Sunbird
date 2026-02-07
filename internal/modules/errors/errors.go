@@ -41,13 +41,13 @@ func wrapError(
 
 func NewTypeError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.NewTypeError(l, c, m)
+		return errors.NewTypeError(l, c, "%s", m)
 	})
 }
 
 func NewRuntimeError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.NewRuntimeError(l, c, m)
+		return errors.NewRuntimeError(l, c, "%s", m)
 	})
 }
 
@@ -70,19 +70,19 @@ func NewConstantReassignmentError(args ...object.Object) object.Object {
 
 func NewIndexNotSupportedError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.IndexNotSupportedError, l, c, m)
+		return errors.New(errors.IndexNotSupportedError, l, c, "%s", m)
 	})
 }
 
 func NewIndexOutOfBoundsError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.IndexOutOfBoundsError, l, c, m)
+		return errors.New(errors.IndexOutOfBoundsError, l, c, "%s", m)
 	})
 }
 
 func NewKeyError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.KeyError, l, c, m)
+		return errors.New(errors.KeyError, l, c, "%s", m)
 	})
 }
 
@@ -92,7 +92,7 @@ func NewVariableReassignmentError(args ...object.Object) object.Object {
 
 func NewNotCallableError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.NotCallableError, l, c, m)
+		return errors.New(errors.NotCallableError, l, c, "%s", m)
 	})
 }
 
@@ -102,13 +102,13 @@ func NewInvalidAssignmentError(args ...object.Object) object.Object {
 
 func NewArgumentError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.ArgumentError, l, c, m)
+		return errors.New(errors.ArgumentError, l, c, "%s", m)
 	})
 }
 
 func NewPropertyAccessError(args ...object.Object) object.Object {
 	return wrapError(args, func(l, c int, m string) *object.Error {
-		return errors.New(errors.PropertyAccessOnNonObjectError, l, c, m)
+		return errors.New(errors.PropertyAccessOnNonObjectError, l, c, "%s", m)
 	})
 }
 
