@@ -116,7 +116,7 @@ func listen(args ...object.Object) object.Object {
 
 	errGo := http.ListenAndServe(":"+strconv.FormatInt(port, 10), nil)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, errGo.Error())
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
 	return &object.Null{}
