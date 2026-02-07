@@ -107,8 +107,8 @@ func TestIndexOf(t *testing.T) {
 		input string
 		want  int64
 	}{
-		{"import 'array'; let a = ['a', 'b', 'c']; array.indexOf(a, 'b')", 1},
-		{"import 'array'; let a = ['a', 'b', 'c']; array.indexOf(a, 'z')", -1},
+		{"import 'array'; let a = ['a', 'b', 'c']; array.index_of(a, 'b')", 1},
+		{"import 'array'; let a = ['a', 'b', 'c']; array.index_of(a, 'z')", -1},
 	}
 
 	for _, tt := range tests {
