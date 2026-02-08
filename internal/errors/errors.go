@@ -6,8 +6,10 @@ import (
 	"sunbird/internal/object"
 )
 
+type ErrorCode int
+
 const (
-	SyntaxError = iota
+	SyntaxError ErrorCode = iota
 	TypeError
 	TypeMismatchError
 	UndefinedVariableError
@@ -28,52 +30,7 @@ const (
 	FeatureNotImplementedError
 )
 
-type ErrorCode int
-
-func (ec ErrorCode) String() string {
-	switch ec {
-	case SyntaxError:
-		return "SyntaxError"
-	case TypeError:
-		return "TypeError"
-	case TypeMismatchError:
-		return "TypeMismatchError"
-	case UndefinedVariableError:
-		return "UndefinedVariableError"
-	case DivisionByZeroError:
-		return "DivisionByZeroError"
-	case ConstantReassignmentError:
-		return "ConstantReassignmentError"
-	case RuntimeError:
-		return "RuntimeError"
-	case IndexNotSupportedError:
-		return "IndexNotSupportedError"
-	case IndexOutOfBoundsError:
-		return "IndexOutOfBoundsError"
-	case KeyError:
-		return "KeyError"
-	case ImportError:
-		return "ImportError"
-	case VariableReassignmentError:
-		return "VariableReassignmentError"
-	case NotCallableError:
-		return "NotCallableError"
-	case InvalidAssignmentError:
-		return "InvalidAssignmentError"
-	case ArgumentError:
-		return "ArgumentError"
-	case ParseError:
-		return "ParseError"
-	case PropertyAccessOnNonObjectError:
-		return "PropertyAccessOnNonObjectError"
-	case UnknownOperatorError:
-		return "UnknownOperatorError"
-	case FeatureNotImplementedError:
-		return "FeatureNotImplementedError"
-	default:
-		return "UnknownError"
-	}
-}
+//go:generate stringer -type=ErrorCode
 
 func New(code ErrorCode, line, col int, format string, args ...interface{}) *object.Error {
 	return &object.Error{
