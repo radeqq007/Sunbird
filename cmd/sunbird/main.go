@@ -142,8 +142,7 @@ description = "A Sunbird project"
 authors = ["Your Name <you@example.com>"]
 main = "./src/main.sb"
 
-[dependencies]
-# example = { git = "https://github.com/user/repo", version = "1.0.0" }
+dependencies = []
 `
 
 	err := os.WriteFile("sunbird.toml", []byte(template), 0644)
@@ -176,12 +175,10 @@ func handleInstall() {
 }
 
 func handleAdd() {
-	pkgManager, err := pkg.NewPackageManager()
-	if err != nil {
-		fmt.Printf("Error adding dependency: %s\n", err)
-	}
+	pkgManager:= pkg.NewPackageManager()
+
 	url := os.Args[2]
-	err = pkgManager.Add(url)
+	err := pkgManager.Add(url)
 	if err != nil {
 		fmt.Printf("Error adding dependency: %s\n", err)
 	}

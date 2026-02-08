@@ -7,16 +7,16 @@ import (
 )
 
 type Config struct {
-	Package      PackageInfo               `toml:"package"`
-	Dependencies map[string]DependencyInfo `toml:"dependencies"`
+	Package PackageInfo `toml:"package"`
 }
 
 type PackageInfo struct {
-	Name        string   `toml:"name"`
-	Version     string   `toml:"version"`
-	Description string   `toml:"description"`
-	Authors     []string `toml:"authors"`
-	Main        string   `toml:"main"`
+	Name         string           `toml:"name"`
+	Version      string           `toml:"version"`
+	Description  string           `toml:"description"`
+	Authors      []string         `toml:"authors"`
+	Main         string           `toml:"main"`
+	Dependencies []DependencyInfo `toml:"dependencies"`
 }
 
 type DependencyInfo struct {
@@ -41,3 +41,29 @@ func LoadConfig(path string) (*Config, error) {
 
 	return &config, nil
 }
+
+func SaveConfig(path string, config *Config) error {
+	data, err := toml.Marshal(config)
+	if err != nil {
+		return err
+	}
+	
+	err = os.WriteFile(path, data, 0644)
+	if err != nil {
+		return err
+	}
+	
+	return nil
+}
+
+func AddDependency(path string, name string, dependency DependencyInfo) error {
+	config, err := LoadConfig(path)
+	if err != nil {
+		return err
+	}
+	
+	config.Package.Dependencies = append(config.Package.Dependencies, dependency)
+
+	return SaveConfig(path, config)
+}
+

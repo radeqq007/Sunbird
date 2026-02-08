@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -62,20 +63,7 @@ func (p *PackageURL) GetCachePath(cacheDir string) string {
 	return filepath.Join(cacheDir, p.Host, p.Owner, p.Repo+versionSuffix)
 }
 
-func DownloadPackage(pkgURL *PackageURL, cacheDir string) error {
-	cachePath := pkgURL.GetCachePath(cacheDir)
-
-	// Check if already downloaded
-	if _, err := os.Stat(cachePath); err == nil {
-		fmt.Printf("  Package already cached at: %s\n", cachePath)
-		return nil
-	}
-
-	// Create parent directories
-	if err := os.MkdirAll(filepath.Dir(cachePath), 0755); err != nil {
-		return fmt.Errorf("failed to create cache directory: %w", err)
-	}
-
+func DownloadPackage(pkgURL *PackageURL) error {
 	gitURL := pkgURL.GetGitURL()
 	fmt.Printf("  Cloning from: %s\n", gitURL)
 
@@ -97,12 +85,120 @@ func DownloadPackage(pkgURL *PackageURL, cacheDir string) error {
 		}
 	}
 
+
+	tempDir := filepath.Join(os.TempDir(), "sunbird_cache", pkgURL.Owner, pkgURL.Repo)
+
+	if _, err := os.Stat(tempDir); err == nil {
+		err = os.RemoveAll(tempDir)
+		if err != nil {
+			return fmt.Errorf("failed to remove existing temp directory: %w", err)
+		}
+	}
+
 	// Clone the repository
-	_, err := git.PlainClone(cachePath, false, cloneOptions)
+	_, err := git.PlainClone(tempDir, false, cloneOptions)
 	if err != nil {
 		return fmt.Errorf("failed to clone repository: %w", err)
 	}
 
-	fmt.Printf("  ✓ Downloaded to: %s\n", cachePath)
+	// Read config from the cloned package, get the name and move the package to .sunbird/host/owner/repo/version
+	configPath := filepath.Join(tempDir, "sunbird.toml")
+	config, err := LoadConfig(configPath)
+	if err != nil {
+		return fmt.Errorf("Failed to load config from downloaded package: %w", err)
+	}
+
+	packageName := config.Package.Name
+	if packageName == "" {
+		return fmt.Errorf("Package name is missing in sunbird.toml")
+	}
+
+	finalPath := filepath.Join(dependencyDirectory, packageName)
+
+	// Remove existing directory if it exists
+	if _, err :=
+		os.Stat(finalPath); err == nil {
+		err = os.RemoveAll(finalPath)
+		if err != nil {
+			return fmt.Errorf("failed to remove existing directory: %w", err)
+		}
+	}
+
+	err = os.MkdirAll(filepath.Dir(finalPath), 0755)
+	if err != nil {
+		return fmt.Errorf("failed to create directory for package: %w", err)
+	}
+
+	err = moveDirectory(tempDir, finalPath)
+	if err != nil {
+		return fmt.Errorf("failed to move package to final location: %w", err)
+	}
+
+	fmt.Printf("  ✓ Downloaded\n")
 	return nil
+}
+
+func moveDirectory(src, dst string) error {
+	// Try renaming first (cross-device moves will fail)
+	err := os.Rename(src, dst)
+	if err == nil {
+		return nil
+	}
+
+	// Fallback to copying the directory
+	return moveViaCopy(src, dst)
+}
+
+func moveViaCopy(src, dst string) error {
+	err := filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Determine the destination path
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+		targetPath := filepath.Join(dst, relPath)
+
+		if info.IsDir() {
+			return os.MkdirAll(targetPath, info.Mode())
+		}
+
+		// It's a file, copy it
+		return copyFile(path, targetPath)
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// Clean up the source
+	return os.RemoveAll(src)
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	info, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, info.Mode())
 }
