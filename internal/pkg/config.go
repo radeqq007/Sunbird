@@ -47,12 +47,12 @@ func SaveConfig(path string, config *Config) error {
 	if err != nil {
 		return err
 	}
-	
+
 	err = os.WriteFile(path, data, 0644)
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -61,9 +61,8 @@ func AddDependency(path string, name string, dependency DependencyInfo) error {
 	if err != nil {
 		return err
 	}
-	
+
 	config.Package.Dependencies = append(config.Package.Dependencies, dependency)
 
 	return SaveConfig(path, config)
 }
-

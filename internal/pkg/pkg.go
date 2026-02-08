@@ -7,7 +7,7 @@ import (
 const dependencyDirectory = ".sb_modules/"
 
 type PackageManager struct {
-	config   *Config
+	config *Config
 }
 
 func NewPackageManager() *PackageManager {

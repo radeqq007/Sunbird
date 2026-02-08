@@ -36,11 +36,11 @@ func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
 
 	// Check in .sb_modules directory
 	modulesDir := ".sb_modules"
-		if _, err := os.Stat(modulesDir); err == nil {
-			if module, err := mc.tryLoadFromModulesDir(path); err == nil {
-				mc.modules[path] = module
-				return module, nil
-			}
+	if _, err := os.Stat(modulesDir); err == nil {
+		if module, err := mc.tryLoadFromModulesDir(path); err == nil {
+			mc.modules[path] = module
+			return module, nil
+		}
 	}
 
 	// Load from file

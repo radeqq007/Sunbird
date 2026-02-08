@@ -85,7 +85,6 @@ func DownloadPackage(pkgURL *PackageURL) error {
 		}
 	}
 
-
 	tempDir := filepath.Join(os.TempDir(), "sunbird_cache", pkgURL.Owner, pkgURL.Repo)
 
 	if _, err := os.Stat(tempDir); err == nil {

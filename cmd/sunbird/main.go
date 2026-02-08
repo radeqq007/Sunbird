@@ -175,7 +175,7 @@ func handleInstall() {
 }
 
 func handleAdd() {
-	pkgManager:= pkg.NewPackageManager()
+	pkgManager := pkg.NewPackageManager()
 
 	url := os.Args[2]
 	err := pkgManager.Add(url)
