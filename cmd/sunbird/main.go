@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -81,7 +82,7 @@ func findMainFile() (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("no main file found")
+	return "", errors.New("no main file found")
 }
 
 func runFile(path string) {
@@ -151,7 +152,12 @@ dependencies = []
 		os.Exit(1)
 	}
 
-	os.Mkdir("src", 0755)
+	err = os.Mkdir("src", 0755)
+	if err != nil {
+		fmt.Printf("Error creating src directory: %s\n", err)
+		os.Exit(1)
+	}
+
 
 	mainTemplate := `import "io"
 

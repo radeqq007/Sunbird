@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"sunbird/internal/ast"
 	"sunbird/internal/token"
 )
@@ -85,7 +84,7 @@ func (p *Parser) parseAssignExpression(left ast.Expression) ast.Expression {
 	}
 
 	if !p.validateAssignmentTarget(left) {
-		p.newError(fmt.Sprintf("invalid assignment target: %s", left.String()))
+		p.newError("invalid assignment target: " + left.String())
 		return nil
 	}
 
@@ -111,7 +110,7 @@ func (p *Parser) parseCompoundAssignExpression(left ast.Expression) ast.Expressi
 	}
 
 	if !p.validateAssignmentTarget(left) {
-		p.newError(fmt.Sprintf("invalid assignment target: %s", left.String()))
+		p.newError("invalid assignment target: " + left.String())
 		return nil
 	}
 

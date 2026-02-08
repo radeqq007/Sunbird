@@ -12,20 +12,6 @@ issues:
     - text: 'comment on exported \S+ \S+ should be of the form ".+"'
       linters: [revive, staticcheck]
     
-    # Allow fmt.Print* in specific files
-    - path: 'cmd/sunbird/main\.go'
-      text: 'use of `fmt\.'
-      linters: [forbidigo]
-    - path: 'internal/modules/io/'
-      text: 'use of `fmt\.'
-      linters: [forbidigo]
-    - path: 'internal/pkg/'
-      text: 'use of `fmt\.'
-      linters: [forbidigo]
-    - path: 'internal/repl/'
-      text: 'use of `fmt\.'
-      linters: [forbidigo]
-    
     # Test files
     - path: '_test\.go'
       linters:
@@ -59,7 +45,6 @@ linters:
     - exhaustive
     - exptostd
     - fatcontext
-    - forbidigo
     - funlen
     - gocheckcompilerdirectives
     - gochecksumtype
@@ -150,13 +135,6 @@ linters-settings:
       - Parser$
       - Lexer$
       - Builder$
-
-  forbidigo:
-    forbid:
-      - p: ^print$
-        msg: 'use fmt package'
-      - p: ^println$
-        msg: 'use fmt package'
 
   funcorder:
     struct-method: false

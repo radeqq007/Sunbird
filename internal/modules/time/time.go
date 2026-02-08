@@ -202,11 +202,11 @@ func convertFormat(format string) string {
 	return result
 }
 
-func replaceAll(s, old, new string) string {
+func replaceAll(s, old, newVal string) string {
 	result := ""
 	for i := 0; i < len(s); {
 		if i+len(old) <= len(s) && s[i:i+len(old)] == old {
-			result += new
+			result += newVal
 			i += len(old)
 		} else {
 			result += string(s[i])

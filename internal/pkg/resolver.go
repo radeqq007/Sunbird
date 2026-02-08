@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -53,7 +54,7 @@ func (p *PackageURL) GetGitURL() string {
 }
 
 func (p *PackageURL) GetCachePath(cacheDir string) string {
-	versionSuffix := ""
+	var versionSuffix string
 	if p.Version != "" {
 		versionSuffix = "@" + p.Version
 	} else {
@@ -104,12 +105,12 @@ func DownloadPackage(pkgURL *PackageURL) error {
 	configPath := filepath.Join(tempDir, "sunbird.toml")
 	config, err := LoadConfig(configPath)
 	if err != nil {
-		return fmt.Errorf("Failed to load config from downloaded package: %w", err)
+		return errors.New("failed to load config from downloaded package: " + err.Error())
 	}
 
 	packageName := config.Package.Name
 	if packageName == "" {
-		return fmt.Errorf("Package name is missing in sunbird.toml")
+		return errors.New("package name is missing in sunbird.toml")
 	}
 
 	finalPath := filepath.Join(dependencyDirectory, packageName)

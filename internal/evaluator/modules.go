@@ -2,6 +2,7 @@
 package evaluator
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -116,11 +117,11 @@ func (mc *ModuleCache) tryLoadFromModulesDir(path string) (*object.Hash, error) 
 
 	moduleConf, err := pkg.LoadConfig(filepath.Join(packagePath, "sunbird.toml"))
 	if err != nil {
-		return nil, fmt.Errorf("failed to load module config: %w", err)
+		return nil, errors.New("failed to load module config: " + err.Error())
 	}
 
 	if moduleConf.Package.Main == "" {
-		return nil, fmt.Errorf("module config missing main file")
+		return nil, errors.New("module config missing main file")
 	}
 
 	return mc.loadFileModule(filepath.Join(packagePath, moduleConf.Package.Main))

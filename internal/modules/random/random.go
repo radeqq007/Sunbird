@@ -56,10 +56,10 @@ func randInt(args ...object.Object) object.Object {
 		return err
 	}
 
-	min := args[0].(*object.Integer).Value
-	max := args[1].(*object.Integer).Value
+	minVal := args[0].(*object.Integer).Value
+	maxVal := args[1].(*object.Integer).Value
 
-	return &object.Integer{Value: r.Int64N(max-(min)) + min}
+	return &object.Integer{Value: r.Int64N(maxVal-minVal) + minVal}
 }
 
 func randFloat(args ...object.Object) object.Object {
@@ -78,10 +78,10 @@ func randFloat(args ...object.Object) object.Object {
 		return err
 	}
 
-	min := args[0].(*object.Float).Value
-	max := args[1].(*object.Float).Value
+	minVal := args[0].(*object.Float).Value
+	maxVal := args[1].(*object.Float).Value
 
-	return &object.Float{Value: r.Float64()*(max-min) + min}
+	return &object.Float{Value: r.Float64()*(maxVal-minVal) + minVal}
 }
 
 func randBool(args ...object.Object) object.Object {
