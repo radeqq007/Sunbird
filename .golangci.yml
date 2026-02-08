@@ -26,10 +26,6 @@ issues:
       text: 'use of `fmt\.'
       linters: [forbidigo]
     
-    # Interface methods ordering
-    - text: '(statementNode|expressionNode|typeAnnotation)'
-      linters: [funcorder]
-    
     # Test files
     - path: '_test\.go'
       linters:
@@ -64,7 +60,6 @@ linters:
     - exptostd
     - fatcontext
     - forbidigo
-    - funcorder
     - funlen
     - gocheckcompilerdirectives
     - gochecksumtype
