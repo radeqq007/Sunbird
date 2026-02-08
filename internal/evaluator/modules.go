@@ -10,6 +10,7 @@ import (
 	"sunbird/internal/modules"
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
+	"sunbird/internal/pkg"
 )
 
 type ModuleCache struct {
@@ -31,6 +32,15 @@ func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
 	if builtinModule, ok := modules.BuiltinModules[path]; ok {
 		mc.modules[path] = builtinModule
 		return builtinModule, nil
+	}
+
+	// Check in .sb_modules directory
+	modulesDir := ".sb_modules"
+		if _, err := os.Stat(modulesDir); err == nil {
+			if module, err := mc.tryLoadFromModulesDir(path); err == nil {
+				mc.modules[path] = module
+				return module, nil
+			}
 	}
 
 	// Load from file
@@ -94,4 +104,24 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 	mc.modules[path] = module
 
 	return module, nil
+}
+
+func (mc *ModuleCache) tryLoadFromModulesDir(path string) (*object.Hash, error) {
+	modulesDir := ".sb_modules"
+	packagePath := filepath.Join(modulesDir, path)
+
+	if _, err := os.Stat(packagePath); err != nil {
+		return nil, err
+	}
+
+	moduleConf, err := pkg.LoadConfig(filepath.Join(packagePath, "sunbird.toml"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to load module config: %w", err)
+	}
+
+	if moduleConf.Package.Main == "" {
+		return nil, fmt.Errorf("module config missing main file")
+	}
+
+	return mc.loadFileModule(filepath.Join(packagePath, moduleConf.Package.Main))
 }
