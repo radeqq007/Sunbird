@@ -136,7 +136,7 @@ func handleInit() {
 	}
 
 	template := `[package]
-name = "my-project"
+name = "my_project"
 version = "0.1.0"
 description = "A Sunbird project"
 authors = ["Your Name <you@example.com>"]
