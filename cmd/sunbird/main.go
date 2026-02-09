@@ -158,7 +158,6 @@ dependencies = []
 		os.Exit(1)
 	}
 
-
 	mainTemplate := `import "io"
 
 io.println("Hello, sunbird!")
@@ -182,6 +181,11 @@ func handleInstall() {
 
 func handleAdd() {
 	pkgManager := pkg.NewPackageManager()
+
+	if len(os.Args) < 3 {
+		fmt.Println("Provide a package url")
+		os.Exit(1)
+	}
 
 	url := os.Args[2]
 	err := pkgManager.Add(url)
