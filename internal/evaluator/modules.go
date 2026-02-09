@@ -1,4 +1,3 @@
-// internal/evaluator/modules.go
 package evaluator
 
 import (
@@ -12,10 +11,12 @@ import (
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
 	"sunbird/internal/pkg"
+	"sync"
 )
 
 type ModuleCache struct {
 	modules map[string]*object.Hash
+	mu      sync.RWMutex
 }
 
 func NewModuleCache() *ModuleCache {
@@ -25,13 +26,18 @@ func NewModuleCache() *ModuleCache {
 }
 
 func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
-	if module, ok := mc.modules[path]; ok {
+	mc.mu.RLock()
+	module, ok := mc.modules[path]
+	mc.mu.RUnlock()
+	if ok {
 		return module, nil
 	}
 
 	// Check if it's a built-in module
 	if builtinModule, ok := modules.BuiltinModules[path]; ok {
+		mc.mu.Lock()
 		mc.modules[path] = builtinModule
+		mc.mu.Unlock()
 		return builtinModule, nil
 	}
 
@@ -39,7 +45,9 @@ func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
 	modulesDir := ".sb_modules"
 	if _, err := os.Stat(modulesDir); err == nil {
 		if module, err := mc.tryLoadFromModulesDir(path); err == nil {
+			mc.mu.Lock()
 			mc.modules[path] = module
+			mc.mu.Unlock()
 			return module, nil
 		}
 	}
@@ -102,7 +110,9 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 	}
 
 	module := &object.Hash{Pairs: pairs}
+	mc.mu.Lock()
 	mc.modules[path] = module
+	mc.mu.Unlock()
 
 	return module, nil
 }
