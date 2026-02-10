@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 issues:
   max-same-issues: 50
@@ -11,7 +11,7 @@ issues:
       linters: [revive]
     - text: 'comment on exported \S+ \S+ should be of the form ".+"'
       linters: [revive, staticcheck]
-    
+
     # Test files
     - path: '_test\.go'
       linters:
@@ -101,7 +101,6 @@ linters-settings:
     max-complexity: 30
     package-average: 10.0
 
-
   errcheck:
     check-type-assertions: true
     exclude-functions:
@@ -162,13 +161,13 @@ linters-settings:
 
   gosec:
     excludes:
-      - G304  # File inclusion
-      - G306  # File permissions
-      - G301  # Directory permissions
-      - G302  # File permissions  
-      - G404  # Weak random (math/rand/v2 is fine)
-      - G114  # HTTP timeouts
-      - G115  # Integer conversions
+      - G304 # File inclusion
+      - G306 # File permissions
+      - G301 # Directory permissions
+      - G302 # File permissions
+      - G404 # Weak random (math/rand/v2 is fine)
+      - G114 # HTTP timeouts
+      - G115 # Integer conversions
 
   govet:
     enable-all: true
@@ -180,7 +179,8 @@ linters-settings:
     max-func-lines: 0
 
   nolintlint:
-    allow-no-explanation: [funlen, gocognit, golines, gochecknoglobals, reassign]
+    allow-no-explanation:
+      [funlen, gocognit, golines, gochecknoglobals, reassign]
     require-explanation: true
     require-specific: true
 
@@ -193,7 +193,7 @@ linters-settings:
       - all
       - -ST1000
       - -ST1003
-      - -ST1005  # Error capitalization
+      - -ST1005 # Error capitalization
       - -ST1016
 
   unused:
