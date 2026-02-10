@@ -72,6 +72,8 @@ func typeAnnotationToObjectType(typeName string) object.ObjectType {
 		return object.ArrayObj
 	case "hash":
 		return object.HashObj
+	case "range":
+		return object.RangeObj
 	default:
 		return object.NullObj
 	}
