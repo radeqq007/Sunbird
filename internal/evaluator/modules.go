@@ -80,12 +80,13 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
 
 	content, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
+
+	file.Close()
 
 	l := lexer.New(string(content))
 	p := parser.New(l)
