@@ -91,14 +91,15 @@ func runFile(path string) {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
-	_ = src.Close()
-
+	
 	content, err := io.ReadAll(src)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
-
+	
+	_ = src.Close()
+	
 	l := lexer.New(string(content))
 	p := parser.New(l)
 
