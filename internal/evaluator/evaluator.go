@@ -7,14 +7,14 @@ import (
 )
 
 var (
-	NULL     = &object.Null{}
-	TRUE     = &object.Boolean{Value: true}
-	FALSE    = &object.Boolean{Value: false}
-	BREAK    = &object.Break{}
-	CONTINUE = &object.Continue{}
+	NULL     = object.NewNull()
+	TRUE     = object.NewBool(true)
+	FALSE    = object.NewBool(false)
+	BREAK    = object.NewBreak()
+	CONTINUE = object.NewContinue()
 )
 
-func Eval(node ast.Node, env *object.Environment) object.Object {
+func Eval(node ast.Node, env *object.Environment) object.Value {
 	switch node := node.(type) {
 	case *ast.Program:
 		return evalProgram(node.Statements, env)
@@ -32,13 +32,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return CONTINUE
 
 	case *ast.StringLiteral:
-		return &object.String{Value: node.Value}
+		return object.NewString(node.Value)
 
 	case *ast.IntegerLiteral:
-		return &object.Integer{Value: node.Value}
+		return object.NewInt(node.Value)
 
 	case *ast.FloatLiteral:
-		return &object.Float{Value: node.Value}
+		return object.NewFloat(node.Value)
 
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
@@ -82,7 +82,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalTryCatchStatement(node, env)
 
 	case *ast.ReturnStatement:
-		var val object.Object
+		var val object.Value
 		if node.ReturnValue != nil {
 			val = Eval(node.ReturnValue, env)
 			if isError(val) {
@@ -91,7 +91,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		} else {
 			val = NULL
 		}
-		return &object.ReturnValue{Value: val}
+		return object.NewReturnValue(val)
 
 	case *ast.LetExpression:
 		if env.Has(node.Name.String()) {
@@ -104,7 +104,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		if node.Type != nil {
-			if err := checkType(node.Type, val, node.Token.Line, node.Token.Col); err != nil {
+			if err := checkType(node.Type, val, node.Token.Line, node.Token.Col); err.IsError() {
 				return err
 			}
 		}
@@ -139,7 +139,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		if node.Type != nil {
-			if err := checkType(node.Type, val, node.Token.Line, node.Token.Col); err != nil {
+			if err := checkType(node.Type, val, node.Token.Line, node.Token.Col); err.IsError() {
 				return err
 			}
 		}
@@ -153,7 +153,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
-		return &object.Function{Parameters: params, ReturnType: node.ReturnType, Body: body, Env: env}
+		return object.NewFunction(params, node.ReturnType, body, env)
 
 	case *ast.PropertyExpression:
 		return evalPropertyExpression(node, env)
@@ -168,9 +168,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 				return obj
 			}
 
-			var hash *object.Hash
-			if hash, ok = obj.(*object.Hash); ok {
-				key := &object.String{Value: propExpr.Property.Value}
+			if obj.IsHash() {
+				hash := obj.AsHash()
+				key := object.NewString(propExpr.Property.Value)
 				method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
 				if isError(method) {
 					return method
@@ -204,7 +204,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(elements) == 1 && isError(elements[0]) {
 			return elements[0]
 		}
-		return &object.Array{Elements: elements}
+		return object.NewArray(elements)
 
 	case *ast.IndexExpression:
 		left := Eval(node.Left, env)
@@ -222,21 +222,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.RangeExpression:
 		return evalRangeExpression(node, env)
 	}
-	return nil
+	return object.NewNull()
 }
 
-func evalProgram(stmts []ast.Statement, env *object.Environment) object.Object {
-	var result object.Object
+func evalProgram(stmts []ast.Statement, env *object.Environment) object.Value {
+	var result object.Value
 
 	for _, statement := range stmts {
 		result = Eval(statement, env)
 
-		switch result := result.(type) {
-		case *object.ReturnValue:
-			return result.Value
+		switch result.Kind() {
+		case object.ReturnValueKind:
+			return result.AsReturnValue().Value
 
-		case *object.Error:
-			if result.Propagating {
+		case object.ErrorKind:
+			if result.AsError().Propagating {
 				return result
 			}
 		}
@@ -248,14 +248,14 @@ func evalProgram(stmts []ast.Statement, env *object.Environment) object.Object {
 func evalExpressions(
 	exps []ast.Expression,
 	env *object.Environment,
-) []object.Object {
-	var result []object.Object
+) []object.Value {
+	var result []object.Value
 
 	for _, e := range exps {
 		evaluated := Eval(e, env)
 
 		if isError(evaluated) {
-			return []object.Object{evaluated}
+			return []object.Value{evaluated}
 		}
 
 		result = append(result, evaluated)
@@ -264,32 +264,24 @@ func evalExpressions(
 	return result
 }
 
-func isTruthy(obj object.Object) bool {
-	switch obj {
-	case NULL:
+func isTruthy(obj object.Value) bool {
+	switch obj.Kind() {
+	case object.NullKind:
 		return false
-
-	case TRUE:
-		return true
-
-	case FALSE:
-		return false
-
+	case object.BoolKind:
+		return obj.AsBool()
+	case object.StringKind:
+		return obj.AsString().Value != ""
+	case object.IntKind:
+		return obj.AsInt() != 0
+	case object.FloatKind:
+		return obj.AsFloat() != 0.0
 	default:
-		switch obj := obj.(type) {
-		case *object.String:
-			return obj.Value != ""
-		case *object.Integer:
-			return obj.Value != 0
-		case *object.Float:
-			return obj.Value != 0.0
-		default:
-			return true
-		}
+		return true
 	}
 }
 
-func nativeBoolToBooleanObject(input bool) *object.Boolean {
+func nativeBoolToBooleanObject(input bool) object.Value {
 	if input {
 		return TRUE
 	}
@@ -297,7 +289,7 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	return FALSE
 }
 
-func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) object.Object {
+func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) object.Value {
 	start := Eval(node.Start, env)
 	if isError(start) {
 		return start
@@ -308,21 +300,19 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 		return end
 	}
 
-	err := errors.ExpectType(node.Token.Line, node.Token.Col, start, object.IntegerObj)
-	if err != nil {
+	err := errors.ExpectType(node.Token.Line, node.Token.Col, start, object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(node.Token.Line, node.Token.Col, end, object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(node.Token.Line, node.Token.Col, end, object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	startObj, _ := start.(*object.Integer)
-	startVal := startObj.Value
+	startVal := start.AsInt()
 
-	endObj, _ := end.(*object.Integer)
-	endVal := endObj.Value
+	endVal := end.AsInt()
 	stepVal := int64(1)
 
 	if node.Step != nil {
@@ -331,14 +321,13 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 			return step
 		}
 
-		err = errors.ExpectType(node.Token.Line, node.Token.Col, step, object.IntegerObj)
-		if err != nil {
+		err = errors.ExpectType(node.Token.Line, node.Token.Col, step, object.IntKind)
+		if err.IsError() {
 			return err
 		}
 
-		stepObj, _ := step.(*object.Integer)
-		stepVal = stepObj.Value
+		stepVal = step.AsInt()
 	}
 
-	return &object.Range{Start: startVal, End: endVal, Step: stepVal}
+	return object.NewRange(startVal, endVal, stepVal)
 }

@@ -4,11 +4,12 @@ import (
 	"sunbird/internal/object"
 )
 
-func isError(obj object.Object) bool {
-	if obj != nil && obj.Type() == object.ErrorObj {
-		errObj := obj.(*object.Error)
-		return errObj.Propagating
+func isError(obj object.Value) bool {
+	isErr := obj.IsError()
+	isPropagating := false
+	if isErr {
+		isPropagating = obj.AsError().Propagating
 	}
 
-	return false
+	return isErr && isPropagating
 }

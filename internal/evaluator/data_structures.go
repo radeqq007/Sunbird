@@ -6,8 +6,8 @@ import (
 	"sunbird/internal/object"
 )
 
-func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Object {
-	pairs := make(map[object.HashKey]object.HashPair)
+func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Value {
+	pairs := make(map[object.HashKey]object.HashPair) // ! take a look at this
 
 	for _, pair := range node.Pairs {
 		key := Eval(pair.Key, env)
@@ -29,18 +29,18 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 		pairs[hashed] = object.HashPair{Key: key, Value: value}
 	}
 
-	return &object.Hash{Pairs: pairs}
+	return object.NewHash(pairs)
 }
 
-func evalIndexExpression(left, index object.Object, line, col int) object.Object {
+func evalIndexExpression(left, index object.Value, line, col int) object.Value {
 	switch {
-	case left.Type() == object.ArrayObj && index.Type() == object.IntegerObj:
+	case left.IsArray() && index.IsInt():
 		return evalArrayIndexExpression(left, index, line, col)
 
-	case left.Type() == object.HashObj:
+	case left.IsHash():
 		return evalHashIndexExpression(left, index, line, col)
 
-	case left.Type() == object.StringObj:
+	case left.IsString() && index.IsInt():
 		return evalStringIndexExpression(left, index, line, col)
 
 	default:
