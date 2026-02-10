@@ -11,7 +11,7 @@ type TypeAnnotation interface {
 	typeAnnotation()
 }
 
-// SimpleType is for strings, ints, bools etc.
+// SimpleType is for strings, ints, bools, Range type etc.
 type SimpleType struct {
 	Token token.Token
 	Name  string
