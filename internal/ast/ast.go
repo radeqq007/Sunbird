@@ -1,82 +1,40 @@
 package ast
 
-import (
-	"bytes"
-	"strings"
-	"sunbird/internal/token"
-)
+import "bytes"
 
-type TypeAnnotation interface {
+type Node interface {
+	TokenLiteral() string
+	String() string
+}
+
+type Statement interface {
 	Node
-	typeAnnotation()
+	statementNode()
 }
 
-// SimpleType is for strings, ints, bools, Range type etc.
-type SimpleType struct {
-	Token token.Token
-	Name  string
+type Expression interface {
+	Node
+	expressionNode()
 }
 
-func (st *SimpleType) typeAnnotation()      {}
-func (st *SimpleType) TokenLiteral() string { return st.Token.Literal }
-func (st *SimpleType) String() string       { return st.Name }
-
-type ArrayType struct {
-	Token       token.Token
-	ElementType TypeAnnotation
+type Program struct {
+	Statements []Statement
 }
 
-func (at *ArrayType) typeAnnotation()      {}
-func (at *ArrayType) TokenLiteral() string { return at.Token.Literal }
-func (at *ArrayType) String() string {
-	// return "[" +  "]" + at.ElementType.String()
-	return "Array"
-}
-
-type HashType struct {
-	Token token.Token
-}
-
-func (ht *HashType) typeAnnotation()      {}
-func (ht *HashType) TokenLiteral() string { return ht.Token.Literal }
-func (ht *HashType) String() string       { return "Hash" }
-
-type FunctionType struct {
-	Token      token.Token
-	Parameters []TypeAnnotation
-	ReturnType TypeAnnotation
-}
-
-func (ft *FunctionType) typeAnnotation()      {}
-func (ft *FunctionType) TokenLiteral() string { return ft.Token.Literal }
-func (ft *FunctionType) String() string {
-	var out bytes.Buffer
-
-	params := []string{}
-	for _, p := range ft.Parameters {
-		params = append(params, p.String())
+func (p *Program) TokenLiteral() string {
+	if len(p.Statements) > 0 {
+		return p.Statements[0].TokenLiteral()
 	}
 
-	out.WriteString("(")
-	out.WriteString(strings.Join(params, ", "))
-	out.WriteString(")")
+	return ""
+}
 
-	if ft.ReturnType != nil {
-		out.WriteString(": ")
-		out.WriteString(ft.ReturnType.String())
+func (p *Program) String() string {
+	var out bytes.Buffer
+
+	for _, s := range p.Statements {
+		out.WriteString(s.String())
 	}
 
 	return out.String()
-}
-
-// OptionalType is for optional types like int?
-type OptionalType struct {
-	Token    token.Token
-	BaseType TypeAnnotation
-}
-
-func (ot *OptionalType) typeAnnotation()      {}
-func (ot *OptionalType) TokenLiteral() string { return ot.Token.Literal }
-func (ot *OptionalType) String() string {
-	return ot.BaseType.String() + "?"
 }
