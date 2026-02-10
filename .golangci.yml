@@ -2,31 +2,6 @@ version: '2'
 
 issues:
   max-same-issues: 50
-  exclude-rules:
-    - text: 'should have a package comment'
-      linters: [revive]
-    - text: 'exported \S+ \S+ should have comment( \(or a comment on this block\))? or be unexported'
-      linters: [revive]
-    - text: 'package comment should be of the form ".+"'
-      linters: [revive]
-    - text: 'comment on exported \S+ \S+ should be of the form ".+"'
-      linters: [revive, staticcheck]
-
-    # Test files
-    - path: '_test\.go'
-      linters:
-        - bodyclose
-        - dupl
-        - errcheck
-        - funlen
-        - goconst
-        - gosec
-        - noctx
-        - wrapcheck
-        - gochecknoglobals
-        - exhaustruct
-        - cyclop
-        - gocognit
 
 linters:
   enable:
@@ -56,7 +31,7 @@ linters:
     - goprintffuncname
     - gosec
     - govet
-    - iface
+    - ifaceassert
     - ineffassign
     - intrange
     - loggercheck
@@ -66,7 +41,6 @@ linters:
     - nakedret
     - nestif
     - nilerr
-    - nilnesserr
     - nilnil
     - noctx
     - nolintlint
@@ -77,7 +51,6 @@ linters:
     - promlinter
     - protogetter
     - reassign
-    - recvcheck
     - rowserrcheck
     - sloglint
     - spancheck
@@ -96,105 +69,136 @@ linters:
     - whitespace
     - exhaustruct
 
-linters-settings:
-  cyclop:
-    max-complexity: 30
-    package-average: 10.0
+  settings:
+    cyclop:
+      max-complexity: 30
+      package-average: 10.0
 
-  errcheck:
-    check-type-assertions: true
-    exclude-functions:
-      - (io.Closer).Close
-      - (*os.File).Close
+    errcheck:
+      check-type-assertions: true
+      exclude-functions:
+        - (io.Closer).Close
+        - (*os.File).Close
 
-  exhaustive:
-    check:
-      - switch
-      - map
-    default-signifies-exhaustive: true
+    exhaustive:
+      check:
+        - switch
+        - map
+      default-signifies-exhaustive: true
 
-  exhaustruct:
-    exclude:
-      # Standard library
-      - ^net/http\.
-      - ^net/url\.
-      - ^os/exec\.
-      - ^reflect\.
-      # Git library
-      - ^github\.com/go-git/
-      # Patterns
-      - Token$
-      - Statement$
-      - Expression$
-      - Literal$
-      - Type$
-      - Object$
-      - Hash$
-      - Environment$
-      - Parser$
-      - Lexer$
-      - Builder$
+    exhaustruct:
+      exclude:
+        - ^net/http\.
+        - ^net/url\.
+        - ^os/exec\.
+        - ^reflect\.
+        - ^github\.com/go-git/
+        - Token$
+        - Statement$
+        - Expression$
+        - Literal$
+        - Type$
+        - Object$
+        - Hash$
+        - Environment$
+        - Parser$
+        - Lexer$
+        - Builder$
 
-  funcorder:
-    struct-method: false
+    funcorder:
+      struct-method: false
 
-  funlen:
-    lines: 200
-    statements: 80
+    funlen:
+      lines: 200
+      statements: 80
 
-  gocognit:
-    min-complexity: 30
+    gocognit:
+      min-complexity: 30
 
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - style
-      - performance
-    disabled-checks:
-      - ifElseChain
-      - exitAfterDefer
-      - nestingReduce
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      disabled-checks:
+        - ifElseChain
+        - exitAfterDefer
+        - nestingReduce
 
-  goprintffuncname:
-    skip:
-      - newError
+    goprintffuncname:
+      skip:
+        - newError
 
-  gosec:
-    excludes:
-      - G304 # File inclusion
-      - G306 # File permissions
-      - G301 # Directory permissions
-      - G302 # File permissions
-      - G404 # Weak random (math/rand/v2 is fine)
-      - G114 # HTTP timeouts
-      - G115 # Integer conversions
+    gosec:
+      excludes:
+        - G304 # File inclusion
+        - G306 # File permissions
+        - G301 # Directory permissions
+        - G302 # File permissions
+        - G404 # Weak random (math/rand/v2 is fine)
+        - G114 # HTTP timeouts
+        - G115 # Integer conversions
 
-  govet:
-    enable-all: true
-    disable:
-      - fieldalignment
-      - shadow
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+        - shadow
 
-  nakedret:
-    max-func-lines: 0
+    nakedret:
+      max-func-lines: 0
 
-  nolintlint:
-    allow-no-explanation:
-      [funlen, gocognit, golines, gochecknoglobals, reassign]
-    require-explanation: true
-    require-specific: true
+    nolintlint:
+      allow-no-explanation:
+        - funlen
+        - gocognit
+        - golines
+        - gochecknoglobals
+        - reassign
+      require-explanation: true
+      require-specific: true
 
-  perfsprint:
-    strconcat: false
-    err-error: false
+    perfsprint:
+      strconcat: false
+      err-error: false
 
-  staticcheck:
-    checks:
-      - all
-      - -ST1000
-      - -ST1003
-      - -ST1005 # Error capitalization
-      - -ST1016
+    staticcheck:
+      checks:
+        - all
+        - -ST1000
+        - -ST1003
+        - -ST1005 # Error capitalization
+        - -ST1016
 
-  unused:
-    field-writes-are-uses: true
+    unused:
+      field-writes-are-uses: true
+
+  exclusions:
+    rules:
+      - text: 'should have a package comment'
+        linters:
+          - revive
+      - text: 'exported \S+ \S+ should have comment( \(or a comment on this block\))? or be unexported'
+        linters:
+          - revive
+      - text: 'package comment should be of the form ".+"'
+        linters:
+          - revive
+      - text: 'comment on exported \S+ \S+ should be of the form ".+"'
+        linters:
+          - revive
+          - staticcheck
+      - path: '_test\.go'
+        linters:
+          - bodyclose
+          - dupl
+          - errcheck
+          - funlen
+          - goconst
+          - gosec
+          - noctx
+          - wrapcheck
+          - gochecknoglobals
+          - exhaustruct
+          - cyclop
+          - gocognit
