@@ -150,7 +150,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseTypeAnnotation() ast.TypeAnnotation {
 	switch p.curToken.Type {
-	case token.TypeInt, token.TypeFloat, token.TypeString, token.TypeBool, token.TypeVoid:
+	case token.TypeInt, token.TypeFloat, token.TypeString, token.TypeBool, token.TypeRange, token.TypeVoid:
 		t := &ast.SimpleType{
 			Token: p.curToken,
 			Name:  p.curToken.Literal,
