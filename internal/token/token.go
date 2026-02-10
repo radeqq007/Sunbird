@@ -74,6 +74,7 @@ const (
 	TypeArray  TokenType = "TYPE_ARRAY"
 	TypeFunc   TokenType = "TYPE_FUNC"
 	TypeHash   TokenType = "TYPE_HASH"
+	TypeRange  TokenType = "TYPE_RANGE"
 
 	// Keywords
 	Function TokenType = "FUNC"
