@@ -91,15 +91,11 @@ func runFile(path string) {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
-	defer func() {
-		_ = src.Close()
-	}()
+	_ = src.Close()
 
 	content, err := io.ReadAll(src)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
-
-		_ = src.Close() // Close file before exiting
 		os.Exit(1)
 	}
 
