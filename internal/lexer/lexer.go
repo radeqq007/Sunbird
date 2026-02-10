@@ -43,6 +43,7 @@ var keywords = map[string]token.TokenType{
 	"Array":    token.TypeArray,
 	"Func":     token.TypeFunc,
 	"Hash":     token.TypeHash,
+	"Range":	token.TypeRange,
 	"in":       token.In,
 }
 
