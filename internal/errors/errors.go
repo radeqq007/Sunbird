@@ -86,6 +86,14 @@ func ExpectNumberOfArguments(line, col int, expected int, args []object.Value) o
 	return object.NewNull()
 }
 
+func ExpectMinNumberOfArguments(line, col int, expected int, args []object.Value) object.Value {
+	if len(args) < expected {
+		return New(ArgumentError, line, col, "expected at least %d arguments, got %d", expected, len(args))
+	}
+	return object.NewNull()
+}
+
+
 func NewIndexNotSupportedError(line, col int, val object.Value) object.Value {
 	return New(IndexNotSupportedError, line, col, "%s", val.Kind().String())
 }

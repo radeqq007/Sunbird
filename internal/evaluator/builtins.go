@@ -16,7 +16,7 @@ var builtins = map[string]object.Value{
 			}
 
 			err = errors.ExpectOneOfTypes(0, 0, args[0], object.StringKind, object.ArrayKind)
-			if err.IsNull() {
+			if !err.IsNull() {
 				return err
 			}
 
@@ -43,7 +43,7 @@ var builtins = map[string]object.Value{
 
 	"append": object.NewBuiltin(
 		func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+			err := errors.ExpectMinNumberOfArguments(0, 0, 2, args)
 			if !err.IsNull() {
 				return err
 			}

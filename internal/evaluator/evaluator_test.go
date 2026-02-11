@@ -393,6 +393,20 @@ func TestBuiltinFunctions(t *testing.T) {
 		switch expected := tt.expected.(type) {
 		case int:
 			testIntegerObject(t, evaluated, int64(expected))
+		case []int64:
+			if !evaluated.IsArray() {
+				t.Errorf("object is not Array. got=%T (%+v)", evaluated, evaluated)
+				continue
+			}
+			arr := evaluated.AsArray()
+			if len(arr.Elements) != len(expected) {
+				t.Errorf("wrong num of elements. want=%d, got=%d",
+					len(expected), len(arr.Elements))
+				continue
+			}
+			for i, expectedElem := range expected {
+				testIntegerObject(t, arr.Elements[i], expectedElem)
+			}
 		case string:
 			if !evaluated.IsError() {
 				t.Errorf("object is not Error. got=%T (%+v)", evaluated, evaluated)
