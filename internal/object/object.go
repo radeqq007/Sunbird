@@ -137,19 +137,19 @@ func (v Value) Inspect() string {
 	switch v.kind {
 	case IntKind:
 		return strconv.FormatInt(v.AsInt(), 10)
-	
+
 	case FloatKind:
 		return strconv.FormatFloat(v.AsFloat(), 'f', -1, 64)
-	
+
 	case BoolKind:
 		return strconv.FormatBool(v.AsBool())
-	
+
 	case NullKind:
 		return "null"
-	
+
 	case StringKind:
 		return `"` + v.AsString().Value + `"`
-	
+
 	case ArrayKind:
 		arr := v.AsArray()
 		var out bytes.Buffer
@@ -161,7 +161,7 @@ func (v Value) Inspect() string {
 		out.WriteString(strings.Join(elements, ", "))
 		out.WriteString("]")
 		return out.String()
-	
+
 	case HashKind:
 		h := v.AsHash()
 		var out bytes.Buffer
@@ -173,7 +173,7 @@ func (v Value) Inspect() string {
 		out.WriteString(strings.Join(pairs, ", "))
 		out.WriteString("}")
 		return out.String()
-	
+
 	case FunctionKind:
 		fn := v.AsFunction()
 		var out bytes.Buffer
@@ -188,34 +188,34 @@ func (v Value) Inspect() string {
 		out.WriteString(fn.Body.String())
 		out.WriteString("\n}")
 		return out.String()
-	
+
 	case BuiltinKind:
 		return "builtin function"
-	
+
 	case ReturnValueKind:
 		rv := v.AsReturnValue()
 		return rv.Value.Inspect()
-	
+
 	case ErrorKind:
 		err := v.AsError()
 		if err.Line > 0 {
 			return fmt.Sprintf("%s (at line %d, col %d)", err.Message, err.Line, err.Col)
 		}
 		return err.Message
-	
+
 	case BreakKind:
 		return "break"
-	
+
 	case ContinueKind:
 		return "continue"
-	
+
 	case RangeKind:
 		r := v.AsRange()
 		if r.Step != 1 {
 			return fmt.Sprintf("%d..%d:%d", r.Start, r.End, r.Step)
 		}
 		return fmt.Sprintf("%d..%d", r.Start, r.End)
-	
+
 	default:
 		return "unknown"
 	}
@@ -226,12 +226,12 @@ func (v Value) HashKey() HashKey {
 	switch v.kind {
 	case IntKind:
 		return HashKey{Kind: IntKind, Value: v.bits}
-	
+
 	case StringKind:
 		h := fnv.New64a()
 		_, _ = h.Write([]byte(v.AsString().Value))
 		return HashKey{Kind: StringKind, Value: h.Sum64()}
-	
+
 	default:
 		// Other types can't be used as hash keys
 		panic(fmt.Sprintf("type %s is not hashable", v.kind))
@@ -254,9 +254,6 @@ func (v Value) IsRange() bool    { return v.kind == RangeKind }
 func (v Value) AsInt() int64 {
 	return int64(v.bits)
 }
-
-
-
 
 func (v Value) AsFloat() float64 {
 	return math.Float64frombits(v.bits)
@@ -339,6 +336,18 @@ func NewHash(pairs map[HashKey]HashPair) Value {
 	return Value{
 		kind: HashKind,
 		ptr:  unsafe.Pointer(h),
+	}
+}
+
+func NewHashPair(key, value Value) HashPair {
+	switch key.Kind() {
+	case IntKind, StringKind:
+		return HashPair{
+			Key:   key,
+			Value: value,
+		}
+	default:
+		panic(fmt.Sprintf("type %s is not hashable", key.Kind()))
 	}
 }
 
