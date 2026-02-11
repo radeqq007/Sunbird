@@ -6,7 +6,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
+func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Value {
 	if val, ok := env.Get(node.Value); ok {
 		return val
 	}

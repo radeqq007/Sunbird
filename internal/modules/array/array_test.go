@@ -16,26 +16,26 @@ func TestPush(t *testing.T) {
 		{
 			input: "import 'array'; let a = [1, 2]; array.push(a, 3); a",
 			want: object.Array{
-				Elements: []object.Object{
-					&object.Integer{Value: 1},
-					&object.Integer{Value: 2},
-					&object.Integer{Value: 3},
+				Elements: []object.Value{
+					object.NewInt(1),
+					object.NewInt(2),
+					object.NewInt(3),
 				},
 			},
 		},
 		{
 			input: "import 'array'; let a = [1, 2]; array.push(a, 'abc'); a",
 			want: object.Array{
-				Elements: []object.Object{
-					&object.Integer{Value: 1},
-					&object.Integer{Value: 2},
-					&object.String{Value: "abc"},
+				Elements: []object.Value{
+					object.NewInt(1),
+					object.NewInt(2),
+					object.NewString("abc"),
 				},
 			},
 		},
 		{
 			input: "import 'array'; let a = []; array.push(a, true); a",
-			want:  object.Array{Elements: []object.Object{&object.Boolean{Value: true}}},
+			want:  object.Array{Elements: []object.Value{object.NewBool(true)}},
 		},
 	}
 
@@ -82,10 +82,10 @@ func TestShift(t *testing.T) {
 
 func TestUnshift(t *testing.T) {
 	input := "import 'array'; let a = [2, 3]; array.unshift(a, 1); a"
-	want := object.Array{Elements: []object.Object{
-		&object.Integer{Value: 1},
-		&object.Integer{Value: 2},
-		&object.Integer{Value: 3},
+	want := object.Array{Elements: []object.Value{
+		object.NewInt(1),
+		object.NewInt(2),
+		object.NewInt(3),
 	}}
 
 	testArrayObject(t, testEval(input), want)
@@ -93,10 +93,10 @@ func TestUnshift(t *testing.T) {
 
 func TestReverse(t *testing.T) {
 	input := "import 'array'; let a = [1, 2, 3]; array.reverse(a); a"
-	want := object.Array{Elements: []object.Object{
-		&object.Integer{Value: 3},
-		&object.Integer{Value: 2},
-		&object.Integer{Value: 1},
+	want := object.Array{Elements: []object.Value{
+		object.NewInt(3),
+		object.NewInt(2),
+		object.NewInt(1),
 	}}
 
 	testArrayObject(t, testEval(input), want)
@@ -113,12 +113,13 @@ func TestIndexOf(t *testing.T) {
 
 	for _, tt := range tests {
 		val := testEval(tt.input)
-		result, ok := val.(*object.Integer)
-		if !ok {
+		if !val.IsInt() {
 			t.Fatalf("expected Integer, got=%T", val)
 		}
-		if result.Value != tt.want {
-			t.Errorf("indexOf wrong. want=%d, got=%d", tt.want, result.Value)
+
+		value := val.AsInt()
+		if value != tt.want {
+			t.Errorf("indexOf wrong. want=%d, got=%d", tt.want, value)
 		}
 	}
 }
@@ -134,13 +135,16 @@ func TestSlice(t *testing.T) {
 
 	for _, tt := range tests {
 		val := testEval(tt.input)
-		array, ok := val.(*object.Array)
-		if !ok {
+		if !val.IsArray() {
 			t.Fatalf("expected Array, got=%T", val)
 		}
+
+		array := val.AsArray()
+		
 		if len(array.Elements) != len(tt.want) {
 			t.Fatalf("slice length wrong. want=%d, got=%d", len(tt.want), len(array.Elements))
 		}
+		
 		for i, wantStr := range tt.want {
 			if array.Elements[i].Inspect() != wantStr {
 				t.Errorf(
@@ -158,10 +162,12 @@ func TestJoin(t *testing.T) {
 	input := "import 'array'; let a = [1, 2, 3]; array.join(a, '-')"
 	val := testEval(input)
 
-	str, ok := val.(*object.String)
-	if !ok {
+	if !val.IsString() {
 		t.Fatalf("expected String, got=%T", val)
 	}
+
+	str := val.AsString()
+	
 	if str.Value != "1-2-3" {
 		t.Errorf("join result wrong. want='1-2-3', got='%s'", str.Value)
 	}
@@ -169,9 +175,9 @@ func TestJoin(t *testing.T) {
 
 func TestConcat(t *testing.T) {
 	input := "import 'array'; let a = [1]; let b = [2]; array.concat(a, b)"
-	want := object.Array{Elements: []object.Object{
-		&object.Integer{Value: 1},
-		&object.Integer{Value: 2},
+	want := object.Array{Elements: []object.Value{
+		object.NewInt(1),
+		object.NewInt(2),
 	}}
 
 	testArrayObject(t, testEval(input), want)
@@ -188,12 +194,14 @@ func TestContains(t *testing.T) {
 
 	for _, tt := range tests {
 		val := testEval(tt.input)
-		boolean, ok := val.(*object.Boolean)
-		if !ok {
+		if !val.IsBool() {
 			t.Fatalf("expected Boolean, got=%T", val)
 		}
-		if boolean.Value != tt.want {
-			t.Errorf("contains wrong. want=%t, got=%t", tt.want, boolean.Value)
+
+		boolean := val.AsBool()
+		
+		if boolean != tt.want {
+			t.Errorf("contains wrong. want=%t, got=%t", tt.want, boolean)
 		}
 	}
 }
@@ -202,17 +210,17 @@ func TestClear(t *testing.T) {
 	input := "import 'array'; let a = [1, 2, 3]; array.clear(a); a"
 	val := testEval(input)
 
-	array, ok := val.(*object.Array)
-	if !ok || len(array.Elements) != 0 {
+	if !val.IsArray() || len(val.AsArray().Elements) != 0 {
 		t.Errorf("clear failed. array not empty, got=%+v", val)
 	}
 }
 
-func testArrayObject(t *testing.T, obj object.Object, expected object.Array) {
-	array, ok := obj.(*object.Array)
-	if !ok {
+func testArrayObject(t *testing.T, obj object.Value, expected object.Array) {
+	if !obj.IsArray() {
 		t.Errorf("object is not Array. got=%T (%+v)", obj, obj)
 	}
+
+	array := obj.AsArray()
 
 	if len(array.Elements) != len(expected.Elements) {
 		t.Errorf(
@@ -234,7 +242,7 @@ func testArrayObject(t *testing.T, obj object.Object, expected object.Array) {
 	}
 }
 
-func testEval(input string) object.Object {
+func testEval(input string) object.Value {
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()

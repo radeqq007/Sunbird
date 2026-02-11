@@ -59,7 +59,7 @@ func TestEvalFloatExpression(t *testing.T) {
 	}
 }
 
-func testEval(input string) object.Object {
+func testEval(input string) object.Value {
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -68,30 +68,29 @@ func testEval(input string) object.Object {
 	return evaluator.Eval(program, env)
 }
 
-func testIntegerObject(t *testing.T, obj object.Object, expected int64) {
-	result, ok := obj.(*object.Integer)
-
-	if !ok {
-		t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
+func testIntegerObject(t *testing.T, obj object.Value, expected int64) {
+	if !obj.IsInt() {
+		t.Errorf("object is not Integer. got=%T", obj.Kind().String())
 	}
 
-	if result.Value != expected {
-		t.Errorf("object has wrong value. got=%d, want=%d", result.Value, expected)
+	val := obj.AsInt()
+	if obj.AsInt() != expected {
+		t.Errorf("object has wrong value. got=%d, want=%d", val, expected)
 	}
 }
 
 // I have to do it that way cause result.Value == expected doesn't work
 const floatTolerance = 1e-9
 
-func testFloatObject(t *testing.T, obj object.Object, expected float64) {
-	result, ok := obj.(*object.Float)
-
-	if !ok {
-		t.Errorf("object is not Float. got=%T (%+v)", obj, obj)
+func testFloatObject(t *testing.T, obj object.Value, expected float64) {
+	if !obj.IsFloat() {
+		t.Errorf("object is not Float. got=%T", obj.Kind().String())
 	}
 
-	if math.Abs(result.Value-expected) > floatTolerance {
-		t.Errorf("object has wrong value. got=%f, want=%f", result.Value, expected)
+	val := obj.AsFloat()
+
+	if math.Abs(val-expected) > floatTolerance {
+		t.Errorf("object has wrong value. got=%f, want=%f", val, expected)
 	}
 }
 
@@ -119,15 +118,15 @@ func TestEvalBooleanExpression(t *testing.T) {
 	}
 }
 
-func testBooleanObject(t *testing.T, obj object.Object, expected bool) {
-	result, ok := obj.(*object.Boolean)
-
-	if !ok {
+func testBooleanObject(t *testing.T, obj object.Value, expected bool) {
+	if !obj.IsBool() {
 		t.Errorf("object is not Boolean. got=%T (%+v)", obj, obj)
 	}
 
-	if result.Value != expected {
-		t.Errorf("object has wrong value. got=%t, want=%t", result.Value, expected)
+	val := obj.AsBool()
+
+	if val != expected {
+		t.Errorf("object has wrong value. got=%t, want=%t", val, expected)
 	}
 }
 
@@ -176,7 +175,7 @@ func TestIfElseExpressions(t *testing.T) {
 	}
 }
 
-func testNullObject(t *testing.T, obj object.Object) {
+func testNullObject(t *testing.T, obj object.Value) {
 	if obj != evaluator.NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
 	}
@@ -256,15 +255,16 @@ func TestErrorHandling(t *testing.T) {
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		errObj, ok := evaluated.(*object.Error)
-		if !ok {
+		if !evaluated.IsError() {
 			t.Errorf("no error object returned. got=%T(%+v)",
 				evaluated, evaluated)
 			continue
 		}
-		if errObj.Message != tt.expectedMessage {
+
+		err := evaluated.AsError()
+		if err.Message != tt.expectedMessage {
 			t.Errorf("wrong error message. expected=%q, got=%q",
-				tt.expectedMessage, errObj.Message)
+				tt.expectedMessage, err.Message)
 		}
 	}
 }
@@ -289,11 +289,11 @@ func TestFunctionObject(t *testing.T) {
 
 	evaluated := testEval(input)
 
-	fn, ok := evaluated.(*object.Function)
-
-	if !ok {
+	if !evaluated.IsFunction() {
 		t.Fatalf("object is not Function. got=%T (%+v)", evaluated, evaluated)
 	}
+
+	fn := evaluated.AsFunction()
 
 	if len(fn.Parameters) != 1 {
 		t.Fatalf("function has wrong parameters. Parameters=%+v", fn.Parameters)
@@ -342,13 +342,14 @@ func TestStringLiteral(t *testing.T) {
 
 	evaluated := testEval(input)
 
-	str, ok := evaluated.(*object.String)
-	if !ok {
+	if !evaluated.IsString() {
 		t.Fatalf("object is not String. got=%T (%+v)", evaluated, evaluated)
 	}
 
-	if str.Value != "Hello World!" {
-		t.Errorf("String has wrong value. got=%q", str.Value)
+	str := evaluated.AsString().Value
+
+	if str != "Hello World!" {
+		t.Errorf("String has wrong value. got=%q", str)
 	}
 }
 
@@ -357,14 +358,14 @@ func TestStringConcatenation(t *testing.T) {
 
 	evaluated := testEval(input)
 
-	str, ok := evaluated.(*object.String)
-
-	if !ok {
+	if !evaluated.IsString() {
 		t.Fatalf("object is not String. got=%T (%+v)", evaluated, evaluated)
 	}
 
-	if str.Value != "Hello World!" {
-		t.Errorf("String has wrong value. got=%q", str.Value)
+	str := evaluated.AsString().Value
+
+	if str != "Hello World!" {
+		t.Errorf("String has wrong value. got=%q", str)
 	}
 }
 
@@ -392,16 +393,29 @@ func TestBuiltinFunctions(t *testing.T) {
 		switch expected := tt.expected.(type) {
 		case int:
 			testIntegerObject(t, evaluated, int64(expected))
+		case []int64:
+			if !evaluated.IsArray() {
+				t.Errorf("object is not Array. got=%T (%+v)", evaluated, evaluated)
+				continue
+			}
+			arr := evaluated.AsArray()
+			if len(arr.Elements) != len(expected) {
+				t.Errorf("wrong num of elements. want=%d, got=%d",
+					len(expected), len(arr.Elements))
+				continue
+			}
+			for i, expectedElem := range expected {
+				testIntegerObject(t, arr.Elements[i], expectedElem)
+			}
 		case string:
-			errObj, ok := evaluated.(*object.Error)
-
-			if !ok {
+			if !evaluated.IsError() {
 				t.Errorf("object is not Error. got=%T (%+v)", evaluated, evaluated)
 				continue
 			}
 
-			if errObj.Message != expected {
-				t.Errorf("wrong error message. expected=%q, got=%q", expected, errObj.Message)
+			err := evaluated.AsError()
+			if err.Message != expected {
+				t.Errorf("wrong error message. expected=%q, got=%q", expected, err.Message)
 			}
 		}
 	}
@@ -412,20 +426,20 @@ func TestArrayLiterals(t *testing.T) {
 
 	evaluated := testEval(input)
 
-	result, ok := evaluated.(*object.Array)
-
-	if !ok {
+	if !evaluated.IsArray() {
 		t.Fatalf("object is not Array. got=%T (%+v)", evaluated, evaluated)
 	}
 
-	if len(result.Elements) != 3 {
+	arr := evaluated.AsArray()
+
+	if len(arr.Elements) != 3 {
 		t.Fatalf("array has wrong num of elements. got=%d",
-			len(result.Elements))
+			len(arr.Elements))
 	}
 
-	testIntegerObject(t, result.Elements[0], 1)
-	testIntegerObject(t, result.Elements[1], 4)
-	testIntegerObject(t, result.Elements[2], 6)
+	testIntegerObject(t, arr.Elements[0], 1)
+	testIntegerObject(t, arr.Elements[1], 4)
+	testIntegerObject(t, arr.Elements[2], 6)
 }
 
 func TestArrayIndexExpressions(t *testing.T) {
@@ -499,25 +513,25 @@ a + true;
 		env := object.NewEnvironment()
 		evaluated := evaluator.Eval(program, env)
 
-		errObj, ok := evaluated.(*object.Error)
-		if !ok {
+		if !evaluated.IsError() {
 			t.Errorf("no error object returned for input: %q. got=%T(%+v)",
 				tt.input, evaluated, evaluated)
 			continue
 		}
 
-		if errObj.Line != tt.expectedLine {
+		err := evaluated.AsError()
+		if err.Line != tt.expectedLine {
 			t.Errorf("wrong line number for input: %q. expected=%d, got=%d",
-				tt.input, tt.expectedLine, errObj.Line)
+				tt.input, tt.expectedLine, err.Line)
 		}
 
-		if errObj.Col != tt.expectedCol {
+		if err.Col != tt.expectedCol {
 			t.Errorf("wrong column number for input: %q. expected=%d, got=%d",
-				tt.input, tt.expectedCol, errObj.Col)
+				tt.input, tt.expectedCol, err.Col)
 		}
 
-		if errObj.Message != tt.expectedMsg {
-			t.Errorf("wrong error message. expected=%q, got=%q", tt.expectedMsg, errObj.Message)
+		if err.Message != tt.expectedMsg {
+			t.Errorf("wrong error message. expected=%q, got=%q", tt.expectedMsg, err.Message)
 		}
 	}
 }
@@ -552,26 +566,23 @@ func TestFunctionTypeChecking(t *testing.T) {
 		evaluated := testEval(tt.input)
 		if tt.expectedMessage == "" {
 			if isError(evaluated) {
-				t.Errorf("expected no error, got=%q", evaluated.(*object.Error).Message)
+				t.Errorf("expected no error, got=%q", evaluated.AsError().Message)
 			}
 		} else {
-			errObj, ok := evaluated.(*object.Error)
-			if !ok {
+			if !evaluated.IsError() {
 				t.Errorf("no error object returned. got=%T(%+v)",
 					evaluated, evaluated)
 				continue
 			}
-			if errObj.Message != tt.expectedMessage {
+			err := evaluated.AsError()
+			if err.Message != tt.expectedMessage {
 				t.Errorf("wrong error message. expected=%q, got=%q",
-					tt.expectedMessage, errObj.Message)
+					tt.expectedMessage, err.Message)
 			}
 		}
 	}
 }
 
-func isError(obj object.Object) bool {
-	if obj != nil {
-		return obj.Type() == object.ErrorObj
-	}
-	return false
+func isError(obj object.Value) bool {
+	return obj.IsError()
 }

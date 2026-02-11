@@ -4,134 +4,99 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
+	"math"
 	"strconv"
 	"strings"
 	"sunbird/internal/ast"
+	"unsafe"
 )
 
 // ApplyFunction is a hook to allow calling functions from modules
-var ApplyFunction func(fn Object, args []Object) Object
+var ApplyFunction func(fn Value, args []Value) Value
 
-type ObjectType uint8
+type ValueKind uint8
 
 const (
-	StringObj ObjectType = iota
-	IntegerObj
-	FloatObj
-	BooleanObj
-	NullObj
-	FunctionObj
-	ReturnValueObj
-	ErrorObj
-	BuiltinObj
-	ArrayObj
-	HashObj
-	BreakObj
-	ContinueObj
-	RangeObj
+	IntKind ValueKind = iota
+	FloatKind
+	BoolKind
+	NullKind
+	StringKind
+	ArrayKind
+	HashKind
+	FunctionKind
+	BuiltinKind
+	ReturnValueKind
+	ErrorKind
+	BreakKind
+	ContinueKind
+	RangeKind
 )
 
-func (ot ObjectType) String() string {
-	switch ot {
-	case StringObj:
-		return "String"
-	case IntegerObj:
+func (vk ValueKind) String() string {
+	switch vk {
+	case IntKind:
 		return "Integer"
-	case FloatObj:
+	case FloatKind:
 		return "Float"
-	case BooleanObj:
+	case BoolKind:
 		return "Boolean"
-	case NullObj:
+	case NullKind:
 		return "Null"
-	case FunctionObj:
-		return "Function"
-	case ReturnValueObj:
-		return "ReturnValue"
-	case ErrorObj:
-		return "Error"
-	case BuiltinObj:
-		return "Builtin"
-	case ArrayObj:
+	case StringKind:
+		return "String"
+	case ArrayKind:
 		return "Array"
-	case BreakObj:
+	case HashKind:
+		return "Hash"
+	case FunctionKind:
+		return "Function"
+	case BuiltinKind:
+		return "Builtin"
+	case ReturnValueKind:
+		return "ReturnValue"
+	case ErrorKind:
+		return "Error"
+	case BreakKind:
 		return "Break"
-	case ContinueObj:
+	case ContinueKind:
 		return "Continue"
-	case RangeObj:
+	case RangeKind:
 		return "Range"
 	default:
 		return "Unknown"
 	}
 }
 
-type Object interface {
-	Type() ObjectType
-	Inspect() string
+// Primitives (int, float, bool, null) are stored inline
+// Complex types use ptr to heap-allocated data
+type Value struct {
+	kind ValueKind
+	bits uint64
+	ptr  unsafe.Pointer
 }
 
 type String struct {
 	Value string
 }
 
-func (s *String) Inspect() string  { return "\"" + s.Value + "\"" }
-func (s *String) Type() ObjectType { return StringObj }
-
-type Integer struct {
-	Value int64
+type Array struct {
+	Elements []Value
 }
 
-func (i *Integer) Inspect() string  { return strconv.FormatInt(i.Value, 10) }
-func (i *Integer) Type() ObjectType { return IntegerObj }
-
-type Float struct {
-	Value float64
+type Hash struct {
+	Pairs map[HashKey]HashPair
+	Proto *Hash
 }
 
-func (f *Float) Inspect() string  { return strconv.FormatFloat(f.Value, 'f', -1, 64) }
-func (f *Float) Type() ObjectType { return FloatObj }
-
-type Boolean struct {
-	Value bool
+type HashKey struct {
+	Kind  ValueKind
+	Value uint64
 }
 
-func (b *Boolean) Inspect() string  { return strconv.FormatBool(b.Value) }
-func (b *Boolean) Type() ObjectType { return BooleanObj }
-
-type Null struct{}
-
-func (n *Null) Type() ObjectType { return NullObj }
-func (n *Null) Inspect() string  { return "null" }
-
-type ReturnValue struct {
-	Value Object
-}
-
-func (rv *ReturnValue) Type() ObjectType { return ReturnValueObj }
-func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
-
-type Break struct{}
-
-func (b *Break) Type() ObjectType { return BreakObj }
-func (b *Break) Inspect() string  { return "break" }
-
-type Continue struct{}
-
-func (c *Continue) Type() ObjectType { return ContinueObj }
-func (c *Continue) Inspect() string  { return "continue" }
-
-type Error struct {
-	Message     string
-	Line        int
-	Col         int
-	Propagating bool
-}
-
-func (e *Error) Type() ObjectType { return ErrorObj }
-func (e *Error) Inspect() string {
-	if e.Line > 0 {
-		return fmt.Sprintf("%s (at line %d, col %d)", e.Message, e.Line, e.Col)
-	}
-	return e.Message
+type HashPair struct {
+	Key   Value
+	Value Value
 }
 
 type Function struct {
@@ -141,100 +106,21 @@ type Function struct {
 	Env        *Environment
 }
 
-func (f *Function) Type() ObjectType { return FunctionObj }
-func (f *Function) Inspect() string {
-	var out bytes.Buffer
-
-	params := []string{}
-
-	for _, p := range f.Parameters {
-		params = append(params, p.String())
-	}
-
-	out.WriteString("func")
-	out.WriteString("(")
-	out.WriteString(strings.Join(params, ", "))
-	out.WriteString(") {\n")
-	out.WriteString(f.Body.String())
-	out.WriteString("\n}")
-
-	return out.String()
-}
-
-type BuiltinFunction func(args ...Object) Object
+type BuiltinFunction func(args ...Value) Value
 
 type Builtin struct {
 	Fn BuiltinFunction
 }
 
-func (b *Builtin) Type() ObjectType { return BuiltinObj }
-func (b *Builtin) Inspect() string  { return "builtin function" }
-
-type Array struct {
-	Elements []Object
+type ReturnValue struct {
+	Value Value
 }
 
-func (ao *Array) Type() ObjectType { return ArrayObj }
-func (ao *Array) Inspect() string {
-	var out bytes.Buffer
-
-	elements := []string{}
-
-	for _, e := range ao.Elements {
-		elements = append(elements, e.Inspect())
-	}
-
-	out.WriteString("[")
-	out.WriteString(strings.Join(elements, ", "))
-	out.WriteString("]")
-
-	return out.String()
-}
-
-// Hash is just an object in sunbird
-type Hash struct {
-	Pairs map[HashKey]HashPair
-	Proto *Hash
-}
-
-type HashKey struct {
-	Type  ObjectType
-	Value uint64
-}
-
-type HashPair struct {
-	Key   Object
-	Value Object
-}
-
-func (h *Hash) Type() ObjectType { return HashObj }
-func (h *Hash) Inspect() string {
-	var out bytes.Buffer
-
-	pairs := []string{}
-	for _, pair := range h.Pairs {
-		pairs = append(pairs, pair.Key.Inspect()+": "+pair.Value.Inspect())
-	}
-
-	out.WriteString("{")
-	out.WriteString(strings.Join(pairs, ", "))
-	out.WriteString("}")
-
-	return out.String()
-}
-
-type Hashable interface {
-	HashKey() HashKey
-}
-
-func (s *String) HashKey() HashKey {
-	h := fnv.New64a()
-	_, _ = h.Write([]byte(s.Value))
-	return HashKey{Type: s.Type(), Value: h.Sum64()}
-}
-
-func (i *Integer) HashKey() HashKey {
-	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
+type Error struct {
+	Message     string
+	Line        int
+	Col         int
+	Propagating bool
 }
 
 type Range struct {
@@ -243,10 +129,292 @@ type Range struct {
 	Step  int64
 }
 
-func (r *Range) Type() ObjectType { return RangeObj }
-func (r *Range) Inspect() string {
-	if r.Step != 1 {
-		return fmt.Sprintf("%d..%d:%d", r.Start, r.End, r.Step)
+func (v Value) Kind() ValueKind {
+	return v.kind
+}
+
+func (v Value) Inspect() string {
+	switch v.kind {
+	case IntKind:
+		return strconv.FormatInt(v.AsInt(), 10)
+
+	case FloatKind:
+		return strconv.FormatFloat(v.AsFloat(), 'f', -1, 64)
+
+	case BoolKind:
+		return strconv.FormatBool(v.AsBool())
+
+	case NullKind:
+		return "null"
+
+	case StringKind:
+		return `"` + v.AsString().Value + `"`
+
+	case ArrayKind:
+		arr := v.AsArray()
+		var out bytes.Buffer
+		elements := make([]string, 0, len(arr.Elements))
+		for _, e := range arr.Elements {
+			elements = append(elements, e.Inspect())
+		}
+		out.WriteString("[")
+		out.WriteString(strings.Join(elements, ", "))
+		out.WriteString("]")
+		return out.String()
+
+	case HashKind:
+		h := v.AsHash()
+		var out bytes.Buffer
+		pairs := []string{}
+		for _, pair := range h.Pairs {
+			pairs = append(pairs, pair.Key.Inspect()+": "+pair.Value.Inspect())
+		}
+		out.WriteString("{")
+		out.WriteString(strings.Join(pairs, ", "))
+		out.WriteString("}")
+		return out.String()
+
+	case FunctionKind:
+		fn := v.AsFunction()
+		var out bytes.Buffer
+		params := []string{}
+		for _, p := range fn.Parameters {
+			params = append(params, p.String())
+		}
+		out.WriteString("func")
+		out.WriteString("(")
+		out.WriteString(strings.Join(params, ", "))
+		out.WriteString(") {\n")
+		out.WriteString(fn.Body.String())
+		out.WriteString("\n}")
+		return out.String()
+
+	case BuiltinKind:
+		return "builtin function"
+
+	case ReturnValueKind:
+		rv := v.AsReturnValue()
+		return rv.Value.Inspect()
+
+	case ErrorKind:
+		err := v.AsError()
+		if err.Line > 0 {
+			return fmt.Sprintf("%s (at line %d, col %d)", err.Message, err.Line, err.Col)
+		}
+		return err.Message
+
+	case BreakKind:
+		return "break"
+
+	case ContinueKind:
+		return "continue"
+
+	case RangeKind:
+		r := v.AsRange()
+		if r.Step != 1 {
+			return fmt.Sprintf("%d..%d:%d", r.Start, r.End, r.Step)
+		}
+		return fmt.Sprintf("%d..%d", r.Start, r.End)
+
+	default:
+		return "unknown"
 	}
-	return fmt.Sprintf("%d..%d", r.Start, r.End)
+}
+
+// Hashable interface implementation
+func (v Value) HashKey() HashKey {
+	switch v.kind {
+	case IntKind:
+		return HashKey{Kind: IntKind, Value: v.bits}
+
+	case StringKind:
+		h := fnv.New64a()
+		_, _ = h.Write([]byte(v.AsString().Value))
+		return HashKey{Kind: StringKind, Value: h.Sum64()}
+
+	default:
+		// Other types can't be used as hash keys
+		panic(fmt.Sprintf("type %s is not hashable", v.kind))
+	}
+}
+
+func (v Value) IsInt() bool      { return v.kind == IntKind }
+func (v Value) IsFloat() bool    { return v.kind == FloatKind }
+func (v Value) IsBool() bool     { return v.kind == BoolKind }
+func (v Value) IsNull() bool     { return v.kind == NullKind }
+func (v Value) IsString() bool   { return v.kind == StringKind }
+func (v Value) IsArray() bool    { return v.kind == ArrayKind }
+func (v Value) IsHash() bool     { return v.kind == HashKind }
+func (v Value) IsFunction() bool { return v.kind == FunctionKind }
+func (v Value) IsBuiltin() bool  { return v.kind == BuiltinKind }
+func (v Value) IsError() bool    { return v.kind == ErrorKind }
+func (v Value) IsRange() bool    { return v.kind == RangeKind }
+
+// Getters
+func (v Value) AsInt() int64 {
+	return int64(v.bits)
+}
+
+func (v Value) AsFloat() float64 {
+	return math.Float64frombits(v.bits)
+}
+
+func (v Value) AsBool() bool {
+	return v.bits != 0
+}
+
+func (v Value) AsString() *String {
+	return (*String)(v.ptr)
+}
+
+func (v Value) AsArray() *Array {
+	return (*Array)(v.ptr)
+}
+
+func (v Value) AsHash() *Hash {
+	return (*Hash)(v.ptr)
+}
+
+func (v Value) AsFunction() *Function {
+	return (*Function)(v.ptr)
+}
+
+func (v Value) AsBuiltin() *Builtin {
+	return (*Builtin)(v.ptr)
+}
+
+func (v Value) AsReturnValue() *ReturnValue {
+	return (*ReturnValue)(v.ptr)
+}
+
+func (v Value) AsError() *Error {
+	return (*Error)(v.ptr)
+}
+
+func (v Value) AsRange() *Range {
+	return (*Range)(v.ptr)
+}
+
+func NewInt(val int64) Value {
+	return Value{kind: IntKind, bits: uint64(val)}
+}
+
+func NewFloat(val float64) Value {
+	return Value{kind: FloatKind, bits: math.Float64bits(val)}
+}
+
+func NewBool(val bool) Value {
+	var bits uint64 = 0
+	if val {
+		bits = 1
+	}
+	return Value{kind: BoolKind, bits: bits}
+}
+
+func NewNull() Value {
+	return Value{kind: NullKind}
+}
+
+func NewString(val string) Value {
+	s := &String{Value: val}
+	return Value{
+		kind: StringKind,
+		ptr:  unsafe.Pointer(s),
+	}
+}
+
+func NewArray(elements []Value) Value {
+	arr := &Array{Elements: elements}
+	return Value{
+		kind: ArrayKind,
+		ptr:  unsafe.Pointer(arr),
+	}
+}
+
+func NewHash(pairs map[HashKey]HashPair) Value {
+	h := &Hash{Pairs: pairs}
+	return Value{
+		kind: HashKind,
+		ptr:  unsafe.Pointer(h),
+	}
+}
+
+func NewHashPair(key, value Value) HashPair {
+	switch key.Kind() {
+	case IntKind, StringKind:
+		return HashPair{
+			Key:   key,
+			Value: value,
+		}
+	default:
+		panic(fmt.Sprintf("type %s is not hashable", key.Kind()))
+	}
+}
+
+func NewFunction(
+	parameters []*ast.Identifier,
+	returnType ast.TypeAnnotation,
+	body *ast.BlockStatement,
+	env *Environment,
+) Value {
+	fn := &Function{
+		Parameters: parameters,
+		ReturnType: returnType,
+		Body:       body,
+		Env:        env,
+	}
+
+	return Value{
+		kind: FunctionKind,
+		ptr:  unsafe.Pointer(fn),
+	}
+}
+
+func NewBuiltin(fn BuiltinFunction) Value {
+	b := &Builtin{Fn: fn}
+	return Value{
+		kind: BuiltinKind,
+		ptr:  unsafe.Pointer(b),
+	}
+}
+
+func NewReturnValue(val Value) Value {
+	rv := &ReturnValue{Value: val}
+	return Value{
+		kind: ReturnValueKind,
+		ptr:  unsafe.Pointer(rv),
+	}
+}
+
+func NewError(message string, line, col int, propagating bool) Value {
+	err := &Error{
+		Message:     message,
+		Line:        line,
+		Col:         col,
+		Propagating: propagating,
+	}
+	return Value{
+		kind: ErrorKind,
+		ptr:  unsafe.Pointer(err),
+	}
+}
+
+func NewBreak() Value {
+	return Value{kind: BreakKind}
+}
+
+func NewContinue() Value {
+	return Value{kind: ContinueKind}
+}
+
+func NewRange(start, end, step int64) Value {
+	r := &Range{
+		Start: start,
+		End:   end,
+		Step:  step,
+	}
+	return Value{
+		kind: RangeKind,
+		ptr:  unsafe.Pointer(r),
+	}
 }

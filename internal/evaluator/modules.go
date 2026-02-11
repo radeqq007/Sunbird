@@ -15,17 +15,17 @@ import (
 )
 
 type ModuleCache struct {
-	modules map[string]*object.Hash
+	modules map[string]object.Value
 	mu      sync.RWMutex
 }
 
 func NewModuleCache() *ModuleCache {
 	return &ModuleCache{
-		modules: make(map[string]*object.Hash),
+		modules: make(map[string]object.Value),
 	}
 }
 
-func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
+func (mc *ModuleCache) loadModule(path string) (object.Value, error) {
 	mc.mu.RLock()
 	module, ok := mc.modules[path]
 	mc.mu.RUnlock()
@@ -56,7 +56,7 @@ func (mc *ModuleCache) loadModule(path string) (*object.Hash, error) {
 	return mc.loadFileModule(path)
 }
 
-func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
+func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 	mainFileDir := ""
 	if len(os.Args) > 1 {
 		mainFileDir = filepath.Dir(os.Args[1]) // TODO: don't use os.Args
@@ -71,19 +71,19 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 			if _, err = os.Stat(withExt); err == nil {
 				fullPath = withExt
 			} else {
-				return nil, fmt.Errorf("module not found: %s", path)
+				return object.NewNull(), fmt.Errorf("module not found: %s", path)
 			}
 		}
 	}
 
 	file, err := os.Open(fullPath)
 	if err != nil {
-		return nil, err
+		return object.NewNull(), err
 	}
 
 	content, err := io.ReadAll(file)
 	if err != nil {
-		return nil, err
+		return object.NewNull(), err
 	}
 
 	file.Close()
@@ -93,7 +93,7 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 	program := p.ParseProgram()
 
 	if len(p.Errors()) > 0 {
-		return nil, fmt.Errorf("parse errors in module: %v", p.Errors())
+		return object.NewNull(), fmt.Errorf("parse errors in module: %v", p.Errors())
 	}
 
 	moduleEnv := object.NewEnvironment()
@@ -102,15 +102,14 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 
 	pairs := make(map[object.HashKey]object.HashPair)
 	for name, value := range moduleEnv.GetStore() {
-		key := &object.String{Value: name}
+		key := object.NewString(name)
 		hashKey := key.HashKey()
-		pairs[hashKey] = object.HashPair{
-			Key:   key,
-			Value: value,
-		}
+
+		pairs[hashKey] = object.NewHashPair(key, value)
+
 	}
 
-	module := &object.Hash{Pairs: pairs}
+	module := object.NewHash(pairs)
 	mc.mu.Lock()
 	mc.modules[path] = module
 	mc.mu.Unlock()
@@ -118,21 +117,21 @@ func (mc *ModuleCache) loadFileModule(path string) (*object.Hash, error) {
 	return module, nil
 }
 
-func (mc *ModuleCache) tryLoadFromModulesDir(path string) (*object.Hash, error) {
+func (mc *ModuleCache) tryLoadFromModulesDir(path string) (object.Value, error) {
 	modulesDir := ".sb_modules"
 	packagePath := filepath.Join(modulesDir, path)
 
 	if _, err := os.Stat(packagePath); err != nil {
-		return nil, err
+		return object.NewNull(), err
 	}
 
 	moduleConf, err := pkg.LoadConfig(filepath.Join(packagePath, "sunbird.toml"))
 	if err != nil {
-		return nil, errors.New("failed to load module config: " + err.Error())
+		return object.NewNull(), errors.New("failed to load module config: " + err.Error())
 	}
 
 	if moduleConf.Package.Main == "" {
-		return nil, errors.New("module config missing main file")
+		return object.NewNull(), errors.New("module config missing main file")
 	}
 
 	return mc.loadFileModule(filepath.Join(packagePath, moduleConf.Package.Main))

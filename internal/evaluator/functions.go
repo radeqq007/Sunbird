@@ -5,16 +5,17 @@ import (
 	"sunbird/internal/object"
 )
 
-func applyFunction(fn object.Object, args []object.Object, line, col int) object.Object {
-	switch fn := fn.(type) {
-	case *object.Function:
+func applyFunction(fn object.Value, args []object.Value, line, col int) object.Value {
+	switch fn.Kind() {
+	case object.FunctionKind:
+		fn := fn.AsFunction()
 		err := errors.ExpectNumberOfArguments(line, col, len(fn.Parameters), args)
-		if err != nil {
+		if err.IsError() {
 			return err
 		}
 
 		extendedEnv, err := extendFunctionEnv(fn, args)
-		if err != nil {
+		if err.IsError() {
 			return err
 		}
 
@@ -33,15 +34,15 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 
 		// Type check return value
 		if fn.ReturnType != nil {
-			if typeErr := checkType(fn.ReturnType, result, line, col); typeErr != nil {
+			if typeErr := checkType(fn.ReturnType, result, line, col); typeErr.IsError() {
 				return typeErr
 			}
 		}
 
 		return result
 
-	case *object.Builtin:
-		return fn.Fn(args...)
+	case object.BuiltinKind:
+		return fn.AsBuiltin().Fn(args...)
 
 	default:
 		return errors.NewNotCallableError(line, col, fn)
@@ -50,32 +51,32 @@ func applyFunction(fn object.Object, args []object.Object, line, col int) object
 
 func extendFunctionEnv(
 	fn *object.Function,
-	args []object.Object,
-) (*object.Environment, *object.Error) {
+	args []object.Value,
+) (*object.Environment, object.Value) {
 	env := object.NewEnclosedEnvironment(fn.Env)
 
 	for i, param := range fn.Parameters {
 		if param.Type != nil {
-			if err := checkType(param.Type, args[i], param.Token.Line, param.Token.Col); err != nil {
+			if err := checkType(param.Type, args[i], param.Token.Line, param.Token.Col); err.IsError() {
 				return nil, err
 			}
 		}
 		env.SetWithType(param.Value, args[i], param.Type)
 	}
 
-	return env, nil
+	return env, NULL
 }
 
-func unwrapReturnValue(obj object.Object) object.Object {
-	if returnValue, ok := obj.(*object.ReturnValue); ok {
-		return returnValue.Value
+func unwrapReturnValue(obj object.Value) object.Value {
+	if obj.Kind() == object.ReturnValueKind {
+		return obj.AsReturnValue().Value
 	}
 
 	return obj
 }
 
 func init() {
-	object.ApplyFunction = func(fn object.Object, args []object.Object) object.Object {
+	object.ApplyFunction = func(fn object.Value, args []object.Value) object.Value {
 		return applyFunction(fn, args, 0, 0)
 	}
 }

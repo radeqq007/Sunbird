@@ -8,73 +8,73 @@ import (
 	"sunbird/internal/object"
 )
 
-func checkType(expected ast.TypeAnnotation, actual object.Object, line, col int) *object.Error {
+func checkType(expected ast.TypeAnnotation, actual object.Value, line, col int) object.Value {
 	if expected == nil {
-		return nil
+		return object.NewNull()
 	}
 
 	switch expectedType := expected.(type) {
 	case *ast.SimpleType:
-		expectedObjType := typeAnnotationToObjectType(expectedType.Name)
-		if expectedObjType != actual.Type() {
+		expectedObjType := typeAnnotationToObjectKind(expectedType.Name)
+		if expectedObjType != actual.Kind() {
 			return errors.NewTypeError(line, col,
-				"expected %s, got %s", expected.String(), actual.Type().String())
+				"expected %s, got %s", expected.String(), actual.Kind().String())
 		}
 
 	case *ast.ArrayType:
-		array, ok := actual.(*object.Array)
-		if !ok {
+		if !actual.IsArray() {
 			return errors.NewTypeError(line, col,
-				"expected %s, got %s", expected.String(), actual.Type().String())
+				"expected %s, got %s", expected.String(), actual.Kind().String())
 		}
 
+		arr := actual.AsArray()
 		if expectedType.ElementType != nil {
-			for _, element := range array.Elements {
-				if err := checkType(expectedType.ElementType, element, line, col); err != nil {
+			for _, element := range arr.Elements {
+				if err := checkType(expectedType.ElementType, element, line, col); err.IsError() {
 					return err
 				}
 			}
 		}
 
 	case *ast.OptionalType:
-		if actual.Type() == object.NullObj {
-			return nil
+		if actual.IsNull() {
+			return object.NewNull()
 		}
 		return checkType(expectedType.BaseType, actual, line, col)
 
 	case *ast.HashType:
-		if actual.Type() != object.HashObj {
+		if !actual.IsHash() {
 			return errors.NewTypeError(line, col,
-				"expected %s, got %s", expected.String(), actual.Type().String())
+				"expected %s, got %s", expected.String(), actual.Kind().String())
 		}
 
 	case *ast.FunctionType:
-		if actual.Type() != object.FunctionObj && actual.Type() != object.BuiltinObj {
+		if !actual.IsFunction() && !actual.IsBuiltin() {
 			return errors.NewTypeError(line, col,
-				"expected %s, got %s", expected.String(), actual.Type().String())
+				"expected %s, got %s", expected.String(), actual.Kind().String())
 		}
 	}
 
-	return nil
+	return object.NewNull()
 }
 
-func typeAnnotationToObjectType(typeName string) object.ObjectType {
+func typeAnnotationToObjectKind(typeName string) object.ValueKind {
 	switch strings.ToLower(typeName) {
 	case "int":
-		return object.IntegerObj
+		return object.IntKind
 	case "float":
-		return object.FloatObj
+		return object.FloatKind
 	case "string":
-		return object.StringObj
+		return object.StringKind
 	case "bool":
-		return object.BooleanObj
+		return object.BoolKind
 	case "array":
-		return object.ArrayObj
+		return object.ArrayKind
 	case "hash":
-		return object.HashObj
+		return object.HashKind
 	case "range":
-		return object.RangeObj
+		return object.RangeKind
 	default:
-		return object.NullObj
+		return object.NullKind
 	}
 }

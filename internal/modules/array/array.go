@@ -7,7 +7,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("push", push).
 		AddFunction("pop", pop).
@@ -23,34 +23,34 @@ func New() *object.Hash {
 		Build()
 }
 
-func push(args ...object.Object) object.Object {
+func push(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
+	array := args[0].AsArray()
 	array.Elements = append(array.Elements, args[1])
-	return &object.Null{}
+	return object.NewNull()
 }
 
-func pop(args ...object.Object) object.Object {
+func pop(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
+	array := args[0].AsArray()
 	if len(array.Elements) == 0 {
 		return errors.NewRuntimeError(0, 0, "array is empty")
 	}
@@ -61,18 +61,18 @@ func pop(args ...object.Object) object.Object {
 	return lastElement
 }
 
-func shift(args ...object.Object) object.Object {
+func shift(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
+	array := args[0].AsArray()
 	if len(array.Elements) == 0 {
 		return errors.NewRuntimeError(0, 0, "array is empty")
 	}
@@ -83,62 +83,63 @@ func shift(args ...object.Object) object.Object {
 	return firstElement
 }
 
-func unshift(args ...object.Object) object.Object {
+func unshift(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
-	array.Elements = append([]object.Object{args[1]}, array.Elements...)
-	return &object.Null{}
+	array := args[0].AsArray()
+	array.Elements = append([]object.Value{args[1]}, array.Elements...)
+
+	return object.NewNull()
 }
 
-func reverse(args ...object.Object) object.Object {
+func reverse(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
+	array := args[0].AsArray()
 
-	reversed := make([]object.Object, len(array.Elements))
+	reversed := make([]object.Value, len(array.Elements))
 	for i, v := range array.Elements {
 		reversed[len(array.Elements)-1-i] = v
 	}
 
 	array.Elements = reversed
-	return &object.Null{}
+	return object.NewNull()
 }
 
-func join(args ...object.Object) object.Object {
+func join(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
-	separator := args[1].(*object.String)
+	array := args[0].AsArray()
+	separator := args[1].AsString()
 
 	var b strings.Builder
 	for i, v := range array.Elements {
@@ -147,150 +148,151 @@ func join(args ...object.Object) object.Object {
 		}
 		b.WriteString(v.Inspect())
 	}
-	return &object.String{Value: b.String()}
+
+	return object.NewString(b.String())
 }
 
-func slice(args ...object.Object) object.Object {
+func slice(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		err = errors.ExpectNumberOfArguments(0, 0, 3, args)
-		if err != nil {
+		if !err.IsNull() {
 			return err
 		}
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	if !err.IsNull() {
 		return err
 	}
 
 	if len(args) == 3 {
-		err = errors.ExpectType(0, 0, args[2], object.IntegerObj)
-		if err != nil {
+		err = errors.ExpectType(0, 0, args[2], object.IntKind)
+		if !err.IsNull() {
 			return err
 		}
 	}
 
-	array, _ := args[0].(*object.Array)
-	start := args[1].(*object.Integer).Value
+	array := args[0].AsArray()
+	start := args[1].AsInt()
 	end := int64(len(array.Elements))
 
 	if len(args) == 3 {
-		end = args[2].(*object.Integer).Value
+		end = args[2].AsInt()
 	}
 
 	if start < 0 {
-		return errors.NewIndexOutOfBoundsError(0, 0, array)
+		return errors.NewIndexOutOfBoundsError(0, 0, args[0])
 	}
 
 	if end < 0 {
-		return errors.NewIndexOutOfBoundsError(0, 0, array)
+		return errors.NewIndexOutOfBoundsError(0, 0, args[0])
 	}
 
 	if start > end {
 		return errors.NewRuntimeError(0, 0, "start index is greater than end index")
 	}
 
-	result := make([]object.Object, end-start)
+	result := make([]object.Value, end-start)
 	copy(result, array.Elements[start:end])
 
-	return &object.Array{Elements: result}
+	return object.NewArray(result)
 }
 
-func indexOf(args ...object.Object) object.Object {
+func indexOf(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
+	array := args[0].AsArray()
 	value := args[1]
 
 	for i, v := range array.Elements {
 		if v.Inspect() == value.Inspect() {
-			return &object.Integer{Value: int64(i)}
+			return object.NewInt(int64(i))
 		}
 	}
 
-	return &object.Integer{Value: -1}
+	return object.NewInt(-1)
 }
 
-func contains(args ...object.Object) object.Object {
+func contains(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
+	array := args[0].AsArray()
 	value := args[1]
 
 	for _, v := range array.Elements {
 		if v.Inspect() == value.Inspect() {
-			return &object.Boolean{Value: true}
+			return object.NewBool(true)
 		}
 	}
 
-	return &object.Boolean{Value: false}
+	return object.NewBool(false)
 }
 
-func concat(args ...object.Object) object.Object {
+func concat(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	arr1, _ := args[0].(*object.Array)
-	arr2 := args[1].(*object.Array)
+	arr1 := args[0].AsArray()
+	arr2 := args[1].AsArray()
 
-	result := make([]object.Object, len(arr1.Elements)+len(arr2.Elements))
+	result := make([]object.Value, len(arr1.Elements)+len(arr2.Elements))
 	copy(result, arr1.Elements)
 	copy(result[len(arr1.Elements):], arr2.Elements)
 
-	return &object.Array{Elements: result}
+	return object.NewArray(result)
 }
 
-func clearArray(args ...object.Object) object.Object {
+func clearArray(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if !err.IsNull() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if !err.IsNull() {
 		return err
 	}
 
-	array, _ := args[0].(*object.Array)
-	array.Elements = []object.Object{} // should this be set to nil?
-	return &object.Null{}
+	array := args[0].AsArray()
+	array.Elements = []object.Value{} // should this be set to nil?
+	return object.NewNull()
 }

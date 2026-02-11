@@ -6,8 +6,8 @@ import (
 	"sunbird/internal/object"
 )
 
-func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Object {
-	pairs := make(map[object.HashKey]object.HashPair)
+func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Value {
+	pairs := make(map[object.HashKey]object.HashPair) // ! take a look at this
 
 	for _, pair := range node.Pairs {
 		key := Eval(pair.Key, env)
@@ -15,32 +15,27 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 			return key
 		}
 
-		hashKey, ok := key.(object.Hashable)
-		if !ok {
-			return errors.NewUnusableAsHashKeyError(node.Token.Line, node.Token.Col, key)
-		}
-
 		value := Eval(pair.Value, env)
 		if isError(value) {
 			return value
 		}
 
-		hashed := hashKey.HashKey()
+		hashed := key.HashKey()
 		pairs[hashed] = object.HashPair{Key: key, Value: value}
 	}
 
-	return &object.Hash{Pairs: pairs}
+	return object.NewHash(pairs)
 }
 
-func evalIndexExpression(left, index object.Object, line, col int) object.Object {
+func evalIndexExpression(left, index object.Value, line, col int) object.Value {
 	switch {
-	case left.Type() == object.ArrayObj && index.Type() == object.IntegerObj:
+	case left.IsArray() && index.IsInt():
 		return evalArrayIndexExpression(left, index, line, col)
 
-	case left.Type() == object.HashObj:
+	case left.IsHash():
 		return evalHashIndexExpression(left, index, line, col)
 
-	case left.Type() == object.StringObj:
+	case left.IsString() && index.IsInt():
 		return evalStringIndexExpression(left, index, line, col)
 
 	default:
@@ -48,14 +43,18 @@ func evalIndexExpression(left, index object.Object, line, col int) object.Object
 	}
 }
 
-func evalArrayIndexExpression(left, index object.Object, line, col int) object.Object {
-	array, ok := left.(*object.Array)
-	if !ok {
+func evalArrayIndexExpression(left, index object.Value, line, col int) object.Value {
+	if !left.IsArray() {
 		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
-	idxObj, _ := index.(*object.Integer)
-	idx := idxObj.Value
+	if !index.IsInt() {
+		return errors.NewIndexNotSupportedError(line, col, index)
+	}
+
+	array := left.AsArray()
+	idx := index.AsInt()
+
 	maxIdx := int64(len(array.Elements) - 1)
 
 	if idx > maxIdx {
@@ -69,86 +68,79 @@ func evalArrayIndexExpression(left, index object.Object, line, col int) object.O
 	return array.Elements[idx]
 }
 
-func evalHashIndexExpression(left, index object.Object, line, col int) object.Object {
-	hash, ok := left.(*object.Hash)
-	if !ok {
+func evalHashIndexExpression(left, index object.Value, line, col int) object.Value {
+	if !left.IsHash() {
 		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
-	key, ok := index.(object.Hashable)
-	if !ok {
-		return errors.NewIndexNotSupportedError(line, col, index)
-	}
+	hash := left.AsHash()
 
-	pair, ok := hash.Pairs[key.HashKey()]
+	pair, ok := hash.Pairs[index.HashKey()]
 	if ok {
 		return pair.Value
 	}
 
 	if hash.Proto != nil {
-		return evalHashIndexExpression(hash.Proto, index, line, col)
+		return evalHashIndexExpression(left, index, line, col)
 	}
 
 	return NULL
 }
 
-func evalStringIndexExpression(left, index object.Object, line, col int) object.Object {
-	str, ok := left.(*object.String)
-	if !ok {
+func evalStringIndexExpression(left, index object.Value, line, col int) object.Value {
+	if !left.IsString() {
 		return errors.NewIndexNotSupportedError(line, col, left)
 	}
 
-	idxObj, _ := index.(*object.Integer)
-	idx := idxObj.Value
-	maxIdx := int64(len(str.Value) - 1)
+	// idxObj, _ := index.(*object.Integer)
+	// TODO: check if it's an int
+	idx := index.AsInt()
+	str := left.AsString().Value
+
+	maxIdx := int64(len(str) - 1)
 
 	if idx > maxIdx {
 		return errors.NewIndexOutOfBoundsError(line, col, left)
 	}
 
 	if idx < 0 {
-		return &object.String{Value: string(str.Value[maxIdx+1+idx])}
+		return object.NewString(string(str[maxIdx+1+idx]))
 	}
 
-	return &object.String{Value: string(str.Value[idx])}
+	return object.NewString(string(str[idx]))
 }
 
-func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment) object.Object {
+func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment) object.Value {
 	obj := Eval(pe.Object, env)
 	if isError(obj) {
 		return obj
 	}
 
-	hash, ok := obj.(*object.Hash)
-	if !ok {
+	if !obj.IsHash() {
 		return errors.NewNonObjectPropertyAccessError(pe.Token.Line, pe.Token.Col, obj)
 	}
 
-	// Convert property name to string key
-	key := &object.String{Value: pe.Property.Value}
-	return evalHashIndexExpression(hash, key, pe.Token.Line, pe.Token.Col)
+	key := object.NewString(pe.Property.Value)
+	return evalHashIndexExpression(obj, key, pe.Token.Line, pe.Token.Col)
 }
 
 func evalMethodCall(
-	obj *object.Hash,
-	method object.Object,
-	args []object.Object,
+	obj object.Value,
+	method object.Value,
+	args []object.Value,
 	line, col int,
-) object.Object {
-	fn, ok := method.(*object.Function)
-	if !ok {
+) object.Value {
+	if !method.IsFunction() {
 		// Not a function, just call normally
 		return applyFunction(method, args, line, col)
 	}
 
+	fn := method.AsFunction()
+
 	newEnv := object.NewEnclosedEnvironment(fn.Env)
 	newEnv.Set("this", obj)
 
-	boundFn := &object.Function{
-		Parameters: fn.Parameters,
-		Body:       fn.Body,
-		Env:        newEnv,
-	}
+	boundFn := object.NewFunction(fn.Parameters, fn.ReturnType, fn.Body, fn.Env)
 
 	return applyFunction(boundFn, args, line, col)
 }

@@ -117,9 +117,9 @@ func runFile(path string) {
 
 	evaluated := evaluator.Eval(program, env)
 
-	if evaluated != nil {
-		if errObj, ok := evaluated.(*object.Error); ok {
-			fmt.Println(errObj.Inspect())
+	if !evaluated.IsNull() {
+		if evaluated.IsError() {
+			fmt.Println(evaluated.Inspect())
 			os.Exit(1)
 		}
 	}

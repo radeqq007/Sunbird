@@ -3,20 +3,20 @@ package object
 import "sunbird/internal/ast"
 
 func NewEnvironment() *Environment {
-	s := make(map[string]Object)
+	s := make(map[string]Value)
 	c := make(map[string]bool)
 	t := make(map[string]ast.TypeAnnotation)
 	return &Environment{store: s, constants: c, types: t}
 }
 
 type Environment struct {
-	store     map[string]Object
+	store     map[string]Value
 	constants map[string]bool
 	types     map[string]ast.TypeAnnotation
 	outer     *Environment
 }
 
-func (e *Environment) Get(name string) (Object, bool) {
+func (e *Environment) Get(name string) (Value, bool) {
 	obj, ok := e.store[name]
 	if !ok && e.outer != nil {
 		obj, ok = e.outer.Get(name)
@@ -34,14 +34,14 @@ func (e *Environment) GetType(name string) (ast.TypeAnnotation, bool) {
 	return t, ok
 }
 
-func (e *Environment) SetConstWithType(name string, val Object, t ast.TypeAnnotation) Object {
+func (e *Environment) SetConstWithType(name string, val Value, t ast.TypeAnnotation) Value {
 	e.store[name] = val
 	e.constants[name] = true
 	e.types[name] = t
 	return val
 }
 
-func (e *Environment) SetConst(name string, val Object) Object {
+func (e *Environment) SetConst(name string, val Value) Value {
 	return e.SetConstWithType(name, val, nil)
 }
 
@@ -55,7 +55,7 @@ func (e *Environment) IsConst(name string) bool {
 	return false
 }
 
-func (e *Environment) GetFromCurrentScope(name string) (Object, bool) {
+func (e *Environment) GetFromCurrentScope(name string) (Value, bool) {
 	obj, ok := e.store[name]
 	return obj, ok
 }
@@ -65,17 +65,17 @@ func (e *Environment) Has(name string) bool {
 	return ok
 }
 
-func (e *Environment) SetWithType(name string, val Object, t ast.TypeAnnotation) Object {
+func (e *Environment) SetWithType(name string, val Value, t ast.TypeAnnotation) Value {
 	e.store[name] = val
 	e.types[name] = t
 	return val
 }
 
-func (e *Environment) Set(name string, val Object) Object {
+func (e *Environment) Set(name string, val Value) Value {
 	return e.SetWithType(name, val, nil)
 }
 
-func (e *Environment) Update(name string, val Object) bool {
+func (e *Environment) Update(name string, val Value) bool {
 	if _, ok := e.store[name]; ok {
 		e.store[name] = val
 		return true
@@ -89,7 +89,7 @@ func (e *Environment) Update(name string, val Object) bool {
 	return false
 }
 
-func (e *Environment) GetStore() map[string]Object {
+func (e *Environment) GetStore() map[string]Value {
 	return e.store
 }
 

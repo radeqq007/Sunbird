@@ -7,25 +7,25 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("parse", parseJSON).
 		AddFunction("stringify", stringify).
 		Build()
 }
 
-func parseJSON(args ...object.Object) object.Object {
+func parseJSON(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	val := args[0].(*object.String).Value
+	val := args[0].AsString().Value
 
 	var data any
 	errGo := json.Unmarshal([]byte(val), &data)
@@ -36,45 +36,45 @@ func parseJSON(args ...object.Object) object.Object {
 	return ToObject(data)
 }
 
-func ToObject(val any) object.Object {
+func ToObject(val any) object.Value {
 	switch v := val.(type) {
 	case string:
-		return &object.String{Value: v}
+		return object.NewString(v)
 	case float64:
 		// JSON numbers are float64 by default in encoding/json
 		if v == float64(int64(v)) {
-			return &object.Integer{Value: int64(v)}
+			return object.NewInt(int64(v))
 		}
-		return &object.Float{Value: v}
+		return object.NewFloat(v)
 	case bool:
-		return &object.Boolean{Value: v}
+		return object.NewBool(v)
 	case nil:
-		return &object.Null{}
+		return object.NewNull()
 	case []any:
-		elements := make([]object.Object, len(v))
+		elements := make([]object.Value, len(v))
 		for i, el := range v {
 			elements[i] = ToObject(el)
 		}
-		return &object.Array{Elements: elements}
+		return object.NewArray(elements)
 	case map[string]any:
 		pairs := make(map[object.HashKey]object.HashPair)
 		for k, val := range v {
-			key := &object.String{Value: k}
+			key := object.NewString(k)
 			hashKey := key.HashKey()
 			pairs[hashKey] = object.HashPair{
 				Key:   key,
 				Value: ToObject(val),
 			}
 		}
-		return &object.Hash{Pairs: pairs}
+		return object.NewHash(pairs)
 	default:
-		return &object.Null{}
+		return object.NewNull()
 	}
 }
 
-func stringify(args ...object.Object) object.Object {
+func stringify(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
@@ -84,33 +84,36 @@ func stringify(args ...object.Object) object.Object {
 		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
 	}
 
-	return &object.String{Value: string(bytes)}
+	return object.NewString(string(bytes))
 }
 
-func FromObject(obj object.Object) any {
-	switch o := obj.(type) {
-	case *object.String:
+func FromObject(obj object.Value) any {
+	switch obj.Kind() {
+	case object.StringKind:
+		o := obj.AsString()
 		return o.Value
-	case *object.Integer:
-		return o.Value
-	case *object.Float:
-		return o.Value
-	case *object.Boolean:
-		return o.Value
-	case *object.Null:
-		return nil
-	case *object.Array:
+	case object.IntKind:
+		return obj.AsInt()
+	case object.FloatKind:
+		return obj.AsFloat()
+	case object.BoolKind:
+		return obj.AsBool()
+	case object.NullKind:
+		return object.NewNull()
+	case object.ArrayKind:
+		o := obj.AsArray()
 		elements := make([]any, len(o.Elements))
 		for i, el := range o.Elements {
 			elements[i] = FromObject(el)
 		}
 		return elements
-	case *object.Hash:
+	case object.HashKind:
+		o := obj.AsHash()
 		m := make(map[string]any)
 		for _, pair := range o.Pairs {
 			var key string
-			if s, ok := pair.Key.(*object.String); ok {
-				key = s.Value
+			if pair.Key.IsString() {
+				key = pair.Key.AsString().Value
 			} else {
 				key = pair.Key.Inspect()
 			}
