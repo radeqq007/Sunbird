@@ -6,7 +6,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
+func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Value {
 	ifEnv := object.NewEnclosedEnvironment(env)
 	condition := Eval(ie.Condition, ifEnv)
 	if isError(condition) {
@@ -23,7 +23,7 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	}
 }
 
-func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Object {
+func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Value {
 	loopEnv := object.NewEnclosedEnvironment(env)
 
 	iterable := Eval(fs.Iterable, loopEnv)
@@ -31,9 +31,11 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 		return iterable
 	}
 
-	var result object.Object = NULL
-	switch iter := iterable.(type) {
-	case *object.Range:
+	result := NULL
+
+	switch iterable.Kind() {
+	case object.RangeKind:
+		iter := iterable.AsRange()
 		step := iter.Step
 		if step == 0 {
 			step = 1
@@ -41,46 +43,47 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 
 		if step > 0 {
 			for i := iter.Start; i < iter.End; i += step {
-				loopEnv.Set(fs.Variable.Value, &object.Integer{Value: i})
+				loopEnv.Set(fs.Variable.Value, object.NewInt(i))
 
 				result = Eval(fs.Body, loopEnv)
 				if isError(result) {
 					return result
 				}
 
-				if result != nil {
-					switch result.Type() {
-					case object.ReturnValueObj:
+				if !result.IsNull() {
+					switch result.Kind() {
+					case object.ReturnValueKind:
 						return result
-					case object.BreakObj:
+					case object.BreakKind:
 						return NULL
-					case object.ContinueObj:
+					case object.ContinueKind:
 						continue
 					}
 				}
 			}
 		} else {
 			for i := iter.Start; i > iter.End; i += step {
-				loopEnv.Set(fs.Variable.Value, &object.Integer{Value: i})
+				loopEnv.Set(fs.Variable.Value, object.NewInt(i))
 
 				result = Eval(fs.Body, loopEnv)
 				if isError(result) {
 					return result
 				}
 
-				if result != nil {
-					switch result.Type() {
-					case object.ReturnValueObj:
+				if !result.IsNull() {
+					switch result.Kind() {
+					case object.ReturnValueKind:
 						return result
-					case object.BreakObj:
+					case object.BreakKind:
 						return NULL
-					case object.ContinueObj:
+					case object.ContinueKind:
 						continue
 					}
 				}
 			}
 		}
-	case *object.Array:
+	case object.ArrayKind:
+		iter := iterable.AsArray()
 		for _, element := range iter.Elements {
 			loopEnv.Set(fs.Variable.Value, element)
 
@@ -89,46 +92,48 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Obje
 				return result
 			}
 
-			if result != nil {
-				switch result.Type() {
-				case object.ReturnValueObj:
+			if !result.IsNull() {
+				switch result.Kind() {
+				case object.ReturnValueKind:
 					return result
-				case object.BreakObj:
+				case object.BreakKind:
 					return NULL
-				case object.ContinueObj:
+				case object.ContinueKind:
 					continue
 				}
 			}
 		}
-	case *object.String:
+	case object.StringKind:
+		iter := iterable.AsString()
 		for _, element := range iter.Value {
-			loopEnv.Set(fs.Variable.Value, &object.String{Value: string(element)})
+			loopEnv.Set(fs.Variable.Value, object.NewString(string(element)))
 
 			result = Eval(fs.Body, loopEnv)
 			if isError(result) {
 				return result
 			}
 
-			if result != nil {
-				switch result.Type() {
-				case object.ReturnValueObj:
+			if !result.IsNull() {
+				switch result.Kind() {
+				case object.ReturnValueKind:
 					return result
-				case object.BreakObj:
+				case object.BreakKind:
 					return NULL
-				case object.ContinueObj:
+				case object.ContinueKind:
 					continue
 				}
 			}
 		}
 	default:
-		return errors.NewTypeError(fs.Token.Line, fs.Token.Col, "cannot iterate over %s", iterable.Type().String())
+		return errors.NewTypeError(fs.Token.Line, fs.Token.Col, "cannot iterate over %s", iterable.Kind().String())
 	}
 
 	return result
 }
 
-func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.Object {
-	var result object.Object = NULL
+func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.Value {
+	result := NULL
+
 	for {
 		loopEnv := object.NewEnclosedEnvironment(env)
 		condition := Eval(ws.Condition, loopEnv)
@@ -145,13 +150,13 @@ func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.
 			return result
 		}
 
-		if result != nil {
-			switch result.Type() {
-			case object.ReturnValueObj:
+		if !result.IsNull() {
+			switch result.Kind() {
+			case object.ReturnValueKind:
 				return result
-			case object.BreakObj:
+			case object.BreakKind:
 				return NULL
-			case object.ContinueObj:
+			case object.ContinueKind:
 				// Fallthrough to update
 			}
 		}
@@ -160,20 +165,14 @@ func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.
 	return result
 }
 
-func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) object.Object {
+func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) object.Value {
 	tryResult := Eval(tcs.Try, env)
 
 	result := tryResult
 
 	if isError(tryResult) {
-		errObj, _ := tryResult.(*object.Error)
-
-		caughtError := &object.Error{
-			Message:     errObj.Message,
-			Line:        errObj.Line,
-			Col:         errObj.Col,
-			Propagating: false,
-		}
+		err := tryResult.AsError()
+		caughtError := object.NewError(err.Message, err.Line, err.Col, false)
 
 		catchEnv := object.NewEnclosedEnvironment(env)
 		catchEnv.Set(tcs.Param.Value, caughtError)
@@ -189,9 +188,9 @@ func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) 
 
 		// If finally produces a control flow change (Return, Break, Continue),
 		// it overrides the result from try/catch.
-		if finallyResult != nil {
-			rt := finallyResult.Type()
-			if rt == object.ReturnValueObj || rt == object.BreakObj || rt == object.ContinueObj {
+		if !finallyResult.IsNull() {
+			kind := finallyResult.Kind()
+			if kind == object.ReturnValueKind || kind == object.BreakKind || kind == object.ContinueKind {
 				return finallyResult
 			}
 		}
@@ -200,18 +199,17 @@ func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) 
 	return result
 }
 
-func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
+func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Value {
 	blockEnv := object.NewEnclosedEnvironment(env)
 
-	var result object.Object
+	var result object.Value
 
 	for _, statement := range block.Statements {
 		result = Eval(statement, blockEnv)
 
-		if result != nil {
-			rt := result.Type()
-			if rt == object.ReturnValueObj || isError(result) || rt == object.BreakObj ||
-				rt == object.ContinueObj {
+		if !result.IsNull() {
+			kind := result.Kind()
+			if kind == object.ReturnValueKind || isError(result) || kind == object.BreakKind || kind == object.ContinueKind {
 				return result
 			}
 		}
