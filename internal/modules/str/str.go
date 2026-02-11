@@ -159,7 +159,7 @@ func toLower(args ...object.Value) object.Value {
 	}
 
 	str := args[0].AsString()
-	
+
 	return object.NewString(strings.ToLower(str.Value))
 }
 
@@ -224,7 +224,7 @@ func repeat(args ...object.Value) object.Value {
 	}
 
 	str := args[0].AsString()
-	count:= args[1].AsInt()
+	count := args[1].AsInt()
 
 	return object.NewString(strings.Repeat(str.Value, int(count)))
 }

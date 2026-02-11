@@ -140,11 +140,11 @@ func TestSlice(t *testing.T) {
 		}
 
 		array := val.AsArray()
-		
+
 		if len(array.Elements) != len(tt.want) {
 			t.Fatalf("slice length wrong. want=%d, got=%d", len(tt.want), len(array.Elements))
 		}
-		
+
 		for i, wantStr := range tt.want {
 			if array.Elements[i].Inspect() != wantStr {
 				t.Errorf(
@@ -167,7 +167,7 @@ func TestJoin(t *testing.T) {
 	}
 
 	str := val.AsString()
-	
+
 	if str.Value != "1-2-3" {
 		t.Errorf("join result wrong. want='1-2-3', got='%s'", str.Value)
 	}
@@ -199,7 +199,7 @@ func TestContains(t *testing.T) {
 		}
 
 		boolean := val.AsBool()
-		
+
 		if boolean != tt.want {
 			t.Errorf("contains wrong. want=%t, got=%t", tt.want, boolean)
 		}

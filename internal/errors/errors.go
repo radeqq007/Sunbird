@@ -93,7 +93,6 @@ func ExpectMinNumberOfArguments(line, col int, expected int, args []object.Value
 	return object.NewNull()
 }
 
-
 func NewIndexNotSupportedError(line, col int, val object.Value) object.Value {
 	return New(IndexNotSupportedError, line, col, "%s", val.Kind().String())
 }

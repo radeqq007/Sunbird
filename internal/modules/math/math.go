@@ -86,9 +86,9 @@ func min(args ...object.Value) object.Value {
 
 	if args[0].IsFloat() || args[1].IsFloat() {
 		return object.NewFloat(math.Min(getFloat64(args[0]), getFloat64(args[1])))
-		}
+	}
 
-		return object.NewInt(int64(math.Min(getFloat64(args[0]), getFloat64(args[1]))))
+	return object.NewInt(int64(math.Min(getFloat64(args[0]), getFloat64(args[1]))))
 }
 
 func pow(args ...object.Value) object.Value {
