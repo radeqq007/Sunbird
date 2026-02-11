@@ -8,7 +8,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("create_server", createServer).
 		AddValue("status", statusCodes).
@@ -16,7 +16,7 @@ func New() *object.Hash {
 		Build()
 }
 
-func createServer(args ...object.Object) object.Object {
+func createServer(args ...object.Value) object.Value {
 	server := modbuilder.NewHashBuilder().
 		AddFunction("get", getRoute).
 		AddFunction("post", postRoute).
@@ -33,27 +33,27 @@ func createServer(args ...object.Object) object.Object {
 	return server
 }
 
-func route(method string, args ...object.Object) object.Object {
+func route(method string, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(1, 0, args[1], object.FunctionObj)
-	if err != nil {
+	err = errors.ExpectType(1, 0, args[1], object.FunctionKind)
+	if err.IsError() {
 		return err
 	}
 
-	route := args[0].(*object.String).Value
-	callback := args[1].(*object.Function)
+	route := args[0].AsString().Value
+	callback := args[1]
 
 	http.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
-		funcArgs := []object.Object{
+		funcArgs := []object.Value{
 			newWriter(w),
 			newRequest(r),
 		}
@@ -62,64 +62,64 @@ func route(method string, args ...object.Object) object.Object {
 		}
 	})
 
-	return &object.Null{}
+	return object.NewNull()
 }
 
-func getRoute(args ...object.Object) object.Object {
+func getRoute(args ...object.Value) object.Value {
 	return route(http.MethodGet, args...)
 }
 
-func postRoute(args ...object.Object) object.Object {
+func postRoute(args ...object.Value) object.Value {
 	return route(http.MethodPost, args...)
 }
 
-func putRoute(args ...object.Object) object.Object {
+func putRoute(args ...object.Value) object.Value {
 	return route(http.MethodPut, args...)
 }
 
-func deleteRoute(args ...object.Object) object.Object {
+func deleteRoute(args ...object.Value) object.Value {
 	return route(http.MethodDelete, args...)
 }
 
-func patchRoute(args ...object.Object) object.Object {
+func patchRoute(args ...object.Value) object.Value {
 	return route(http.MethodPatch, args...)
 }
 
-func headRoute(args ...object.Object) object.Object {
+func headRoute(args ...object.Value) object.Value {
 	return route(http.MethodHead, args...)
 }
 
-func optionsRoute(args ...object.Object) object.Object {
+func optionsRoute(args ...object.Value) object.Value {
 	return route(http.MethodOptions, args...)
 }
 
-func connectRoute(args ...object.Object) object.Object {
+func connectRoute(args ...object.Value) object.Value {
 	return route(http.MethodConnect, args...)
 }
 
-func traceRoute(args ...object.Object) object.Object {
+func traceRoute(args ...object.Value) object.Value {
 	return route(http.MethodTrace, args...)
 }
 
-func listen(args ...object.Object) object.Object {
+func listen(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	port := args[0].(*object.Integer).Value
+	port := args[0].AsInt()
 
 	errGo := http.ListenAndServe(":"+strconv.FormatInt(port, 10), nil)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.Null{}
+	return object.NewNull()
 }
 
 var statusCodes = modbuilder.NewHashBuilder().

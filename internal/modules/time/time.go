@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("now", now).
 		AddFunction("now_ms", nowMs).
@@ -28,151 +28,150 @@ func New() *object.Hash {
 }
 
 // now returns current Unix timestamp as integer
-func now(args ...object.Object) object.Object {
+func now(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	return &object.Integer{Value: time.Now().Unix()}
+	return object.NewInt(time.Now().Unix())
 }
 
 // nowMs returns current Unix timestamp in milliseconds
-func nowMs(args ...object.Object) object.Object {
-	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err != nil {
+func nowMs(args ...object.Value) object.Value {
+	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err.IsError() {
 		return err
 	}
-	return &object.Integer{Value: time.Now().UnixMilli()}
+	return object.NewInt(time.Now().UnixMilli())
 }
 
 // nowNs returns current Unix timestamp in nanoseconds
-func nowNs(args ...object.Object) object.Object {
-	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err != nil {
+func nowNs(args ...object.Value) object.Value {
+	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err.IsError() {
 		return err
 	}
-	return &object.Integer{Value: time.Now().UnixNano()}
+	return object.NewInt(time.Now().UnixNano())
 }
 
-func sleep(args ...object.Object) object.Object {
+func sleep(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntegerObj, object.FloatObj)
-	if err != nil {
+	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	if err.IsError() {
 		return err
 	}
 
 	var d time.Duration
-	switch v := args[0].(type) {
-	case *object.Integer:
-		d = time.Duration(v.Value) * time.Second
-	case *object.Float:
-		d = time.Duration(v.Value * float64(time.Second))
+	switch args[0].Kind() {
+	case object.IntKind:
+		d = time.Duration(args[0].AsInt()) * time.Second
+	case object.FloatKind:
+		d = time.Duration(args[0].AsFloat() * float64(time.Second))
 	}
 
 	time.Sleep(d)
-	return &object.Null{}
+	return object.NewNull()
 }
 
 // unix converts a Unix timestamp to a time object
-func unix(args ...object.Object) object.Object {
+func unix(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	timestamp := args[0].(*object.Integer).Value
+	timestamp := args[0].AsInt()
 	t := time.Unix(timestamp, 0)
 
 	return timeToHash(t)
 }
 
-func unixMs(args ...object.Object) object.Object {
-	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err != nil {
+func unixMs(args ...object.Value) object.Value {
+	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err.IsError() {
 		return err
 	}
 
-	if err := errors.ExpectType(0, 0, args[0], object.IntegerObj); err != nil {
+	if err := errors.ExpectType(0, 0, args[0], object.IntKind); err.IsError() {
 		return err
 	}
 
-	ms := args[0].(*object.Integer).Value
+	ms := args[0].AsInt()
 	t := time.UnixMilli(ms)
 	return timeToHash(t)
 }
 
-func unixNs(args ...object.Object) object.Object {
-	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err != nil {
+func unixNs(args ...object.Value) object.Value {
+	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err.IsError() {
 		return err
 	}
 
-	if err := errors.ExpectType(0, 0, args[0], object.IntegerObj); err != nil {
+	if err := errors.ExpectType(0, 0, args[0], object.IntKind); err.IsError() {
 		return err
 	}
 
-	ns := args[0].(*object.Integer).Value
+	ns := args[0].AsInt()
 	t := time.Unix(0, ns)
 	return timeToHash(t)
 }
 
-func formatTime(args ...object.Object) object.Object {
+func formatTime(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	formatStr := args[1].(*object.String).Value
+	formatStr := args[1].AsString().Value
 	var t time.Time
 
-	switch v := args[0].(type) {
-	case *object.Integer:
-		t = time.Unix(v.Value, 0)
-	case *object.Hash:
-		var errObj *object.Error
-		t, errObj = hashToTime(v)
-		if errObj != nil {
-			return errObj
+	switch args[0].Kind() {
+	case object.IntKind:
+		t = time.Unix(args[0].AsInt(), 0)
+	case object.HashKind:
+		var errVal object.Value
+		t, errVal = hashToTime(args[0].AsHash())
+		if errVal.IsError() {
+			return errVal
 		}
 	default:
-		return errors.NewTypeError(0, 0, "expected Integer or Hash, got %s", args[0].Type().String())
+		return errors.NewTypeError(0, 0, "expected Integer or Hash, got %s", args[0].Kind().String())
 	}
 
 	// Convert Go format to common format patterns
 	goFormat := convertFormat(formatStr)
-	return &object.String{Value: t.Format(goFormat)}
+	return object.NewString(t.Format(goFormat))
 }
 
-func parseTime(args ...object.Object) object.Object {
+func parseTime(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	timeStr := args[0].(*object.String).Value
-	formatStr := args[1].(*object.String).Value
-
+	timeStr := args[0].AsString().Value
+	formatStr := args[1].AsString().Value
 	goFormat := convertFormat(formatStr)
 	t, errGo := time.Parse(goFormat, timeStr)
 	if errGo != nil {
@@ -216,7 +215,7 @@ func replaceAll(s, old, newVal string) string {
 	return result
 }
 
-func timeToHash(t time.Time) *object.Hash {
+func timeToHash(t time.Time) object.Value {
 	return modbuilder.NewHashBuilder().
 		AddInteger("unix", t.Unix()).
 		AddInteger("unix_ms", t.UnixMilli()).
@@ -233,19 +232,19 @@ func timeToHash(t time.Time) *object.Hash {
 		Build()
 }
 
-func hashToTime(h *object.Hash) (time.Time, *object.Error) {
+func hashToTime(h *object.Hash) (time.Time, object.Value) {
 	// Check for unix_ns first for maximum precision
-	if pair, ok := h.Pairs[(&object.String{Value: "unix_ns"}).HashKey()]; ok {
-		if ns, ok := pair.Value.(*object.Integer); ok {
-			return time.Unix(0, ns.Value), nil
+	if pair, ok := h.Pairs[(object.NewString("unix_ns")).HashKey()]; ok {
+		if pair.Value.IsInt() {
+			return time.Unix(0, pair.Value.AsInt()), object.NewNull()
 		}
 	}
 
 	// Fallback to standard unix seconds
-	unixKey := &object.String{Value: "unix"}
+	unixKey := object.NewString("unix")
 	if pair, ok := h.Pairs[unixKey.HashKey()]; ok {
-		if unixInt, ok := pair.Value.(*object.Integer); ok {
-			return time.Unix(unixInt.Value, 0), nil
+		if pair.Value.IsInt() {
+			return time.Unix(pair.Value.AsInt(), 0), object.NewNull()
 		}
 	}
 

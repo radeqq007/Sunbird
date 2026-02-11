@@ -7,9 +7,9 @@ import (
 	"sunbird/internal/object"
 )
 
-var builtins = map[string]*object.Builtin{
-	"len": {
-		Fn: func(args ...object.Value) object.Value {
+var builtins = map[string]object.Value{
+	"len": object.NewBuiltin(
+		func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -39,10 +39,10 @@ var builtins = map[string]*object.Builtin{
 
 			return NULL
 		},
-	},
+	),
 
-	"append": {
-		Fn: func(args ...object.Value) object.Value {
+	"append": object.NewBuiltin(
+		func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 			if !err.IsNull() {
 				return err
@@ -59,10 +59,10 @@ var builtins = map[string]*object.Builtin{
 
 			return object.NewArray(newElements)
 		},
-	},
+	),
 
-	"type": {
-		Fn: func(args ...object.Value) object.Value {
+	"type": object.NewBuiltin(
+		func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -70,10 +70,9 @@ var builtins = map[string]*object.Builtin{
 
 			return object.NewString(args[0].Kind().String())
 		},
-	},
+	),
 
-	"string": {
-		Fn: func(args ...object.Value) object.Value {
+	"string": object.NewBuiltin(func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -86,10 +85,9 @@ var builtins = map[string]*object.Builtin{
 
 			return object.NewString(args[0].Inspect())
 		},
-	},
+	),
 
-	"int": {
-		Fn: func(args ...object.Value) object.Value {
+	"int": object.NewBuiltin(func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -122,10 +120,9 @@ var builtins = map[string]*object.Builtin{
 				return errors.NewTypeError(0, 0, "argument to `int` not supported, got %s", args[0].Kind().String())
 			}
 		},
-	},
+	),
 
-	"float": {
-		Fn: func(args ...object.Value) object.Value {
+	"float": object.NewBuiltin(func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -158,10 +155,9 @@ var builtins = map[string]*object.Builtin{
 				return errors.NewTypeError(0, 0, "argument to `float` not supported, got %s", args[0].Kind().String())
 			}
 		},
-	},
+	),
 
-	"bool": {
-		Fn: func(args ...object.Value) object.Value {
+	"bool": object.NewBuiltin(func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -196,10 +192,9 @@ var builtins = map[string]*object.Builtin{
 				return errors.NewTypeError(0, 0, "argument to `bool` not supported, got %s", args[0].Kind().String())
 			}
 		},
-	},
+	),
 
-	"exit": {
-		Fn: func(args ...object.Value) object.Value {
+	"exit": object.NewBuiltin(func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
 			if !err.IsNull() {
 				return err
@@ -208,10 +203,9 @@ var builtins = map[string]*object.Builtin{
 			os.Exit(0)
 			return object.NewNull()
 		},
-	},
+	),
 
-	"error": {
-		Fn: func(args ...object.Value) object.Value {
+	"error": object.NewBuiltin(func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if !err.IsNull() {
 				return err
@@ -231,5 +225,5 @@ var builtins = map[string]*object.Builtin{
 
 			return errors.New(errors.RuntimeError, 0, 0, "%s", msg)
 		},
-	},
+	),
 }

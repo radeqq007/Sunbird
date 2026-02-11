@@ -7,7 +7,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("concat", concat).
 		AddFunction("is_empty", isEmpty).
@@ -22,204 +22,209 @@ func New() *object.Hash {
 		Build()
 }
 
-func concat(args ...object.Object) object.Object {
+func concat(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str1, _ := args[0].(*object.String)
-	str2, _ := args[1].(*object.String)
+	str1 := args[0].AsString()
+	str2 := args[1].AsString()
 
-	return &object.String{Value: str1.Value + str2.Value}
+	return object.NewString(str1.Value + str2.Value)
 }
 
-func isEmpty(args ...object.Object) object.Object {
+func isEmpty(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
+	str := args[0].AsString()
 
-	return &object.Boolean{Value: str.Value == ""}
+	return object.NewBool(str.Value == "")
 }
 
-func startsWith(args ...object.Object) object.Object {
+func startsWith(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
-	startStr, _ := args[1].(*object.String)
+	str := args[0].AsString()
+	startStr := args[1].AsString()
 
-	return &object.Boolean{Value: strings.HasPrefix(str.Value, startStr.Value)}
+	return object.NewBool(strings.HasPrefix(str.Value, startStr.Value))
 }
 
-func endsWith(args ...object.Object) object.Object {
+func endsWith(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
-	endStr, _ := args[1].(*object.String)
+	str := args[0].AsString()
+	endStr := args[1].AsString()
 
-	return &object.Boolean{Value: strings.HasSuffix(str.Value, endStr.Value)}
+	return object.NewBool(strings.HasSuffix(str.Value, endStr.Value))
 }
 
-func contains(args ...object.Object) object.Object {
+func contains(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
-	subStr, _ := args[1].(*object.String)
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
+		return err
+	}
 
-	return &object.Boolean{Value: strings.Contains(str.Value, subStr.Value)}
+	str := args[0].AsString()
+	subStr := args[1].AsString()
+
+	return object.NewBool(strings.Contains(str.Value, subStr.Value))
 }
 
-func toUpper(args ...object.Object) object.Object {
+func toUpper(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
+	str := args[0].AsString()
 
-	return &object.String{Value: strings.ToUpper(str.Value)}
+	return object.NewString(strings.ToUpper(str.Value))
 }
 
-func toLower(args ...object.Object) object.Object {
+func toLower(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
-
-	return &object.String{Value: strings.ToLower(str.Value)}
+	str := args[0].AsString()
+	
+	return object.NewString(strings.ToLower(str.Value))
 }
 
-func trim(args ...object.Object) object.Object {
+func trim(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
+	str := args[0].AsString()
 
-	return &object.String{Value: strings.TrimSpace(str.Value)}
+	return object.NewString(strings.TrimSpace(str.Value))
 }
 
-func split(args ...object.Object) object.Object {
+func split(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
-	sep, _ := args[1].(*object.String)
+	str := args[0].AsString()
+	sep := args[1].AsString()
 
 	strs := strings.Split(str.Value, sep.Value)
-	objects := make([]object.Object, len(strs))
+	objects := make([]object.Value, len(strs))
 	for i, s := range strs {
-		objects[i] = &object.String{Value: s}
+		objects[i] = object.NewString(s)
 	}
 
-	return &object.Array{Elements: objects}
+	return object.NewArray(objects)
 }
 
-func repeat(args ...object.Object) object.Object {
+func repeat(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	str, _ := args[0].(*object.String)
-	count, _ := args[1].(*object.Integer)
+	str := args[0].AsString()
+	count:= args[1].AsInt()
 
-	return &object.String{Value: strings.Repeat(str.Value, int(count.Value))}
+	return object.NewString(strings.Repeat(str.Value, int(count)))
 }

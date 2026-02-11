@@ -7,7 +7,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("push", push).
 		AddFunction("pop", pop).

@@ -8,7 +8,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("read", readFile).
 		AddFunction("write", writeFile).
@@ -37,226 +37,222 @@ func getFullPath(requestedPath string) string {
 	return fullPath
 }
 
-func readFile(args ...object.Object) object.Object {
+func readFile(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	data, errGo := os.ReadFile(getFullPath(args[0].(*object.String).Value))
+	data, errGo := os.ReadFile(getFullPath(args[0].AsString().Value))
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.String{Value: string(data)}
+	return object.NewString(string(data))
 }
 
-func writeFile(args ...object.Object) object.Object {
+func writeFile(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 1, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 1, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	os.WriteFile(getFullPath(args[0].(*object.String).Value), []byte(args[1].(*object.String).Value), 0644)
-
-	return &object.Null{}
+	os.WriteFile(getFullPath(args[0].AsString().Value), []byte(args[1].AsString().Value), 0644)
+	return object.NewNull()
 }
 
-func appendFile(args ...object.Object) object.Object {
+func appendFile(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 1, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 1, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	// os.WriteFile(getFullPath(args[0].(*object.String).Value), []byte(args[1].(*object.String).Value), 0644)
-	file, errGo := os.OpenFile(getFullPath(args[0].(*object.String).Value), os.O_APPEND|os.O_WRONLY, 0644)
+	file, errGo := os.OpenFile(getFullPath(args[0].AsString().Value), os.O_APPEND|os.O_WRONLY, 0644)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 	defer file.Close()
 
-	_, errGo = file.WriteString(args[1].(*object.String).Value)
+	_, errGo = file.WriteString(args[1].AsString().Value)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.Null{}
+	return object.NewNull()
 }
 
-func removeFile(args ...object.Object) object.Object {
+func removeFile(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	errGo := os.Remove(getFullPath(args[0].(*object.String).Value))
+	errGo := os.Remove(getFullPath(args[0].AsString().Value))
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.Null{}
+	return object.NewNull()
 }
 
-func exists(args ...object.Object) object.Object {
+func exists(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	_, errGo := os.Stat(getFullPath(args[0].(*object.String).Value))
+	_, errGo := os.Stat(getFullPath(args[0].AsString().Value))
 	if errGo != nil {
 		if os.IsNotExist(errGo) {
-			return &object.Boolean{Value: false}
+			return object.NewBool(false)
 		}
 		// Other errors (permissions, etc.)
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.Boolean{Value: true}
+	return object.NewBool(true)
 }
 
-func isDir(args ...object.Object) object.Object {
+func isDir(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	info, errGo := os.Stat(getFullPath(args[0].(*object.String).Value))
+	info, errGo := os.Stat(getFullPath(args[0].AsString().Value))
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.Boolean{Value: info.IsDir()}
+	return object.NewBool(info.IsDir())
 }
 
-func listDir(args ...object.Object) object.Object {
+func listDir(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	entries, errGo := os.ReadDir(getFullPath(args[0].(*object.String).Value))
+	entries, errGo := os.ReadDir(getFullPath(args[0].AsString().Value))
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	var result []object.Object
+	var result []object.Value
 	for _, entry := range entries {
-		result = append(result, &object.String{Value: entry.Name()})
+		result = append(result, object.NewString(entry.Name()))
 	}
 
-	return &object.Array{Elements: result}
+	return object.NewArray(result)
 }
 
-func createDir(args ...object.Object) object.Object {
+func createDir(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	os.Mkdir(getFullPath(args[0].(*object.String).Value), 0755)
-
-	return &object.Null{}
+	os.Mkdir(getFullPath(args[0].AsString().Value), 0755)
+	return object.NewNull()
 }
 
-func rename(args ...object.Object) object.Object {
+func rename(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 1, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 1, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	os.Rename(getFullPath(args[0].(*object.String).Value), getFullPath(args[1].(*object.String).Value))
-
-	return &object.Null{}
+	os.Rename(getFullPath(args[0].AsString().Value), getFullPath(args[1].AsString().Value))
+	return object.NewNull()
 }
 
-func copyFile(args ...object.Object) object.Object {
+func copyFile(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 1, args[1], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 1, args[1], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
-	strObj, _ := args[0].(*object.String)
+	str := args[0].AsString().Value
 
-	data, errGo := os.ReadFile(getFullPath(strObj.Value))
+	data, errGo := os.ReadFile(getFullPath(str))
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	errGo = os.WriteFile(getFullPath(args[1].(*object.String).Value), data, 0644)
+	errGo = os.WriteFile(getFullPath(args[1].AsString().Value), data, 0644)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	return &object.Null{}
+	return object.NewNull()
 }

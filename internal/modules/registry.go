@@ -14,7 +14,7 @@ import (
 	"sunbird/internal/object"
 )
 
-var BuiltinModules = map[string]*object.Hash{
+var BuiltinModules = map[string]object.Value{
 	"math":   math.New(),
 	"io":     io.New(),
 	"array":  array.New(),
@@ -27,7 +27,7 @@ var BuiltinModules = map[string]*object.Hash{
 	"time":   time.New(),
 }
 
-func Get(name string) (*object.Hash, bool) {
+func Get(name string) (object.Value, bool) {
 	module, ok := BuiltinModules[name]
 	return module, ok
 }

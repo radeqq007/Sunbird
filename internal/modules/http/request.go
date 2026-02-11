@@ -11,52 +11,52 @@ import (
 	"sunbird/internal/object"
 )
 
-func newRequest(r *http.Request) object.Object {
+func newRequest(r *http.Request) object.Value {
 	var bodyCache *string
-	var bodyJSONCache object.Object
+	var bodyJSONCache object.Value
 
 	// defer r.Body.Close()
 	return modbuilder.NewHashBuilder().
-		AddFunction("path_param", func(args ...object.Object) object.Object {
+		AddFunction("path_param", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringObj)
-			if err != nil {
+			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			if err.IsError() {
 				return err
 			}
 
-			val := r.PathValue(args[0].(*object.String).Value)
-			return &object.String{Value: val}
+			val := r.PathValue(args[0].AsString().Value)
+			return object.NewString(val)
 		}).
-		AddFunction("query_param", func(args ...object.Object) object.Object {
+		AddFunction("query_param", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringObj)
-			if err != nil {
+			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			if err.IsError() {
 				return err
 			}
 
-			param := r.URL.Query().Get(args[0].(*object.String).Value)
+			param := r.URL.Query().Get(args[0].AsString().Value)
 			if param == "" {
-				return &object.Null{}
+				return object.NewNull()
 			}
 
-			return &object.String{Value: param}
+			return object.NewString(param)
 		}).
-		AddFunction("body", func(args ...object.Object) object.Object {
+		AddFunction("body", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
 			if bodyCache != nil {
-				return &object.String{Value: *bodyCache}
+				return object.NewString(*bodyCache)
 			}
 
 			byteData, errGo := io.ReadAll(r.Body)
@@ -67,15 +67,15 @@ func newRequest(r *http.Request) object.Object {
 
 			bodyString := string(byteData)
 			bodyCache = &bodyString
-			return &object.String{Value: bodyString}
+			return object.NewString(bodyString)
 		}).
-		AddFunction("json", func(args ...object.Object) object.Object {
+		AddFunction("json", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
-			if bodyJSONCache != nil {
+			if !bodyJSONCache.IsNull() {
 				return bodyJSONCache
 			}
 
@@ -98,92 +98,89 @@ func newRequest(r *http.Request) object.Object {
 
 			return bodyJSONCache
 		}).
-		AddFunction("method", func(args ...object.Object) object.Object {
+		AddFunction("method", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
-			return &object.String{Value: r.Method}
+			return object.NewString(r.Method)
 		}).
-		AddFunction("url", func(args ...object.Object) object.Object {
+		AddFunction("url", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
-			return &object.String{Value: r.URL.String()}
+			return object.NewString(r.URL.String())
 		}).
-		AddFunction("header", func(args ...object.Object) object.Object {
+		AddFunction("header", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringObj)
-			if err != nil {
+			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			if err.IsError() {
 				return err
 			}
 
-			header := r.Header.Get(args[0].(*object.String).Value)
-
+			header := r.Header.Get(args[0].AsString().Value)
 			if header == "" {
-				return &object.Null{}
+				return object.NewNull()
 			}
 
-			return &object.String{Value: header}
+			return object.NewString(header)
 		}).
-		AddFunction("headers", func(args ...object.Object) object.Object {
+		AddFunction("headers", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
 			pairs := make(map[object.HashKey]object.HashPair)
 			for key, values := range r.Header {
-				keyObj := &object.String{Value: key}
+				keyObj := object.NewString(key)
 				hashKey := keyObj.HashKey()
 
-				valueObj := &object.String{Value: strings.Join(values, ", ")}
+				valueObj := object.NewString(strings.Join(values, ", "))
 				pairs[hashKey] = object.HashPair{Key: keyObj, Value: valueObj}
 			}
 
-			return &object.Hash{
-				Pairs: pairs,
-			}
+			return object.NewHash(pairs)
 		}).
-		AddFunction("cookie", func(args ...object.Object) object.Object {
+		AddFunction("cookie", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
-			err = errors.ExpectType(0, 0, args[0], object.StringObj)
-			if err != nil {
+			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			if err.IsError() {
 				return err
 			}
 
-			cookie, errGo := r.Cookie(args[0].(*object.String).Value)
+			cookie, errGo := r.Cookie(args[0].AsString().Value)
 			if errGo != nil {
-				return &object.Null{}
+				return object.NewNull()
 			}
 
-			return &object.String{Value: cookie.Value}
+			return object.NewString(cookie.Value)
 		}).
-		AddFunction("cookies", func(args ...object.Object) object.Object {
+		AddFunction("cookies", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-			if err != nil {
+			if err.IsError() {
 				return err
 			}
 
 			pairs := make(map[object.HashKey]object.HashPair)
 			for _, cookie := range r.Cookies() {
-				keyObj := &object.String{Value: cookie.Name}
+				keyObj := object.NewString(cookie.Name)
 				hashKey := keyObj.HashKey()
-				valueObj := &object.String{Value: cookie.Value}
-				pairs[hashKey] = object.HashPair{Key: keyObj, Value: valueObj}
+				valueObj := object.NewString(cookie.Value)
+				pairs[hashKey] = object.NewHashPair(keyObj, valueObj)
 			}
 
-			return &object.Hash{Pairs: pairs}
+			return object.NewHash(pairs)
 		}).
 		Build()
 }

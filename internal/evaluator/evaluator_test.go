@@ -70,7 +70,7 @@ func testEval(input string) object.Value {
 
 func testIntegerObject(t *testing.T, obj object.Value, expected int64) {
 	if !obj.IsInt() {
-		t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
+		t.Errorf("object is not Integer. got=%T", obj.Kind().String())
 	}
 
 	val := obj.AsInt()
@@ -83,8 +83,8 @@ func testIntegerObject(t *testing.T, obj object.Value, expected int64) {
 const floatTolerance = 1e-9
 
 func testFloatObject(t *testing.T, obj object.Value, expected float64) {
-	if obj.IsFloat() {
-		t.Errorf("object is not Float. got=%T (%+v)", obj, obj)
+	if !obj.IsFloat() {
+		t.Errorf("object is not Float. got=%T", obj.Kind().String())
 	}
 
 	val := obj.AsFloat()

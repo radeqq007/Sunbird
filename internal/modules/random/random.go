@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("int", randInt).
 		AddFunction("float", randFloat).
@@ -23,103 +23,109 @@ var seed uint64 = uint64(time.Now().UnixNano())
 
 var r = rand.New(rand.NewPCG(seed, seed))
 
-func newSeed(args ...object.Object) object.Object {
+func newSeed(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	seed = uint64(args[0].(*object.Integer).Value)
+	seed = uint64(args[0].AsInt())
 	r = rand.New(rand.NewPCG(seed, seed))
 
-	return &object.Null{}
+	return object.NewNull()
 }
 
-func randInt(args ...object.Object) object.Object {
+func randInt(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntegerObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	if err.IsError() {
 		return err
 	}
 
-	minVal := args[0].(*object.Integer).Value
-	maxVal := args[1].(*object.Integer).Value
+	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	if err.IsError() {
+		return err
+	}
 
-	return &object.Integer{Value: r.Int64N(maxVal-minVal) + minVal}
+	minVal := args[0].AsInt()
+	maxVal := args[1].AsInt()
+
+	return object.NewInt(r.Int64N(maxVal-minVal) + minVal)
 }
 
-func randFloat(args ...object.Object) object.Object {
+func randFloat(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.FloatObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.FloatKind)
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.FloatObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[1], object.FloatKind)
+	if err.IsError() {
 		return err
 	}
 
-	minVal := args[0].(*object.Float).Value
-	maxVal := args[1].(*object.Float).Value
+	minVal := args[0].AsFloat()
+	maxVal := args[1].AsFloat()
 
-	return &object.Float{Value: r.Float64()*(maxVal-minVal) + minVal}
+	return object.NewFloat(r.Float64()*(maxVal-minVal) + minVal)
 }
 
-func randBool(args ...object.Object) object.Object {
+func randBool(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	return &object.Boolean{Value: r.Int64N(2) == 1}
+	return object.NewBool(r.Int64N(2) == 1)
 }
 
-func choice(args ...object.Object) object.Object {
+func choice(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if err.IsError() {
 		return err
 	}
 
-	return args[0].(*object.Array).Elements[r.Int64N(int64(len(args[0].(*object.Array).Elements)))]
+	arr := args[0].AsArray()
+	return arr.Elements[r.Int64N(int64(len(arr.Elements)))]
 }
 
-func shuffle(args ...object.Object) object.Object {
+func shuffle(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	if err.IsError() {
 		return err
 	}
 
-	arr, _ := args[0].(*object.Array)
-	shuffled := make([]object.Object, len(arr.Elements))
+	arr := args[0].AsArray()
+	shuffled := make([]object.Value, len(arr.Elements))
 	copy(shuffled, arr.Elements)
 
 	for i := range shuffled {
@@ -127,5 +133,5 @@ func shuffle(args ...object.Object) object.Object {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	}
 
-	return &object.Array{Elements: shuffled}
+	return object.NewArray(shuffled)
 }

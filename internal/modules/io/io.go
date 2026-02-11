@@ -11,7 +11,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func New() *object.Hash {
+func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("print", printObject).
 		AddFunction("println", printlnObject).
@@ -28,30 +28,30 @@ func New() *object.Hash {
 
 var stdin = bufio.NewReader(os.Stdin)
 
-func printObject(args ...object.Object) object.Object {
+func printObject(args ...object.Value) object.Value {
 	for i, arg := range args {
 		if i > 0 {
 			fmt.Print(" ")
 		}
-		if s, ok := arg.(*object.String); ok {
-			fmt.Print(s.Value)
+		if arg.IsString() {
+			fmt.Print(arg.AsString().Value)
 		} else {
 			fmt.Print(arg.Inspect())
 		}
 	}
-	return nil
+	return object.NewNull()
 }
 
-func printlnObject(args ...object.Object) object.Object {
+func printlnObject(args ...object.Value) object.Value {
 	printObject(args...)
 	fmt.Print("\n")
-	return nil
+	return object.NewNull()
 }
 
-func readln(args ...object.Object) object.Object {
+func readln(args ...object.Value) object.Value {
 	if len(args) > 0 {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if err != nil {
+		if err.IsError() {
 			return err
 		}
 		printObject(args[0])
@@ -59,22 +59,21 @@ func readln(args ...object.Object) object.Object {
 
 	input, err := stdin.ReadString('\n')
 	if err != nil && err != io.EOF {
-		return nil
+		return object.NewNull()
 	}
 
-	return &object.String{
-		Value: strings.TrimRight(input, "\r\n"),
-	}
+	return object.NewString(strings.TrimRight(input, "\r\n"))
 }
 
-func read(args ...object.Object) object.Object {
+func read(args ...object.Value) object.Value {
 	if len(args) > 0 {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if err != nil {
+		if err.IsError() {
 			return err
 		}
-		err = errors.ExpectType(0, 0, args[0], object.StringObj)
-		if err != nil {
+
+		err = errors.ExpectType(0, 0, args[0], object.StringKind)
+		if err.IsError() {
 			return err
 		}
 		printObject(args[0])
@@ -82,35 +81,33 @@ func read(args ...object.Object) object.Object {
 
 	input, err := stdin.ReadString(' ')
 	if err != nil && err != io.EOF {
-		return nil
+		return object.NewNull()
 	}
 
-	return &object.String{
-		Value: strings.TrimSpace(input),
-	}
+	return object.NewString(strings.TrimSpace(input))
 }
 
-func printf(args ...object.Object) object.Object {
+func printf(args ...object.Value) object.Value {
 	if len(args) < 1 {
 		return errors.NewArgumentError(0, 0, "expected minimum 1 argument, got %v", len(args))
 	}
 
-	err := errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err := errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
 	var format string
-	if s, ok := args[0].(*object.String); ok {
-		format = s.Value
+	if args[0].IsString() {
+		format = args[0].AsString().Value
 	} else {
 		format = args[0].Inspect()
 	}
 
 	for _, arg := range args[1:] {
 		var val string
-		if s, ok := arg.(*object.String); ok {
-			val = s.Value
+		if arg.IsString() {
+			val = arg.AsString().Value
 		} else {
 			val = arg.Inspect()
 		}
@@ -119,30 +116,30 @@ func printf(args ...object.Object) object.Object {
 
 	fmt.Print(format)
 
-	return nil
+	return object.NewNull()
 }
 
-func printfn(args ...object.Object) object.Object {
+func printfn(args ...object.Value) object.Value {
 	if len(args) < 1 {
 		return errors.NewArgumentError(0, 0, "expected minimum 1 argument, got %v", len(args))
 	}
 
-	err := errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err := errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
 	var format string
-	if s, ok := args[0].(*object.String); ok {
-		format = s.Value
+	if args[0].IsString() {
+		format = args[0].AsString().Value
 	} else {
 		format = args[0].Inspect()
 	}
 
 	for _, arg := range args[1:] {
 		var val string
-		if s, ok := arg.(*object.String); ok {
-			val = s.Value
+		if arg.IsString() {
+			val = arg.AsString().Value
 		} else {
 			val = arg.Inspect()
 		}
@@ -151,76 +148,72 @@ func printfn(args ...object.Object) object.Object {
 
 	fmt.Println(format)
 
-	return nil
+	return object.NewNull()
 }
 
-func sprintf(args ...object.Object) object.Object {
+func sprintf(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
-	err = errors.ExpectType(0, 0, args[0], object.StringObj)
-	if err != nil {
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
 		return err
 	}
 
 	var format string
-	if s, ok := args[0].(*object.String); ok {
-		format = s.Value
+	if args[0].IsString() {
+		format = args[0].AsString().Value
 	} else {
 		format = args[0].Inspect()
 	}
 
 	for _, arg := range args[1:] {
 		var val string
-		if s, ok := arg.(*object.String); ok {
-			val = s.Value
+		if arg.IsString() {
+			val = arg.AsString().Value
 		} else {
 			val = arg.Inspect()
 		}
 		format = strings.Replace(format, "{}", val, 1)
 	}
 
-	return &object.String{
-		Value: format,
-	}
+	return object.NewString(format)
 }
 
-func clearScreen(args ...object.Object) object.Object {
+func clearScreen(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 	fmt.Print("\033[H")
 	fmt.Print("\033[2J")
-	return nil
+	return object.NewNull()
 }
 
-func beep(args ...object.Object) object.Object {
+func beep(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 	fmt.Print("\a")
-	return nil
+	return object.NewNull()
 }
 
-func getArgsArray(args ...object.Object) object.Object {
+func getArgsArray(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-	if err != nil {
+	if err.IsError() {
 		return err
 	}
 
-	var elements []object.Object
+	var elements []object.Value
 	userScriptIndex := 2
 	if len(os.Args) > userScriptIndex {
 		osArgs := os.Args[userScriptIndex:]
 		for _, arg := range osArgs {
-			elements = append(elements, &object.String{Value: arg})
+			elements = append(elements, object.NewString(arg))
 		}
 	}
 
-	return &object.Array{
-		Elements: elements,
-	}
+	return object.NewArray(elements)
 }
