@@ -10,7 +10,7 @@ import (
 
 var moduleCache = NewModuleCache()
 
-func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) object.Object {
+func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) object.Value {
 	path := stmt.Path.Value
 
 	module, err := moduleCache.loadModule(path)
