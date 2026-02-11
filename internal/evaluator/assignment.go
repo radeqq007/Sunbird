@@ -6,7 +6,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func evalAssignment(name ast.Expression, val object.Object, env *object.Environment) object.Object {
+func evalAssignment(name ast.Expression, val object.Value, env *object.Environment) object.Value {
 	switch node := name.(type) {
 	case *ast.Identifier:
 		return evalIdentifierAssignment(node, val, env)
@@ -24,15 +24,15 @@ func evalAssignment(name ast.Expression, val object.Object, env *object.Environm
 
 func evalIdentifierAssignment(
 	node *ast.Identifier,
-	val object.Object,
+	val object.Value,
 	env *object.Environment,
-) object.Object {
+) object.Value {
 	if env.IsConst(node.Value) {
 		return errors.NewConstantReassignmentError(node.Token.Line, node.Token.Col, node.Value)
 	}
 
 	if t, ok := env.GetType(node.Value); ok && t != nil {
-		if err := checkType(t, val, node.Token.Line, node.Token.Col); err != nil {
+		if err := checkType(t, val, node.Token.Line, node.Token.Col); err.IsError() {
 			return err
 		}
 	}
@@ -46,20 +46,23 @@ func evalIdentifierAssignment(
 
 func evalPropertyExpressionAssignment(
 	node *ast.PropertyExpression,
-	val object.Object,
+	val object.Value,
 	env *object.Environment,
-) object.Object {
+) object.Value {
 	obj := Eval(node.Object, env)
 	if isError(obj) {
 		return obj
 	}
 
-	hash, ok := obj.(*object.Hash)
-	if !ok {
+	// hash, ok := obj.(*object.Hash)
+
+	if !obj.IsHash() {
 		return errors.NewNonObjectPropertyAccessError(node.Token.Line, node.Token.Col, obj)
 	}
 
-	key := &object.String{Value: node.Property.Value}
+	hash := obj.AsHash()
+
+	key := object.NewString(node.Property.Value)
 	hashKey := key.HashKey()
 
 	pair := object.HashPair{Key: key, Value: val}
@@ -70,9 +73,9 @@ func evalPropertyExpressionAssignment(
 
 func evalIndexExpressionAssignment(
 	node *ast.IndexExpression,
-	val object.Object,
+	val object.Value,
 	env *object.Environment,
-) object.Object {
+) object.Value {
 	left := Eval(node.Left, env)
 	if isError(left) {
 		return left
@@ -83,28 +86,43 @@ func evalIndexExpressionAssignment(
 		return index
 	}
 
-	switch obj := left.(type) {
-	case *object.Array:
-		idx, ok := index.(*object.Integer)
-		if !ok {
-			return errors.NewIndexNotSupportedError(node.Token.Line, node.Token.Col, obj)
+	kind := left.Kind()
+	switch kind {
+	case object.ArrayKind:
+		obj := left.AsArray()
+
+		if !index.IsInt() {
+			return errors.NewIndexNotSupportedError(node.Token.Line, node.Token.Col, left)
 		}
 
-		if idx.Value < 0 || idx.Value >= int64(len(obj.Elements)) {
-			return errors.NewIndexOutOfBoundsError(node.Token.Line, node.Token.Col, obj)
+		idx := index.AsInt()
+
+		if idx < 0 || idx >= int64(len(obj.Elements)) {
+			return errors.NewIndexOutOfBoundsError(node.Token.Line, node.Token.Col, left)
 		}
 
-		obj.Elements[idx.Value] = val
+		obj.Elements[idx] = val
 		return val
 
-	case *object.Hash:
-		key, ok := index.(object.Hashable)
-		if !ok {
-			return errors.NewUnusableAsHashKeyError(node.Token.Line, node.Token.Col, index)
+	case object.HashKind:
+		obj := left.AsHash()
+
+		switch index.Kind() {
+		case object.IntKind, object.StringKind:
+			// Hashable
+		default:
+			return errors.NewUnusableAsHashKeyError(
+				node.Token.Line,
+				node.Token.Col,
+				index,
+			)
 		}
 
-		pair := object.HashPair{Key: index, Value: val}
-		obj.Pairs[key.HashKey()] = pair
+		hashKey := index.HashKey()
+
+		pair := object.NewHashPair(index, val)
+
+		obj.Pairs[hashKey] = pair
 		return val
 
 	default:
@@ -114,9 +132,9 @@ func evalIndexExpressionAssignment(
 
 func evalCompoundAssignExpression(
 	node *ast.CompoundAssignExpression,
-	val object.Object,
+	val object.Value,
 	env *object.Environment,
-) object.Object {
+) object.Value {
 	currentVal := Eval(node.Name, env)
 	if isError(currentVal) {
 		return currentVal
