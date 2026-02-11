@@ -5,7 +5,7 @@ import (
 	"sunbird/internal/object"
 )
 
-func evalPrefixExpression(operator string, right object.Object, line, col int) object.Object {
+func evalPrefixExpression(operator string, right object.Value, line, col int) object.Value {
 	switch operator {
 	case "!":
 		return evalBangOperator(right)
@@ -17,15 +17,12 @@ func evalPrefixExpression(operator string, right object.Object, line, col int) o
 	}
 }
 
-func evalBangOperator(right object.Object) object.Object {
+func evalBangOperator(right object.Value) object.Value {
 	switch right {
 	case TRUE:
 		return FALSE
 
-	case FALSE:
-		return TRUE
-
-	case NULL:
+	case FALSE, NULL:
 		return TRUE
 
 	default:
@@ -33,25 +30,21 @@ func evalBangOperator(right object.Object) object.Object {
 	}
 }
 
-func evalMinusPrefixOperator(right object.Object, line, col int) object.Object {
-	if right.Type() == object.IntegerObj {
-		value := right.(*object.Integer).Value
-		return &object.Integer{Value: -value}
+func evalMinusPrefixOperator(right object.Value, line, col int) object.Value {
+	if right.IsInt() {
+		value := right.AsInt()
+		return object.NewInt(-value)
 	}
 
-	if right.Type() == object.FloatObj {
-		value := right.(*object.Float).Value
-		return &object.Float{Value: -value}
+	if right.IsFloat() {
+		value := right.AsFloat()
+		return object.NewFloat(-value)
 	}
 
-	if right.Type() != object.IntegerObj && right.Type() != object.FloatObj {
-		return errors.NewUnknownPrefixOperatorError(line, col, "-", right)
-	}
-
-	return NULL
+	return errors.NewUnknownPrefixOperatorError(line, col, "-", right)
 }
 
-func evalInfixExpression(operator string, left, right object.Object, line, col int) object.Object {
+func evalInfixExpression(operator string, left, right object.Value, line, col int) object.Value {
 	switch {
 	case operator == "&&":
 		return nativeBoolToBooleanObject(isTruthy(left) && isTruthy(right))
@@ -60,33 +53,33 @@ func evalInfixExpression(operator string, left, right object.Object, line, col i
 		return nativeBoolToBooleanObject(isTruthy(left) || isTruthy(right))
 
 	case operator == "==":
-		if left.Type() == object.StringObj && right.Type() == object.StringObj {
+		if left.IsString() && right.IsString() {
 			return nativeBoolToBooleanObject(
-				left.(*object.String).Value == right.(*object.String).Value,
+				left.AsString().Value == right.AsString().Value,
 			)
 		}
 		return nativeBoolToBooleanObject(left.Inspect() == right.Inspect())
 
 	case operator == "!=":
-		if left.Type() == object.StringObj && right.Type() == object.StringObj {
+		if left.IsString() && right.IsString() {
 			return nativeBoolToBooleanObject(
-				left.(*object.String).Value != right.(*object.String).Value,
+				left.AsString().Value != right.AsString().Value,
 			)
 		}
 		return nativeBoolToBooleanObject(left.Inspect() != right.Inspect())
 
-	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
+	case left.IsInt() && right.IsInt():
 		return evalIntegerInfixExpression(operator, left, right, line, col)
 
-	case left.Type() == object.StringObj || right.Type() == object.StringObj:
+	case left.IsString() || right.IsString():
 		return evalStringInfixExpression(operator, left, right, line, col)
 
-	case left.Type() == object.FloatObj || right.Type() == object.FloatObj:
+	case left.IsFloat() || right.IsFloat():
 		return evalFloatInfixExpression(operator, left, right)
 
 	// TODO: this probably should be a different error
-	case left.Type() != right.Type():
-		return errors.NewTypeMismatchError(line, col, left.Type(), operator, right.Type())
+	case left.Kind() != right.Kind():
+		return errors.NewTypeMismatchError(line, col, left.Kind(), operator, right.Kind())
 
 	default:
 		return errors.NewUnknownOperatorError(line, col, left, operator, right)
@@ -95,31 +88,31 @@ func evalInfixExpression(operator string, left, right object.Object, line, col i
 
 func evalIntegerInfixExpression(
 	operator string,
-	left, right object.Object,
+	left, right object.Value,
 	line, col int,
-) object.Object {
-	leftVal := left.(*object.Integer).Value
-	rightVal := right.(*object.Integer).Value
+) object.Value {
+	leftVal := left.AsInt()
+	rightVal := right.AsInt()
 
 	switch operator {
 	case "+":
-		return &object.Integer{Value: leftVal + rightVal}
+		return object.NewInt(leftVal + rightVal)
 	case "-":
-		return &object.Integer{Value: leftVal - rightVal}
+		return object.NewInt(leftVal - rightVal)
 	case "*":
-		return &object.Integer{Value: leftVal * rightVal}
+		return object.NewInt(leftVal * rightVal)
 	case "/":
 		if rightVal == 0 {
 			return errors.NewDivisionByZeroError(line, col)
 		}
 
-		return &object.Integer{Value: leftVal / rightVal}
+		return object.NewInt(leftVal / rightVal)
 	case "%":
 		if rightVal == 0 {
 			return errors.NewDivisionByZeroError(line, col)
 		}
 
-		return &object.Integer{Value: leftVal % rightVal}
+		return object.NewInt(leftVal % rightVal)
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
@@ -134,30 +127,30 @@ func evalIntegerInfixExpression(
 	}
 }
 
-func evalFloatInfixExpression(operator string, left, right object.Object) object.Object {
+func evalFloatInfixExpression(operator string, left, right object.Value) object.Value {
 	var leftVal, rightVal float64
 
-	if left.Type() == object.IntegerObj {
-		leftVal = float64(left.(*object.Integer).Value)
+	if left.IsInt() {
+		leftVal = float64(left.AsInt())
 	} else {
-		leftVal = left.(*object.Float).Value
+		leftVal = left.AsFloat()
 	}
 
-	if right.Type() == object.IntegerObj {
-		rightVal = float64(right.(*object.Integer).Value)
+	if right.IsInt() {
+		rightVal = float64(right.AsInt())
 	} else {
-		rightVal = right.(*object.Float).Value
+		rightVal = right.AsFloat()
 	}
 
 	switch operator {
 	case "+":
-		return &object.Float{Value: leftVal + rightVal}
+		return object.NewFloat(leftVal + rightVal)
 	case "-":
-		return &object.Float{Value: leftVal - rightVal}
+		return object.NewFloat(leftVal - rightVal)
 	case "*":
-		return &object.Float{Value: leftVal * rightVal}
+		return object.NewFloat(leftVal * rightVal)
 	case "/":
-		return &object.Float{Value: leftVal / rightVal}
+		return object.NewFloat(leftVal / rightVal)
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
@@ -173,9 +166,9 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 
 func evalStringInfixExpression(
 	operator string,
-	left, right object.Object,
+	left, right object.Value,
 	line, col int,
-) object.Object {
+) object.Value {
 	if operator != "+" && operator != "==" && operator != "!=" && operator != "&&" &&
 		operator != "||" {
 		return errors.NewUnknownOperatorError(line, col, left, operator, right)
@@ -183,17 +176,17 @@ func evalStringInfixExpression(
 
 	var leftVal, rightVal string
 
-	if s, ok := left.(*object.String); ok {
-		leftVal = s.Value
+	if left.IsString() {
+		leftVal = left.AsString().Value
 	} else {
 		leftVal = left.Inspect()
 	}
 
-	if s, ok := right.(*object.String); ok {
-		rightVal = s.Value
+	if right.IsString() {
+		rightVal = right.AsString().Value
 	} else {
 		rightVal = right.Inspect()
 	}
 
-	return &object.String{Value: leftVal + rightVal}
+	return object.NewString(leftVal + rightVal)
 }
