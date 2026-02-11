@@ -169,9 +169,8 @@ func Eval(node ast.Node, env *object.Environment) object.Value {
 			}
 
 			if obj.IsHash() {
-				hash := obj.AsHash()
 				key := object.NewString(propExpr.Property.Value)
-				method := evalHashIndexExpression(hash, key, node.Token.Line, node.Token.Col)
+				method := evalHashIndexExpression(obj, key, node.Token.Line, node.Token.Col)
 				if isError(method) {
 					return method
 				}
@@ -181,7 +180,7 @@ func Eval(node ast.Node, env *object.Environment) object.Value {
 					return args[0]
 				}
 
-				return evalMethodCall(hash, method, args, node.Token.Line, node.Token.Col)
+				return evalMethodCall(obj, method, args, node.Token.Line, node.Token.Col)
 			}
 		}
 
