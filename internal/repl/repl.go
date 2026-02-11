@@ -109,7 +109,7 @@ func evalInput(input string, env *object.Environment, out io.Writer) {
 	}
 
 	evaluated := evaluator.Eval(program, env)
-	if evaluated.IsNull() {
+	if !evaluated.IsNull() {
 		io.WriteString(out, evaluated.Inspect())
 		io.WriteString(out, "\n")
 	}
