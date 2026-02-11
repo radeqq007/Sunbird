@@ -586,3 +586,96 @@ func TestFunctionTypeChecking(t *testing.T) {
 func isError(obj object.Value) bool {
 	return obj.IsError()
 }
+
+func BenchmarkIntegerArithmetic(b *testing.B) {
+	input := `
+		let x = 10
+		let y = 20
+		x + y * 2 - 5
+	`
+	benchmarkEval(b, input)
+}
+
+func BenchmarkFibonacci(b *testing.B) {
+	input := `
+		let fib = func(n) {
+			if n < 2 {
+				return n
+			}
+			return fib(n-1) + fib(n-2)
+		}
+		fib(15)
+	`
+	benchmarkEval(b, input)
+}
+
+func BenchmarkArrayOperations(b *testing.B) {
+	input := `
+		let arr = [1, 2, 3, 4, 5]
+		let sum = 0
+		for i in arr {
+			sum = sum + i
+		}
+		sum
+	`
+	benchmarkEval(b, input)
+}
+
+func BenchmarkHashAccess(b *testing.B) {
+	input := `
+		let hash = {"a": 1, "b": 2, "c": 3}
+		hash["a"] + hash["b"] + hash["c"]
+	`
+	benchmarkEval(b, input)
+}
+
+func BenchmarkStringConcatenation(b *testing.B) {
+	input := `
+		let result = ""
+		for i in 0..10 {
+			result = result + "x"
+		}
+		result
+	`
+	benchmarkEval(b, input)
+}
+
+func BenchmarkFunctionCalls(b *testing.B) {
+	input := `
+		let add = func(a, b) { a + b }
+		let mul = func(a, b) { a * b }
+		
+		let result = 0
+		for i in 0..20 {
+			result = add(mul(i, 2), 1)
+		}
+		result
+	`
+	benchmarkEval(b, input)
+}
+
+func BenchmarkNestedLoops(b *testing.B) {
+	input := `
+		let sum = 0
+		for i in 0..10 {
+			for j in 0..10 {
+				sum = sum + 1
+			}
+		}
+		sum
+	`
+	benchmarkEval(b, input)
+}
+
+// Helper function to run benchmarks
+func benchmarkEval(b *testing.B, input string) {
+	b.ReportAllocs() // Report memory allocations
+	
+	for i := 0; i < b.N; i++ {
+		l := lexer.New(input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		env := object.NewEnvironment()
+		evaluator.Eval(program, env)
+	}
+}
