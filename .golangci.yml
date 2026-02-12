@@ -30,7 +30,6 @@ linters:
     - gomoddirectives
     - gosec
     - govet
-    - ifaceassert
     - ineffassign
     - intrange
     - loggercheck
