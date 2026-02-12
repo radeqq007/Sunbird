@@ -29,10 +29,10 @@ func wrapError(
 	args []object.Value,
 	internalFunc func(int, int, string) object.Value,
 ) object.Value {
-	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); !err.IsNull() {
+	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err.IsError() {
 		return err
 	}
-	if err := errors.ExpectType(0, 0, args[0], object.StringKind); !err.IsNull() {
+	if err := errors.ExpectType(0, 0, args[0], object.StringKind); err.IsError() {
 		return err
 	}
 	msg := args[0].AsString().Value
@@ -57,7 +57,7 @@ func NewImportError(args ...object.Value) object.Value {
 
 func NewDivisionByZeroError(args ...object.Value) object.Value {
 	// Division by zero doesn't need a custom message
-	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); !err.IsNull() {
+	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err.IsError() {
 		return err
 	}
 
