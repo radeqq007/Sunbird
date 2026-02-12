@@ -25,12 +25,12 @@ func New() object.Value {
 
 func push(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -41,12 +41,12 @@ func push(args ...object.Value) object.Value {
 
 func pop(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -63,12 +63,12 @@ func pop(args ...object.Value) object.Value {
 
 func shift(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -85,12 +85,12 @@ func shift(args ...object.Value) object.Value {
 
 func unshift(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -102,12 +102,12 @@ func unshift(args ...object.Value) object.Value {
 
 func reverse(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -124,17 +124,17 @@ func reverse(args ...object.Value) object.Value {
 
 func join(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[1], object.StringKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -154,26 +154,26 @@ func join(args ...object.Value) object.Value {
 
 func slice(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		err = errors.ExpectNumberOfArguments(0, 0, 3, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[1], object.IntKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	if len(args) == 3 {
 		err = errors.ExpectType(0, 0, args[2], object.IntKind)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 	}
@@ -206,17 +206,17 @@ func slice(args ...object.Value) object.Value {
 
 func indexOf(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[1], object.StringKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -234,12 +234,12 @@ func indexOf(args ...object.Value) object.Value {
 
 func contains(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -257,17 +257,17 @@ func contains(args ...object.Value) object.Value {
 
 func concat(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[1], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
@@ -283,12 +283,12 @@ func concat(args ...object.Value) object.Value {
 
 func clearArray(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
 	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-	if !err.IsNull() {
+	if err.IsError() {
 		return err
 	}
 
