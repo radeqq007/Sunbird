@@ -28,7 +28,6 @@ linters:
     - gocritic
     - gocyclo
     - gomoddirectives
-    - goprintffuncname
     - gosec
     - govet
     - ifaceassert
@@ -124,10 +123,6 @@ linters:
         - ifElseChain
         - exitAfterDefer
         - nestingReduce
-
-    goprintffuncname:
-      skip:
-        - newError
 
     gosec:
       excludes:
