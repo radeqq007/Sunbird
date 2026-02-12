@@ -11,12 +11,12 @@ var builtins = map[string]object.Value{
 	"len": object.NewBuiltin(
 		func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if !err.IsNull() {
+			if err.IsError() {
 				return err
 			}
 
 			err = errors.ExpectOneOfTypes(0, 0, args[0], object.StringKind, object.ArrayKind)
-			if !err.IsNull() {
+			if err.IsError() {
 				return err
 			}
 
@@ -44,12 +44,12 @@ var builtins = map[string]object.Value{
 	"append": object.NewBuiltin(
 		func(args ...object.Value) object.Value {
 			err := errors.ExpectMinNumberOfArguments(0, 0, 2, args)
-			if !err.IsNull() {
+			if err.IsError() {
 				return err
 			}
 
 			err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
-			if !err.IsNull() {
+			if err.IsError() {
 				return err
 			}
 
@@ -64,7 +64,7 @@ var builtins = map[string]object.Value{
 	"type": object.NewBuiltin(
 		func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if !err.IsNull() {
+			if err.IsError() {
 				return err
 			}
 
@@ -74,7 +74,7 @@ var builtins = map[string]object.Value{
 
 	"string": object.NewBuiltin(func(args ...object.Value) object.Value {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
@@ -89,7 +89,7 @@ var builtins = map[string]object.Value{
 
 	"int": object.NewBuiltin(func(args ...object.Value) object.Value {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
@@ -124,7 +124,7 @@ var builtins = map[string]object.Value{
 
 	"float": object.NewBuiltin(func(args ...object.Value) object.Value {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
@@ -159,7 +159,7 @@ var builtins = map[string]object.Value{
 
 	"bool": object.NewBuiltin(func(args ...object.Value) object.Value {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
@@ -196,7 +196,7 @@ var builtins = map[string]object.Value{
 
 	"exit": object.NewBuiltin(func(args ...object.Value) object.Value {
 		err := errors.ExpectNumberOfArguments(0, 0, 0, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
@@ -207,12 +207,12 @@ var builtins = map[string]object.Value{
 
 	"error": object.NewBuiltin(func(args ...object.Value) object.Value {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
 		err = errors.ExpectType(0, 0, args[0], object.StringKind)
-		if !err.IsNull() {
+		if err.IsError() {
 			return err
 		}
 
