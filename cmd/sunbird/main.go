@@ -117,11 +117,9 @@ func runFile(path string) {
 
 	evaluated := evaluator.Eval(program, env)
 
-	if !evaluated.IsNull() {
-		if evaluated.IsError() {
-			fmt.Println(evaluated.Inspect())
-			os.Exit(1)
-		}
+	if evaluated.IsError() {
+		fmt.Println(evaluated.Inspect())
+		os.Exit(1)
 	}
 }
 
