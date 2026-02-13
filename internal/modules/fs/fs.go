@@ -72,7 +72,11 @@ func writeFile(args ...object.Value) object.Value {
 		return err
 	}
 
-	os.WriteFile(getFullPath(args[0].AsString().Value), []byte(args[1].AsString().Value), 0644)
+	errGo := os.WriteFile(getFullPath(args[0].AsString().Value), []byte(args[1].AsString().Value), 0644)
+	if errGo != nil {
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+	}
+	
 	return object.NewNull()
 }
 
@@ -202,7 +206,10 @@ func createDir(args ...object.Value) object.Value {
 		return err
 	}
 
-	os.Mkdir(getFullPath(args[0].AsString().Value), 0755)
+	errGo := os.Mkdir(getFullPath(args[0].AsString().Value), 0755)
+	if errGo != nil {
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+	}
 	return object.NewNull()
 }
 
@@ -222,7 +229,11 @@ func rename(args ...object.Value) object.Value {
 		return err
 	}
 
-	os.Rename(getFullPath(args[0].AsString().Value), getFullPath(args[1].AsString().Value))
+	errGo := os.Rename(getFullPath(args[0].AsString().Value), getFullPath(args[1].AsString().Value))
+	if errGo != nil {
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+	}
+
 	return object.NewNull()
 }
 
