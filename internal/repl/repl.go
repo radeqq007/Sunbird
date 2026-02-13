@@ -1,6 +1,7 @@
 package repl
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -59,7 +60,10 @@ func Start(in io.Reader, out io.Writer) {
 			os.Exit(0)
 		}
 
-		evalInput(input, env, out)
+		if err := evalInput(input, env, out); err != nil {
+			// REPL probably can’t recover meaningfully, but log it
+			fmt.Fprintln(os.Stderr, "write error:", err)
+		}
 	}
 
 	completer := func(d prompt.Document) []prompt.Suggest {
@@ -98,25 +102,37 @@ func Start(in io.Reader, out io.Writer) {
 	p.Run()
 }
 
-func evalInput(input string, env *object.Environment, out io.Writer) {
+func evalInput(input string, env *object.Environment, out io.Writer) error {
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()
 
 	if len(p.Errors()) != 0 {
-		printParserErrors(out, p.Errors())
-		return
+		return printParserErrors(out, p.Errors())
 	}
 
 	evaluated := evaluator.Eval(program, env)
-	if !evaluated.IsNull() {
-		io.WriteString(out, evaluated.Inspect())
-		io.WriteString(out, "\n")
+	
+	if evaluated.IsNull() {
+		return nil
 	}
+
+	if _, err := io.WriteString(out, evaluated.Inspect()); err != nil {
+		return err
+	}
+
+	if _, err := io.WriteString(out, "\n"); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func printParserErrors(out io.Writer, errors []string) {
+func printParserErrors(out io.Writer, errors []string) error {
 	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
+		if _, err := io.WriteString(out, "\t"+msg+"\n"); err != nil {
+			return err
+		}
 	}
+	return nil
 }
