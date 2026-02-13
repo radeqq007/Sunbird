@@ -141,13 +141,13 @@ main = "./src/main.sb"
 dependencies = []
 `
 
-	err := os.WriteFile("sunbird.toml", []byte(template), 0644)
+	err := os.WriteFile("sunbird.toml", []byte(template), 0o644)
 	if err != nil {
 		fmt.Printf("Error creating sunbird.toml: %s\n", err)
 		os.Exit(1)
 	}
 
-	err = os.Mkdir("src", 0755)
+	err = os.Mkdir("src", 0o755)
 	if err != nil {
 		fmt.Printf("Error creating src directory: %s\n", err)
 		os.Exit(1)
@@ -158,7 +158,7 @@ dependencies = []
 io.println("Hello, sunbird!")
 `
 
-	err = os.WriteFile("./src/main.sb", []byte(mainTemplate), 0644)
+	err = os.WriteFile("./src/main.sb", []byte(mainTemplate), 0o644)
 	if err != nil {
 		fmt.Printf("Error creating main.sb: %s\n", err)
 		os.Exit(1)
