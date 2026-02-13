@@ -48,7 +48,7 @@ func SaveConfig(path string, config *Config) error {
 		return err
 	}
 
-	err = os.WriteFile(path, data, 0644)
+	err = os.WriteFile(path, data, 0o644)
 	if err != nil {
 		return err
 	}
