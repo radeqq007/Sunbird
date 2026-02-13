@@ -14,17 +14,27 @@ import (
 	"sunbird/internal/object"
 )
 
-var BuiltinModules = map[string]object.Value{
-	"math":   math.New(),
-	"io":     io.New(),
-	"array":  array.New(),
-	"string": str.New(),
-	"random": random.New(),
-	"errors": errors.New(),
-	"json":   json.New(),
-	"http":   http.New(),
-	"fs":     fs.New(),
-	"time":   time.New(),
+func init() {
+	registerModule("math", math.New())
+	registerModule("io", io.New())
+	registerModule("array", array.New())
+	registerModule("string", str.New())
+	registerModule("random", random.New())
+	registerModule("errors", errors.New())
+	registerModule("json", json.New())
+	registerModule("http", http.New())
+	registerModule("fs", fs.New())
+	registerModule("time", time.New())
+}
+
+var BuiltinModules = make(map[string]object.Value)
+
+func registerModule(name string, module object.Value) {
+	if module.IsModule() {
+		mod := module.AsModule()
+		mod.Name = name
+		BuiltinModules[name] = module
+	}
 }
 
 func Get(name string) (object.Value, bool) {
