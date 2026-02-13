@@ -124,7 +124,7 @@ func DownloadPackage(pkgURL *PackageURL) error {
 		}
 	}
 
-	err = os.MkdirAll(filepath.Dir(finalPath), 0755)
+	err = os.MkdirAll(filepath.Dir(finalPath), 0o755)
 	if err != nil {
 		return fmt.Errorf("failed to create directory for package: %w", err)
 	}
