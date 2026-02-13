@@ -22,6 +22,9 @@ func Eval(node ast.Node, env *object.Environment) object.Value {
 	case *ast.ImportStatement:
 		return evalImportStatement(node, env)
 
+	case *ast.ExportStatement:
+		return evalExportStatement(node, env)
+
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
 

@@ -147,6 +147,22 @@ func (is *ImportStatement) String() string {
 	return out.String()
 }
 
+type ExportStatement struct {
+	Token       token.Token
+	Declaration Expression // the let/const expression being exported
+}
+
+func (es *ExportStatement) statementNode()       {}
+func (es *ExportStatement) TokenLiteral() string { return es.Token.Literal }
+func (es *ExportStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString("export ")
+	if es.Declaration != nil {
+		out.WriteString(es.Declaration.String())
+	}
+	return out.String()
+}
+
 type TryCatchStatement struct {
 	Token   token.Token
 	Try     *BlockStatement

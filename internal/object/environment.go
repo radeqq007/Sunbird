@@ -2,18 +2,20 @@ package object
 
 import "sunbird/internal/ast"
 
-func NewEnvironment() *Environment {
-	s := make(map[string]Value)
-	c := make(map[string]bool)
-	t := make(map[string]ast.TypeAnnotation)
-	return &Environment{store: s, constants: c, types: t}
-}
-
 type Environment struct {
 	store     map[string]Value
 	constants map[string]bool
 	types     map[string]ast.TypeAnnotation
+	exports   map[string]bool
 	outer     *Environment
+}
+
+func NewEnvironment() *Environment {
+	s := make(map[string]Value)
+	c := make(map[string]bool)
+	t := make(map[string]ast.TypeAnnotation)
+	e := make(map[string]bool)
+	return &Environment{store: s, constants: c, types: t, exports: e}
 }
 
 func (e *Environment) Get(name string) (Value, bool) {
@@ -97,4 +99,22 @@ func NewEnclosedEnvironment(outer *Environment) *Environment {
 	env := NewEnvironment()
 	env.outer = outer
 	return env
+}
+
+func (e *Environment) MarkAsExported(name string) {
+	e.exports[name] = true
+}
+
+func (e *Environment) IsExported(name string) bool {
+	return e.exports[name]
+}
+
+func (e *Environment) GetExports() map[string]Value {
+	exports := make(map[string]Value)
+	for name, value := range e.store {
+		if e.exports[name] {
+			exports[name] = value
+		}
+	}
+	return exports
 }

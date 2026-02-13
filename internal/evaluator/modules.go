@@ -59,7 +59,7 @@ func (mc *ModuleCache) loadModule(path string) (object.Value, error) {
 func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 	mainFileDir := ""
 	if len(os.Args) > 1 {
-		mainFileDir = filepath.Dir(os.Args[1]) // TODO: don't use os.Args
+		mainFileDir = filepath.Dir(os.Args[2]) // TODO: don't use os.Args
 	}
 
 	fullPath := filepath.Join(mainFileDir, path)
@@ -98,15 +98,23 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 
 	moduleEnv := object.NewEnvironment()
 
-	Eval(program, moduleEnv)
+	result := Eval(program, moduleEnv)
+	if isError(result) {
+		return result, nil
+	}
 
 	pairs := make(map[object.HashKey]object.HashPair)
-	for name, value := range moduleEnv.GetStore() {
+	// for name, value := range moduleEnv.GetStore() {
+	// 	key := object.NewString(name)
+	// 	hashKey := key.HashKey()
+
+	// 	pairs[hashKey] = object.NewHashPair(key, value)
+
+	// }
+	for name, value := range moduleEnv.GetExports() {
 		key := object.NewString(name)
 		hashKey := key.HashKey()
-
 		pairs[hashKey] = object.NewHashPair(key, value)
-
 	}
 
 	module := object.NewHash(pairs)

@@ -37,3 +37,24 @@ func evalImportStatement(stmt *ast.ImportStatement, env *object.Environment) obj
 
 	return NULL
 }
+
+func evalExportStatement(stmt *ast.ExportStatement, env *object.Environment) object.Value {
+	val := Eval(stmt.Declaration, env)
+	if isError(val) {
+		return val
+	}
+
+	var name string
+	switch decl := stmt.Declaration.(type) {
+	case *ast.LetExpression:
+		name = decl.Name.String()
+	case *ast.ConstExpression:
+		name = decl.Name.String()
+	}
+
+	if name != "" {
+		env.MarkAsExported(name)
+	}
+
+	return val
+}

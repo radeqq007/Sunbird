@@ -28,6 +28,9 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.Import:
 		return p.parseImportStatement()
 
+	case token.Export:
+		return p.parseExportStatement()
+
 	case token.Try:
 		return p.parseTryCatchStatement()
 
@@ -183,6 +186,29 @@ func (p *Parser) parseImportStatement() *ast.ImportStatement {
 
 	if p.peekTokenIs(token.Semicolon) {
 		p.nextToken() // skip the ;
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseExportStatement() *ast.ExportStatement {
+	stmt := &ast.ExportStatement{Token: p.curToken}
+
+	if !p.peekTokenIs(token.Let) && !p.peekTokenIs(token.Const) {
+		p.newError("export must be followed by 'let' or 'const'")
+		return nil
+	}
+
+	p.nextToken()
+
+	switch p.curToken.Type {
+	case token.Let:
+		stmt.Declaration = p.parseLetExpression()
+	case token.Const:
+		stmt.Declaration = p.parseConstExpression()
+	default:
+		p.newError("export must be followed by 'let' or 'const'")
+		return nil
 	}
 
 	return stmt

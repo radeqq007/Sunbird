@@ -89,6 +89,7 @@ const (
 	For      TokenType = "FOR"
 	While    TokenType = "WHILE"
 	Import   TokenType = "IMPORT"
+	Export   TokenType = "EXPORT"
 	As       TokenType = "AS"
 	Break    TokenType = "BREAK"
 	Continue TokenType = "CONTINUE"
