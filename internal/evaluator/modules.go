@@ -103,21 +103,14 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 		return result, nil
 	}
 
-	pairs := make(map[object.HashKey]object.HashPair)
-	// for name, value := range moduleEnv.GetStore() {
-	// 	key := object.NewString(name)
-	// 	hashKey := key.HashKey()
-
-	// 	pairs[hashKey] = object.NewHashPair(key, value)
-
-	// }
-	for name, value := range moduleEnv.GetExports() {
-		key := object.NewString(name)
-		hashKey := key.HashKey()
-		pairs[hashKey] = object.NewHashPair(key, value)
+	moduleName := filepath.Base(path)
+	if ext := filepath.Ext(moduleName); ext != "" {
+		moduleName = moduleName[:len(moduleName)-len(ext)]
 	}
 
-	module := object.NewHash(pairs)
+	exports := moduleEnv.GetExports()
+
+	module := object.NewModule(moduleName, exports)
 	mc.mu.Lock()
 	mc.modules[path] = module
 	mc.mu.Unlock()

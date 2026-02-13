@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"sunbird/internal/ast"
 	"sunbird/internal/errors"
 	"sunbird/internal/object"
@@ -114,6 +115,23 @@ func evalPropertyExpression(pe *ast.PropertyExpression, env *object.Environment)
 	obj := Eval(pe.Object, env)
 	if isError(obj) {
 		return obj
+	}
+
+	if obj.IsModule() {
+		module := obj.AsModule()
+		propertyName := pe.Property.Value
+
+		// Look up the property in the modules exports
+		if val, ok := module.Exports[propertyName]; ok {
+			return val
+		}
+
+		// Property not found in module
+		return errors.NewUndefinedVariableError(
+			pe.Token.Line,
+			pe.Token.Col,
+			fmt.Sprintf("%s.%s", module.Name, propertyName),
+		)
 	}
 
 	if !obj.IsHash() {

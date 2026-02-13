@@ -31,6 +31,7 @@ const (
 	BreakKind
 	ContinueKind
 	RangeKind
+	ModuleKind
 )
 
 func (vk ValueKind) String() string {
@@ -63,6 +64,8 @@ func (vk ValueKind) String() string {
 		return "Continue"
 	case RangeKind:
 		return "Range"
+	case ModuleKind:
+		return "Module"
 	default:
 		return "Unknown"
 	}
@@ -127,6 +130,11 @@ type Range struct {
 	Start int64
 	End   int64
 	Step  int64
+}
+
+type Module struct {
+	Name    string
+	Exports map[string]Value
 }
 
 func (v Value) Kind() ValueKind {
@@ -216,6 +224,10 @@ func (v Value) Inspect() string {
 		}
 		return fmt.Sprintf("%d..%d", r.Start, r.End)
 
+	case ModuleKind:
+		m := v.AsModule()
+		return "<module " + m.Name + ">"
+
 	default:
 		return "unknown"
 	}
@@ -249,6 +261,7 @@ func (v Value) IsFunction() bool { return v.kind == FunctionKind }
 func (v Value) IsBuiltin() bool  { return v.kind == BuiltinKind }
 func (v Value) IsError() bool    { return v.kind == ErrorKind }
 func (v Value) IsRange() bool    { return v.kind == RangeKind }
+func (v Value) IsModule() bool   { return v.kind == ModuleKind }
 
 // Getters
 func (v Value) AsInt() int64 {
@@ -293,6 +306,10 @@ func (v Value) AsError() *Error {
 
 func (v Value) AsRange() *Range {
 	return (*Range)(v.ptr)
+}
+
+func (v Value) AsModule() *Module {
+	return (*Module)(v.ptr)
 }
 
 func NewInt(val int64) Value {
@@ -416,5 +433,16 @@ func NewRange(start, end, step int64) Value {
 	return Value{
 		kind: RangeKind,
 		ptr:  unsafe.Pointer(r),
+	}
+}
+
+func NewModule(name string, exports map[string]Value) Value {
+	m := &Module{
+		Name:    name,
+		Exports: exports,
+	}
+	return Value{
+		kind: ModuleKind,
+		ptr:  unsafe.Pointer(m),
 	}
 }
