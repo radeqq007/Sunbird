@@ -98,6 +98,7 @@ linters:
 
     gosec:
       excludes:
+        - G103
         - G304 # File inclusion
         - G306 # File permissions
         - G301 # Directory permissions
