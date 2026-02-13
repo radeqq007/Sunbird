@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestLetStatement(t *testing.T) {
+func TestLetStatements(t *testing.T) {
 	input := `
 let x = 5;
 let y = 10;
@@ -55,6 +55,52 @@ let foobar = 32.1;
 	}
 }
 
+func TestConstStatements(t *testing.T) {
+	input := `
+const x = 5;
+const y = 10;
+const foobar = 32.1;
+  `
+
+	l := lexer.New(input)
+	p := parser.New(l)
+
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if program == nil {
+		t.Fatalf("p.ParseProgram() returned nil")
+	}
+
+	if len(program.Statements) != 3 {
+		t.Fatalf(
+			"program.Statements does not contain 3 statements. got=%d",
+			len(program.Statements),
+		)
+	}
+
+	tests := []struct {
+		expectedIdentifier string
+	}{
+		{"x"},
+		{"y"},
+		{"foobar"},
+	}
+
+	for i, tt := range tests {
+		stmt, ok := program.Statements[i].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf(
+				"program.Statements[%d] is not ast.ExpressionStatement. got=%T",
+				i,
+				program.Statements[i],
+			)
+		}
+		if !testConstExpression(t, stmt.Expression, tt.expectedIdentifier) {
+			return
+		}
+	}
+}
+
 func testLetExpression(t *testing.T, s ast.Expression, name string) bool {
 	if s.TokenLiteral() != "let" {
 		t.Errorf("s.TokenLiteral is not 'let'. got=%q", s.TokenLiteral())
@@ -62,6 +108,26 @@ func testLetExpression(t *testing.T, s ast.Expression, name string) bool {
 	}
 
 	letExp, ok := s.(*ast.LetExpression)
+	if !ok {
+		t.Errorf("s not *ast.LetExpression. got=%T", s)
+		return false
+	}
+
+	if letExp.Name.String() != name {
+		t.Errorf("letExp.Name.Value not '%s'. got=%s", name, letExp.Name.String())
+		return false
+	}
+
+	return true
+}
+
+func testConstExpression(t *testing.T, s ast.Expression, name string) bool {
+	if s.TokenLiteral() != "const" {
+		t.Errorf("s.TokenLiteral is not 'const'. got=%q", s.TokenLiteral())
+		return false
+	}
+
+	letExp, ok := s.(*ast.ConstExpression)
 	if !ok {
 		t.Errorf("s not *ast.LetExpression. got=%T", s)
 		return false
@@ -338,11 +404,71 @@ func TestBooleanLiteralExpression(t *testing.T) {
 	}
 }
 
+func TestNullLiteral(t *testing.T) {
+	input := "null;"
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf(
+			"program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0],
+		)
+	}
+
+	boolean, ok := stmt.Expression.(*ast.NullLiteral)
+
+	if !ok {
+		t.Fatalf("exp not *ast.NullLiteral. got=%T", stmt.Expression)
+	}
+
+	if boolean.TokenLiteral() != "null" {
+		t.Errorf("boolean.TokenLiteral not %s. got=%s", "null", boolean.TokenLiteral())
+	}
+}
+
+func TestParsingHashLiteral(t *testing.T) {
+	input := `{ "a": 123, 1: "test" }`
+
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	
+	checkParserErrors(t, p)
+	
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf(
+			"program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0],
+		)
+	}
+
+	_, ok = stmt.Expression.(*ast.HashLiteral)
+
+	if !ok {
+		t.Fatalf("exp not *ast.HashLiteral. got=%T", stmt.Expression)
+	}
+}
+
 func TestParsingPrefixExpressions(t *testing.T) {
 	prefixTests := []struct {
 		input    string
 		operator string
-		value    interface{}
+		value    any
 	}{
 		{"!5", "!", 5},
 		{"-14", "-", 14},
@@ -472,9 +598,9 @@ func testBooleanLiteral(t *testing.T, bl ast.Expression, value bool) bool {
 func TestParsingInfixExpressions(t *testing.T) {
 	infixTests := []struct {
 		input      string
-		leftValue  interface{}
+		leftValue  any
 		operator   string
-		rightValue interface{}
+		rightValue any
 	}{
 		{"5 + 5;", 5, "+", 5},
 		{"5 - 5;", 5, "-", 5},
@@ -613,7 +739,7 @@ func testIdentifier(t *testing.T, exp ast.Expression, value string) bool {
 func testLiteralExpression(
 	t *testing.T,
 	exp ast.Expression,
-	expected interface{},
+	expected any,
 ) bool {
 	switch v := expected.(type) {
 	case int:
@@ -641,9 +767,9 @@ func testLiteralExpression(
 func testInfixExpression(
 	t *testing.T,
 	exp ast.Expression,
-	left interface{},
+	left any,
 	operator string,
-	right interface{},
+	right any,
 ) bool {
 	opExp, ok := exp.(*ast.InfixExpression)
 	if !ok {
