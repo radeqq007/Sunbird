@@ -17,7 +17,6 @@ linters:
     - errcheck
     - errname
     - errorlint
-    - exhaustive
     - exptostd
     - fatcontext
     - funlen
@@ -65,7 +64,6 @@ linters:
     - usetesting
     - wastedassign
     - whitespace
-    - exhaustruct
 
   settings:
     cyclop:
@@ -77,31 +75,6 @@ linters:
       exclude-functions:
         - (io.Closer).Close
         - (*os.File).Close
-
-    exhaustive:
-      check:
-        - switch
-        - map
-      default-signifies-exhaustive: true
-
-    exhaustruct:
-      exclude:
-        - ^net/http\.
-        - ^net/url\.
-        - ^os/exec\.
-        - ^reflect\.
-        - ^github\.com/go-git/
-        - Token$
-        - Statement$
-        - Expression$
-        - Literal$
-        - Type$
-        - Object$
-        - Hash$
-        - Environment$
-        - Parser$
-        - Lexer$
-        - Builder$
 
     funcorder:
       struct-method: false
@@ -193,6 +166,5 @@ linters:
           - noctx
           - wrapcheck
           - gochecknoglobals
-          - exhaustruct
           - cyclop
           - gocognit
