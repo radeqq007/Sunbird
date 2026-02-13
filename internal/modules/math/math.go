@@ -207,19 +207,17 @@ func clamp(args ...object.Value) object.Value {
 		return err
 	}
 
+	val := getFloat64(args[0])
+	min := getFloat64(args[1])
+	max := getFloat64(args[2])
+
+	res := math.Max(min, math.Min(val, max))
+
 	if args[0].IsFloat() || args[1].IsFloat() || args[2].IsFloat() {
-		if args[2].IsFloat() {
-			return object.NewFloat(math.Max(
-				getFloat64(args[0]),
-				math.Min(getFloat64(args[1]), getFloat64(args[2])),
-			))
-		}
+		return object.NewFloat(res)
 	}
 
-	return object.NewInt(int64(math.Max(
-		getFloat64(args[0]),
-		math.Min(getFloat64(args[1]), getFloat64(args[2])),
-	)))
+	return object.NewInt(int64(res))
 }
 
 func sign(args ...object.Value) object.Value {
