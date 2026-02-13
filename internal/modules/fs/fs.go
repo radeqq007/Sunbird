@@ -72,7 +72,7 @@ func writeFile(args ...object.Value) object.Value {
 		return err
 	}
 
-	errGo := os.WriteFile(getFullPath(args[0].AsString().Value), []byte(args[1].AsString().Value), 0644)
+	errGo := os.WriteFile(getFullPath(args[0].AsString().Value), []byte(args[1].AsString().Value), 0o644)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
@@ -96,7 +96,7 @@ func appendFile(args ...object.Value) object.Value {
 		return err
 	}
 
-	file, errGo := os.OpenFile(getFullPath(args[0].AsString().Value), os.O_APPEND|os.O_WRONLY, 0644)
+	file, errGo := os.OpenFile(getFullPath(args[0].AsString().Value), os.O_APPEND|os.O_WRONLY, 0o644)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
@@ -206,7 +206,7 @@ func createDir(args ...object.Value) object.Value {
 		return err
 	}
 
-	errGo := os.Mkdir(getFullPath(args[0].AsString().Value), 0755)
+	errGo := os.Mkdir(getFullPath(args[0].AsString().Value), 0o755)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
@@ -260,7 +260,7 @@ func copyFile(args ...object.Value) object.Value {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
-	errGo = os.WriteFile(getFullPath(args[1].AsString().Value), data, 0644)
+	errGo = os.WriteFile(getFullPath(args[1].AsString().Value), data, 0o644)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
