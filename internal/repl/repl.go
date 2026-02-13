@@ -60,7 +60,7 @@ func Start(in io.Reader, out io.Writer) {
 			os.Exit(0)
 		}
 
-		if err := evalInput(input, env, out); err != nil {
+		if err := EvalInput(input, env, out); err != nil {
 			// REPL probably can’t recover meaningfully, but log it
 			fmt.Fprintln(os.Stderr, "write error:", err)
 		}
@@ -102,7 +102,7 @@ func Start(in io.Reader, out io.Writer) {
 	p.Run()
 }
 
-func evalInput(input string, env *object.Environment, out io.Writer) error {
+func EvalInput(input string, env *object.Environment, out io.Writer) error {
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -112,7 +112,7 @@ func evalInput(input string, env *object.Environment, out io.Writer) error {
 	}
 
 	evaluated := evaluator.Eval(program, env)
-	
+
 	if evaluated.IsNull() {
 		return nil
 	}
