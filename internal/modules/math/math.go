@@ -22,8 +22,8 @@ func New() object.Value {
 		AddFunction("sin", sin).
 		AddFunction("cos", cos).
 		AddFunction("tan", tan).
-		AddFloat("PI", math.Pi).
-		AddFloat("E", math.E).
+		AddFloat("pi", math.Pi).
+		AddFloat("e", math.E).
 		Build()
 }
 
