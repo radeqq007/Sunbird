@@ -179,7 +179,6 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 		// Check if it's an object method call
 		propExpr, ok := exp.Function.(*ast.PropertyExpression)
 		if ok {
-
 			obj := Eval(propExpr.Object, env)
 			if isError(obj) {
 				return obj

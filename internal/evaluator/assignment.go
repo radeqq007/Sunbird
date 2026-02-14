@@ -54,8 +54,6 @@ func evalPropertyExpressionAssignment(
 		return obj
 	}
 
-	// hash, ok := obj.(*object.Hash)
-
 	if !obj.IsHash() {
 		return errors.NewNonObjectPropertyAccessError(node.Token.Line, node.Token.Col, obj)
 	}

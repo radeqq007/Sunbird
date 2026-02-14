@@ -86,7 +86,7 @@ func ExpectNumberOfArguments(line, col, expected int, args []object.Value) objec
 	return object.NewNull()
 }
 
-func ExpectMinNumberOfArguments(line, col int, expected int, args []object.Value) object.Value {
+func ExpectMinNumberOfArguments(line, col, expected int, args []object.Value) object.Value {
 	if len(args) < expected {
 		return New(ArgumentError, line, col, "expected at least %d arguments, got %d", expected, len(args))
 	}
@@ -117,7 +117,7 @@ func NewInvalidAssignmentTargetError(line, col int, name string) object.Value {
 	return New(InvalidAssignmentError, line, col, "%s", name)
 }
 
-func NewTypeError(line, col int, format string, args ...interface{}) object.Value {
+func NewTypeError(line, col int, format string, args ...any) object.Value {
 	return New(TypeError, line, col, format, args...)
 }
 

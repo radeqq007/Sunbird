@@ -86,7 +86,10 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 		return object.NewNull(), err
 	}
 
-	file.Close()
+	err = file.Close()
+	if err != nil {
+		return object.NewNull(), err
+	}
 
 	l := lexer.New(string(content))
 	p := parser.New(l)

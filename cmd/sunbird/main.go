@@ -47,25 +47,29 @@ func main() {
 }
 
 func handleRun() {
-	var filePath string
-
-	if len(os.Args) >= 3 {
-		filePath = os.Args[2]
-	} else {
-		config, err := pkg.LoadConfig("sunbird.toml")
-		if err == nil && config.Package.Main != "" {
-			filePath = config.Package.Main
-		} else {
-			filePath, err = findMainFile()
-			if err != nil {
-				fmt.Println("Error: No file specified and no main file found")
-				fmt.Println("Usage: sunbird run [file.sb]")
-				os.Exit(1)
-			}
-		}
+	filePath, err := resolveFilePath()
+	if err != nil {
+		fmt.Println("Error: No file specified and no main file found")
+		fmt.Println("Usage: sunbird run [file.sb]")
+		os.Exit(1)
 	}
 
 	runFile(filePath)
+}
+
+func resolveFilePath() (string, error) {
+	// Check CLI Arguments
+	if len(os.Args) >= 3 {
+		return os.Args[2], nil
+	}
+
+	// Check Config File
+	if config, err := pkg.LoadConfig("sunbird.toml"); err == nil && config.Package.Main != "" {
+		return config.Package.Main, nil
+	}
+
+	// Fallback to searching
+	return findMainFile()
 }
 
 func findMainFile() (string, error) {

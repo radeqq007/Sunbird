@@ -56,7 +56,7 @@ func SaveConfig(path string, config *Config) error {
 	return nil
 }
 
-func AddDependency(path string, name string, dependency DependencyInfo) error {
+func AddDependency(path, name string, dependency DependencyInfo) error {
 	config, err := LoadConfig(path)
 	if err != nil {
 		return err

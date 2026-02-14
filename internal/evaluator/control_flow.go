@@ -59,15 +59,13 @@ func evalRangeLoop(fs *ast.ForStatement, iterable *object.Range, env *object.Env
 				return result
 			}
 
-			if !result.IsNull() {
-				switch result.Kind() {
-				case object.ReturnValueKind:
-					return result
-				case object.BreakKind:
-					return NULL
-				case object.ContinueKind:
-					continue
-				}
+			switch result.Kind() {
+			case object.ReturnValueKind:
+				return result
+			case object.BreakKind:
+				return NULL
+			case object.ContinueKind:
+				continue
 			}
 		}
 	} else {

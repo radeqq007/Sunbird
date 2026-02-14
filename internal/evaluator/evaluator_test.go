@@ -671,7 +671,7 @@ func BenchmarkNestedLoops(b *testing.B) {
 func benchmarkEval(b *testing.B, input string) {
 	b.ReportAllocs() // Report memory allocations
 
-	for _ = range b.N {
+	for range b.N {
 		l := lexer.New(input)
 		p := parser.New(l)
 		program := p.ParseProgram()

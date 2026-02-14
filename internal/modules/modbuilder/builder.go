@@ -30,7 +30,7 @@ func (mb *ModuleBuilder) AddFloat(name string, value float64) *ModuleBuilder {
 	return mb.AddValue(name, object.NewFloat(value))
 }
 
-func (mb *ModuleBuilder) AddString(name string, value string) *ModuleBuilder {
+func (mb *ModuleBuilder) AddString(name, value string) *ModuleBuilder {
 	return mb.AddValue(name, object.NewString(value))
 }
 
@@ -75,7 +75,7 @@ func (hb *HashBuilder) AddFloat(name string, value float64) *HashBuilder {
 	return hb.AddValue(name, object.NewFloat(value))
 }
 
-func (hb *HashBuilder) AddString(name string, value string) *HashBuilder {
+func (hb *HashBuilder) AddString(name, value string) *HashBuilder {
 	return hb.AddValue(name, object.NewString(value))
 }
 

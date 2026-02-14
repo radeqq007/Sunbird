@@ -10,8 +10,8 @@ import (
 func New() object.Value {
 	return modbuilder.NewModuleBuilder().
 		AddFunction("abs", abs).
-		AddFunction("max", max).
-		AddFunction("min", min).
+		AddFunction("max", maxValue).
+		AddFunction("min", minValue).
 		AddFunction("pow", pow).
 		AddFunction("sqrt", sqrt).
 		AddFunction("floor", floor).
@@ -45,7 +45,7 @@ func abs(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Abs(float64(args[0].AsInt()))))
 }
 
-func max(args ...object.Value) object.Value {
+func maxValue(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 	if err.IsError() {
 		return err
@@ -68,7 +68,7 @@ func max(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Max(getFloat64(args[0]), getFloat64(args[1]))))
 }
 
-func min(args ...object.Value) object.Value {
+func minValue(args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 	if err.IsError() {
 		return err
@@ -208,10 +208,10 @@ func clamp(args ...object.Value) object.Value {
 	}
 
 	val := getFloat64(args[0])
-	min := getFloat64(args[1])
-	max := getFloat64(args[2])
+	minVal := getFloat64(args[1])
+	maxVal := getFloat64(args[2])
 
-	res := math.Max(min, math.Min(val, max))
+	res := math.Max(minVal, math.Min(val, maxVal))
 
 	if args[0].IsFloat() || args[1].IsFloat() || args[2].IsFloat() {
 		return object.NewFloat(res)

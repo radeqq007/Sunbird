@@ -15,7 +15,6 @@ func newRequest(r *http.Request) object.Value {
 	var bodyCache *string
 	var bodyJSONCache object.Value
 
-	// defer r.Body.Close()
 	return modbuilder.NewHashBuilder().
 		AddFunction("path_param", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)

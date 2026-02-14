@@ -185,52 +185,40 @@ func cookieHash(w http.ResponseWriter) object.Value {
 				options := args[2].AsHash()
 
 				// MaxAge
-				if pair, ok := options.Pairs[(object.NewString("max_age")).HashKey()]; ok {
-					if pair.Value.IsInt() {
-						intVal := pair.Value.AsInt()
-						cookie.MaxAge = int(intVal)
-					}
+				if pair, ok := options.Pairs[(object.NewString("max_age")).HashKey()]; ok && pair.Value.IsInt() {
+					intVal := pair.Value.AsInt()
+					cookie.MaxAge = int(intVal)
 				}
 
 				// Domain
-				if pair, ok := options.Pairs[(object.NewString("domain")).HashKey()]; ok {
-					if pair.Value.IsString() {
-						cookie.Domain = pair.Value.AsString().Value
-					}
+				if pair, ok := options.Pairs[(object.NewString("domain")).HashKey()]; ok && pair.Value.IsString() {
+					cookie.Domain = pair.Value.AsString().Value
 				}
 
 				// Path
-				if pair, ok := options.Pairs[(object.NewString("path")).HashKey()]; ok {
-					if pair.Value.IsString() {
-						cookie.Path = pair.Value.AsString().Value
-					}
+				if pair, ok := options.Pairs[(object.NewString("path")).HashKey()]; ok && pair.Value.IsString() {
+					cookie.Path = pair.Value.AsString().Value
 				}
 
 				// Secure
-				if pair, ok := options.Pairs[(object.NewString("secure")).HashKey()]; ok {
-					if pair.Value.IsBool() {
-						cookie.Secure = pair.Value.AsBool()
-					}
+				if pair, ok := options.Pairs[(object.NewString("secure")).HashKey()]; ok && pair.Value.IsBool() {
+					cookie.Secure = pair.Value.AsBool()
 				}
 
 				// HttpOnly
-				if pair, ok := options.Pairs[(object.NewString("http_only")).HashKey()]; ok {
-					if pair.Value.IsBool() {
-						cookie.HttpOnly = pair.Value.AsBool()
-					}
+				if pair, ok := options.Pairs[(object.NewString("http_only")).HashKey()]; ok && pair.Value.IsBool() {
+					cookie.HttpOnly = pair.Value.AsBool()
 				}
 
 				// SameSite
-				if pair, ok := options.Pairs[(object.NewString("same_site")).HashKey()]; ok {
-					if pair.Value.IsString() {
-						switch pair.Value.AsString().Value {
-						case "strict":
-							cookie.SameSite = http.SameSiteStrictMode
-						case "lax":
-							cookie.SameSite = http.SameSiteLaxMode
-						case "none":
-							cookie.SameSite = http.SameSiteNoneMode
-						}
+				if pair, ok := options.Pairs[(object.NewString("same_site")).HashKey()]; ok && pair.Value.IsString() {
+					switch pair.Value.AsString().Value {
+					case "strict":
+						cookie.SameSite = http.SameSiteStrictMode
+					case "lax":
+						cookie.SameSite = http.SameSiteLaxMode
+					case "none":
+						cookie.SameSite = http.SameSiteNoneMode
 					}
 				}
 			}
