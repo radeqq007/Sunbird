@@ -6,9 +6,7 @@ import (
 
 const dependencyDirectory = ".sb_modules/"
 
-type PackageManager struct {
-	config *Config
-}
+type PackageManager struct{}
 
 func NewPackageManager() *PackageManager {
 	return &PackageManager{}
