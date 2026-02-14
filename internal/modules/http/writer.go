@@ -177,49 +177,8 @@ func cookieHash(w http.ResponseWriter) object.Value {
 
 			// Parse options if provided
 			if len(args) == 3 {
-				err = errors.ExpectType(2, 0, args[2], object.HashKind)
-				if err.IsError() {
+				if err := applyCookieOptions(cookie, args[2]); err.IsError() {
 					return err
-				}
-
-				options := args[2].AsHash()
-
-				// MaxAge
-				if pair, ok := options.Pairs[(object.NewString("max_age")).HashKey()]; ok && pair.Value.IsInt() {
-					intVal := pair.Value.AsInt()
-					cookie.MaxAge = int(intVal)
-				}
-
-				// Domain
-				if pair, ok := options.Pairs[(object.NewString("domain")).HashKey()]; ok && pair.Value.IsString() {
-					cookie.Domain = pair.Value.AsString().Value
-				}
-
-				// Path
-				if pair, ok := options.Pairs[(object.NewString("path")).HashKey()]; ok && pair.Value.IsString() {
-					cookie.Path = pair.Value.AsString().Value
-				}
-
-				// Secure
-				if pair, ok := options.Pairs[(object.NewString("secure")).HashKey()]; ok && pair.Value.IsBool() {
-					cookie.Secure = pair.Value.AsBool()
-				}
-
-				// HttpOnly
-				if pair, ok := options.Pairs[(object.NewString("http_only")).HashKey()]; ok && pair.Value.IsBool() {
-					cookie.HttpOnly = pair.Value.AsBool()
-				}
-
-				// SameSite
-				if pair, ok := options.Pairs[(object.NewString("same_site")).HashKey()]; ok && pair.Value.IsString() {
-					switch pair.Value.AsString().Value {
-					case "strict":
-						cookie.SameSite = http.SameSiteStrictMode
-					case "lax":
-						cookie.SameSite = http.SameSiteLaxMode
-					case "none":
-						cookie.SameSite = http.SameSiteNoneMode
-					}
 				}
 			}
 
@@ -251,4 +210,48 @@ func cookieHash(w http.ResponseWriter) object.Value {
 		Build()
 
 	return h
+}
+
+func applyCookieOptions(cookie *http.Cookie, optionsObj object.Value) object.Value {
+	if err := errors.ExpectType(2, 0, optionsObj, object.HashKind); err.IsError() {
+		return err
+	}
+
+	options := optionsObj.AsHash()
+
+	getVal := func(key string) (object.Value, bool) {
+		pair, ok := options.Pairs[object.NewString(key).HashKey()]
+		if !ok {
+			return object.NewNull(), false
+		}
+		return pair.Value, true
+	}
+
+	if val, ok := getVal("max_age"); ok && val.IsInt() {
+		cookie.MaxAge = int(val.AsInt())
+	}
+	if val, ok := getVal("domain"); ok && val.IsString() {
+		cookie.Domain = val.AsString().Value
+	}
+	if val, ok := getVal("path"); ok && val.IsString() {
+		cookie.Path = val.AsString().Value
+	}
+	if val, ok := getVal("secure"); ok && val.IsBool() {
+		cookie.Secure = val.AsBool()
+	}
+	if val, ok := getVal("http_only"); ok && val.IsBool() {
+		cookie.HttpOnly = val.AsBool()
+	}
+	if val, ok := getVal("same_site"); ok && val.IsString() {
+		switch val.AsString().Value {
+		case "strict":
+			cookie.SameSite = http.SameSiteStrictMode
+		case "lax":
+			cookie.SameSite = http.SameSiteLaxMode
+		case "none":
+			cookie.SameSite = http.SameSiteNoneMode
+		}
+	}
+
+	return object.NewNull()
 }
