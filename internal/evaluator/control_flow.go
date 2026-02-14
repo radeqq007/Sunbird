@@ -31,22 +31,17 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Valu
 		return iterable
 	}
 
-	result := NULL
-
 	switch iterable.Kind() {
 	case object.RangeKind:
-		result = evalRangeLoop(fs, iterable.AsRange(), loopEnv)
-
+		return evalRangeLoop(fs, iterable.AsRange(), loopEnv)
 	case object.ArrayKind:
-		result = evalArrayLoop(fs, iterable.AsArray(), loopEnv)
+		return evalArrayLoop(fs, iterable.AsArray(), loopEnv)
 	case object.StringKind:
-		result = evalStringLoop(fs, iterable.AsString(), loopEnv)
+		return evalStringLoop(fs, iterable.AsString(), loopEnv)
 
 	default:
 		return errors.NewTypeError(fs.Token.Line, fs.Token.Col, "cannot iterate over %s", iterable.Kind().String())
 	}
-
-	return result
 }
 
 func evalRangeLoop(fs *ast.ForStatement, iterable *object.Range, env *object.Environment) object.Value {
