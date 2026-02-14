@@ -29,7 +29,6 @@ type ArrayType struct {
 func (at *ArrayType) typeAnnotation()      {}
 func (at *ArrayType) TokenLiteral() string { return at.Token.Literal }
 func (at *ArrayType) String() string {
-	// return "[" +  "]" + at.ElementType.String()
 	return "Array"
 }
 

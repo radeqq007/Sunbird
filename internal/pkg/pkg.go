@@ -24,12 +24,5 @@ func (pm *PackageManager) Add(url string) error {
 		return err
 	}
 
-	// if _, err := os.Stat("sunbird.toml"); err == nil {
-	// 	err = pm.addDependencyToConfig(pkgURL)
-	// 	if err != nil {
-	// 		fmt.Printf("Warning: failed to add to sunbird.toml: %s\n", err)
-	// 	}
-	// }
-
 	return nil
 }
