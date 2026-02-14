@@ -644,7 +644,7 @@ func BenchmarkFunctionCalls(b *testing.B) {
 	input := `
 		let add = func(a, b) { a + b }
 		let mul = func(a, b) { a * b }
-		
+
 		let result = 0
 		for i in 0..20 {
 			result = add(mul(i, 2), 1)
@@ -671,7 +671,7 @@ func BenchmarkNestedLoops(b *testing.B) {
 func benchmarkEval(b *testing.B, input string) {
 	b.ReportAllocs() // Report memory allocations
 
-	for i := 0; i < b.N; i++ {
+	for _ = range b.N {
 		l := lexer.New(input)
 		p := parser.New(l)
 		program := p.ParseProgram()

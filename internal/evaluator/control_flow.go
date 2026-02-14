@@ -35,100 +35,116 @@ func evalForStatement(fs *ast.ForStatement, env *object.Environment) object.Valu
 
 	switch iterable.Kind() {
 	case object.RangeKind:
-		iter := iterable.AsRange()
-		step := iter.Step
-		if step == 0 {
-			step = 1
-		}
+		result = evalRangeLoop(fs, iterable.AsRange(), loopEnv)
 
-		if step > 0 {
-			for i := iter.Start; i < iter.End; i += step {
-				loopEnv.Set(fs.Variable.Value, object.NewInt(i))
-
-				result = Eval(fs.Body, loopEnv)
-				if isError(result) {
-					return result
-				}
-
-				if !result.IsNull() {
-					switch result.Kind() {
-					case object.ReturnValueKind:
-						return result
-					case object.BreakKind:
-						return NULL
-					case object.ContinueKind:
-						continue
-					}
-				}
-			}
-		} else {
-			for i := iter.Start; i > iter.End; i += step {
-				loopEnv.Set(fs.Variable.Value, object.NewInt(i))
-
-				result = Eval(fs.Body, loopEnv)
-				if isError(result) {
-					return result
-				}
-
-				if !result.IsNull() {
-					switch result.Kind() {
-					case object.ReturnValueKind:
-						return result
-					case object.BreakKind:
-						return NULL
-					case object.ContinueKind:
-						continue
-					}
-				}
-			}
-		}
 	case object.ArrayKind:
-		iter := iterable.AsArray()
-		for _, element := range iter.Elements {
-			loopEnv.Set(fs.Variable.Value, element)
-
-			result = Eval(fs.Body, loopEnv)
-			if isError(result) {
-				return result
-			}
-
-			if !result.IsNull() {
-				switch result.Kind() {
-				case object.ReturnValueKind:
-					return result
-				case object.BreakKind:
-					return NULL
-				case object.ContinueKind:
-					continue
-				}
-			}
-		}
+		result = evalArrayLoop(fs, iterable.AsArray(), loopEnv)
 	case object.StringKind:
-		iter := iterable.AsString()
-		for _, element := range iter.Value {
-			loopEnv.Set(fs.Variable.Value, object.NewString(string(element)))
+		result = evalStringLoop(fs, iterable.AsString(), loopEnv)
 
-			result = Eval(fs.Body, loopEnv)
-			if isError(result) {
-				return result
-			}
-
-			if !result.IsNull() {
-				switch result.Kind() {
-				case object.ReturnValueKind:
-					return result
-				case object.BreakKind:
-					return NULL
-				case object.ContinueKind:
-					continue
-				}
-			}
-		}
 	default:
 		return errors.NewTypeError(fs.Token.Line, fs.Token.Col, "cannot iterate over %s", iterable.Kind().String())
 	}
 
 	return result
+}
+
+func evalRangeLoop(fs *ast.ForStatement, iterable *object.Range, env *object.Environment) object.Value {
+	step := iterable.Step
+	if step == 0 {
+		step = 1
+	}
+
+	if step > 0 {
+		for i := iterable.Start; i < iterable.End; i += step {
+			env.Set(fs.Variable.Value, object.NewInt(i))
+
+			result := Eval(fs.Body, env)
+			if isError(result) {
+				return result
+			}
+
+			if !result.IsNull() {
+				switch result.Kind() {
+				case object.ReturnValueKind:
+					return result
+				case object.BreakKind:
+					return NULL
+				case object.ContinueKind:
+					continue
+				}
+			}
+		}
+	} else {
+		for i := iterable.Start; i > iterable.End; i += step {
+			env.Set(fs.Variable.Value, object.NewInt(i))
+
+			result := Eval(fs.Body, env)
+			if isError(result) {
+				return result
+			}
+
+			if !result.IsNull() {
+				switch result.Kind() {
+				case object.ReturnValueKind:
+					return result
+				case object.BreakKind:
+					return NULL
+				case object.ContinueKind:
+					continue
+				}
+			}
+		}
+	}
+	return NULL
+}
+
+func evalArrayLoop(fs *ast.ForStatement, iterable *object.Array, env *object.Environment) object.Value {
+	for _, element := range iterable.Elements {
+		env.Set(fs.Variable.Value, element)
+
+		result := Eval(fs.Body, env)
+		if isError(result) {
+			return result
+		}
+
+		if !result.IsNull() {
+			switch result.Kind() {
+			case object.ReturnValueKind:
+				return result
+			case object.BreakKind:
+				return NULL
+			case object.ContinueKind:
+				continue
+			}
+		}
+	}
+
+	return NULL
+}
+
+func evalStringLoop(fs *ast.ForStatement, iterable *object.String, env *object.Environment) object.Value {
+	for _, element := range iterable.Value {
+		env.Set(fs.Variable.Value, object.NewString(string(element)))
+
+		result := Eval(fs.Body, env)
+		if isError(result) {
+			return result
+		}
+
+		if !result.IsNull() {
+			switch result.Kind() {
+			case object.ReturnValueKind:
+				return result
+			case object.BreakKind:
+				return NULL
+			case object.ContinueKind:
+				continue
+			}
+		}
+	}
+
+	return NULL
 }
 
 func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.Value {
