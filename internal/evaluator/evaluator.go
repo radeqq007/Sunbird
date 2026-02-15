@@ -145,20 +145,7 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 		return evalPropertyExpression(exp, env)
 
 	case *ast.CallExpression:
-		if _, ok := exp.Function.(*ast.PropertyExpression); ok {
-			return evalMethodCallExpression(exp, env)
-		}
-
-		// Regular function call
-		function := Eval(exp.Function, env)
-		if isError(function) {
-			return function
-		}
-		args := evalExpressions(exp.Arguments, env)
-		if len(args) == 1 && isError(args[0]) {
-			return args[0]
-		}
-		return applyFunction(function, args, exp.Token.Line, exp.Token.Col)
+		return evalCallExpression(exp, env)
 
 	case *ast.IndexExpression:
 		left := Eval(exp.Left, env)
@@ -341,4 +328,21 @@ func evalConstExpression(exp *ast.ConstExpression, env *object.Environment) obje
 
 	env.SetConstWithType(exp.Name.String(), val, exp.Type)
 	return val
+}
+
+func evalCallExpression(exp *ast.CallExpression, env *object.Environment) object.Value {
+	if _, ok := exp.Function.(*ast.PropertyExpression); ok {
+		return evalMethodCallExpression(exp, env)
+	}
+
+	// Regular function call
+	function := Eval(exp.Function, env)
+	if isError(function) {
+		return function
+	}
+	args := evalExpressions(exp.Arguments, env)
+	if len(args) == 1 && isError(args[0]) {
+		return args[0]
+	}
+	return applyFunction(function, args, exp.Token.Line, exp.Token.Col)
 }
