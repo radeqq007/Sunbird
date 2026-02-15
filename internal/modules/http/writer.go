@@ -9,9 +9,90 @@ import (
 	"sunbird/internal/object"
 )
 
+type responseWriter struct {
+	w http.ResponseWriter
+}
+
 func newWriter(w http.ResponseWriter) object.Value {
+	rw := &responseWriter{w: w}
 	return modbuilder.NewHashBuilder().
-		AddFunction("send", func(args ...object.Value) object.Value {
+		AddFunction("send", rw.send).
+		AddFunction("json", rw.json).
+		AddValue("header", rw.newHeader()).
+		AddFunction("add", rw.add).
+		AddFunction("status", rw.status).
+		AddValue("cookie", cookieHash(w)).
+		Build()
+}
+
+func (rw *responseWriter) send(args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err.IsError() {
+		return err
+	}
+
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
+		return err
+	}
+
+	_, errGo := rw.w.Write([]byte(args[0].AsString().Value))
+	if errGo != nil {
+		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+	}
+
+	return object.NewNull()
+}
+
+func (rw *responseWriter) json(args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err.IsError() {
+		return err
+	}
+
+	err = errors.ExpectType(0, 0, args[0], object.HashKind)
+	if err.IsError() {
+		return err
+	}
+
+	data := json.FromObject(args[0])
+	bytes, errGo := gojson.Marshal(data)
+	if errGo != nil {
+		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+	}
+
+	rw.w.Header().Set("Content-Type", "application/json")
+
+	_, errGo = rw.w.Write(bytes)
+	if errGo != nil {
+		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+	}
+
+	return object.NewNull()
+}
+
+func (rw *responseWriter) newHeader() object.Value {
+	return modbuilder.NewHashBuilder().
+		AddFunction("set", func(args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+			if err.IsError() {
+				return err
+			}
+
+			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			if err.IsError() {
+				return err
+			}
+
+			err = errors.ExpectType(1, 0, args[1], object.StringKind)
+			if err.IsError() {
+				return err
+			}
+
+			rw.w.Header().Set(args[0].AsString().Value, args[1].AsString().Value)
+			return object.NewNull()
+		}).
+		AddFunction("del", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if err.IsError() {
 				return err
@@ -22,131 +103,61 @@ func newWriter(w http.ResponseWriter) object.Value {
 				return err
 			}
 
-			_, errGo := w.Write([]byte(args[0].AsString().Value))
-			if errGo != nil {
-				return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
-			}
+			rw.w.Header().Del(args[0].AsString().Value)
 
 			return object.NewNull()
 		}).
-		AddFunction("json", func(args ...object.Value) object.Value {
+		AddFunction("get", func(args ...object.Value) object.Value {
 			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.HashKind)
+			err = errors.ExpectType(0, 0, args[0], object.StringKind)
 			if err.IsError() {
 				return err
 			}
 
-			data := json.FromObject(args[0])
-			bytes, errGo := gojson.Marshal(data)
-			if errGo != nil {
-				return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
-			}
-
-			w.Header().Set("Content-Type", "application/json")
-
-			_, errGo = w.Write(bytes)
-			if errGo != nil {
-				return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
-			}
-
-			return object.NewNull()
+			return object.NewString(rw.w.Header().Get(args[0].AsString().Value))
 		}).
-		AddValue("header", modbuilder.NewHashBuilder().
-			AddFunction("set", func(args ...object.Value) object.Value {
-				err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(1, 0, args[1], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				w.Header().Set(args[0].AsString().Value, args[1].AsString().Value)
-				return object.NewNull()
-			}).
-			AddFunction("add", func(args ...object.Value) object.Value {
-				err := errors.ExpectNumberOfArguments(0, 0, 2, args)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(1, 0, args[1], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(1, 0, args[1], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				w.Header().Add(args[0].AsString().Value, args[1].AsString().Value)
-
-				return object.NewNull()
-			}).
-			AddFunction("del", func(args ...object.Value) object.Value {
-				err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				w.Header().Del(args[0].AsString().Value)
-
-				return object.NewNull()
-			}).
-			AddFunction("get", func(args ...object.Value) object.Value {
-				err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-				if err.IsError() {
-					return err
-				}
-
-				err = errors.ExpectType(0, 0, args[0], object.StringKind)
-				if err.IsError() {
-					return err
-				}
-
-				return object.NewString(w.Header().Get(args[0].AsString().Value))
-			}).
-			Build(),
-		).
-		AddFunction("status", func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
-			if err.IsError() {
-				return err
-			}
-
-			err = errors.ExpectType(0, 0, args[0], object.IntKind)
-			if err.IsError() {
-				return err
-			}
-
-			w.WriteHeader(int(args[0].AsInt()))
-
-			return object.NewNull()
-		}).
-		AddValue("cookie", cookieHash(w)).
 		Build()
+}
+
+func (rw *responseWriter) add(args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+	if err.IsError() {
+		return err
+	}
+
+	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	if err.IsError() {
+		return err
+	}
+
+	err = errors.ExpectType(1, 0, args[1], object.StringKind)
+	if err.IsError() {
+		return err
+	}
+
+	rw.w.Header().Add(args[0].AsString().Value, args[1].AsString().Value)
+
+	return object.NewNull()
+}
+
+func (rw *responseWriter) status(args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	if err.IsError() {
+		return err
+	}
+
+	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	if err.IsError() {
+		return err
+	}
+
+	rw.w.WriteHeader(int(args[0].AsInt()))
+
+	return object.NewNull()
 }
 
 func cookieHash(w http.ResponseWriter) object.Value {
