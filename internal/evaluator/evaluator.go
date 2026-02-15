@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"sunbird/internal/ast"
 	"sunbird/internal/errors"
 	"sunbird/internal/object"
@@ -119,23 +120,7 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 		return evalIfExpression(exp, env)
 
 	case *ast.LetExpression:
-		if env.Has(exp.Name.String()) {
-			return errors.NewVariableReassignmentError(exp.Token.Line, exp.Token.Col, exp.Name.String())
-		}
-
-		val := Eval(exp.Value, env)
-		if isError(val) {
-			return val
-		}
-
-		if exp.Type != nil {
-			if err := checkType(exp.Type, val, exp.Token.Line, exp.Token.Col); err.IsError() {
-				return err
-			}
-		}
-
-		env.SetWithType(exp.Name.String(), val, exp.Type)
-		return val
+		return evalLetExpression(exp, env)
 
 	case *ast.AssignExpression:
 		val := Eval(exp.Value, env)
@@ -328,4 +313,28 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 	}
 
 	return object.NewRange(startVal, endVal, stepVal)
+}
+
+func evalLetExpression(exp *ast.LetExpression, env *object.Environment) object.Value {
+	if env.Has(exp.Name.String()) {
+		return errors.NewVariableReassignmentError(exp.Token.Line, exp.Token.Col, exp.Name.String())
+	}
+
+	val := Eval(exp.Value, env)
+	if isError(val) {
+		return val
+	}
+
+	if exp.Type != nil {
+		if err := checkType(exp.Type, val, exp.Token.Line, exp.Token.Col); err.IsError() {
+			return err
+		}
+	}
+
+	if val.IsArray() {
+		fmt.Printf("DEBUG: Let %s ptr=%p\n", exp.Name.String(), val.AsArray())
+	}
+
+	env.SetWithType(exp.Name.String(), val, exp.Type)
+	return val
 }
