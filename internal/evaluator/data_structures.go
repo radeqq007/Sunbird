@@ -185,5 +185,17 @@ func evalMethodCallExpression(exp *ast.CallExpression, env *object.Environment) 
 		return evalMethodCall(obj, method, args, exp.Token.Line, exp.Token.Col)
 	}
 
-	return NULL
+	// TODO: handle this in a better way
+	// Method calls for modules
+	function := evalPropertyExpression(propExp, env)
+	if isError(function) {
+		return function
+	}
+
+	args := evalExpressions(exp.Arguments, env)
+	if len(args) == 1 && isError(args[0]) {
+		return args[0]
+	}
+
+	return applyFunction(function, args, exp.Token.Line, exp.Token.Col)
 }
