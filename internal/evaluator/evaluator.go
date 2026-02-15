@@ -176,28 +176,8 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 		return evalPropertyExpression(exp, env)
 
 	case *ast.CallExpression:
-		// Check if it's an object method call
-		propExpr, ok := exp.Function.(*ast.PropertyExpression)
-		if ok {
-			obj := Eval(propExpr.Object, env)
-			if isError(obj) {
-				return obj
-			}
-
-			if obj.IsHash() {
-				key := object.NewString(propExpr.Property.Value)
-				method := evalHashIndexExpression(obj, key, exp.Token.Line, exp.Token.Col)
-				if isError(method) {
-					return method
-				}
-
-				args := evalExpressions(exp.Arguments, env)
-				if len(args) == 1 && isError(args[0]) {
-					return args[0]
-				}
-
-				return evalMethodCall(obj, method, args, exp.Token.Line, exp.Token.Col)
-			}
+		if _, ok := exp.Function.(*ast.PropertyExpression); ok {
+			return evalMethodCallExpression(exp, env)
 		}
 
 		// Regular function call

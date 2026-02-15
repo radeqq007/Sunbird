@@ -162,3 +162,28 @@ func evalMethodCall(
 
 	return applyFunction(boundFn, args, line, col)
 }
+
+func evalMethodCallExpression(exp *ast.CallExpression, env *object.Environment) object.Value {
+	propExp, _ := exp.Function.(*ast.PropertyExpression)
+	obj := Eval(propExp.Object, env)
+	if isError(obj) {
+		return obj
+	}
+
+	if obj.IsHash() {
+		key := object.NewString(propExp.Property.Value)
+		method := evalHashIndexExpression(obj, key, exp.Token.Line, exp.Token.Col)
+		if isError(method) {
+			return method
+		}
+
+		args := evalExpressions(exp.Arguments, env)
+		if len(args) == 1 && isError(args[0]) {
+			return args[0]
+		}
+
+		return evalMethodCall(obj, method, args, exp.Token.Line, exp.Token.Col)
+	}
+
+	return NULL
+}
