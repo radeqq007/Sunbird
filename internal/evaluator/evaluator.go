@@ -139,23 +139,7 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 		return evalCompoundAssignExpression(exp, val, env)
 
 	case *ast.ConstExpression:
-		if env.Has(exp.Name.String()) {
-			return errors.NewVariableReassignmentError(exp.Token.Line, exp.Token.Col, exp.Name.String())
-		}
-
-		val := Eval(exp.Value, env)
-		if isError(val) {
-			return val
-		}
-
-		if exp.Type != nil {
-			if err := checkType(exp.Type, val, exp.Token.Line, exp.Token.Col); err.IsError() {
-				return err
-			}
-		}
-
-		env.SetConstWithType(exp.Name.String(), val, exp.Type)
-		return val
+		return evalConstExpression(exp, env)
 
 	case *ast.PropertyExpression:
 		return evalPropertyExpression(exp, env)
@@ -336,5 +320,25 @@ func evalLetExpression(exp *ast.LetExpression, env *object.Environment) object.V
 	}
 
 	env.SetWithType(exp.Name.String(), val, exp.Type)
+	return val
+}
+
+func evalConstExpression(exp *ast.ConstExpression, env *object.Environment) object.Value {
+	if env.Has(exp.Name.String()) {
+		return errors.NewVariableReassignmentError(exp.Token.Line, exp.Token.Col, exp.Name.String())
+	}
+
+	val := Eval(exp.Value, env)
+	if isError(val) {
+		return val
+	}
+
+	if exp.Type != nil {
+		if err := checkType(exp.Type, val, exp.Token.Line, exp.Token.Col); err.IsError() {
+			return err
+		}
+	}
+
+	env.SetConstWithType(exp.Name.String(), val, exp.Type)
 	return val
 }
