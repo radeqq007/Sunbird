@@ -146,113 +146,37 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.Eq, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Assign, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.Eq, token.Assign, startLine, startCol)
 
 	case '+':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.PlusEqual, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Plus, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.PlusEqual, token.Plus, startLine, startCol)
 
 	case '-':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.MinusEqual, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Minus, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.MinusEqual, token.Minus, startLine, startCol)
 
 	case ';':
 		tok = l.newToken(token.Semicolon, string(l.ch), startLine, startCol)
 
 	case '!':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.NotEq, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Bang, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.NotEq, token.Bang, startLine, startCol)
 
 	case '/':
-		if l.peekChar() == '/' { // Comment handling
-			for l.ch != '\n' && l.ch != 0 {
-				l.readChar()
-			}
-
-			return l.NextToken()
-		} else if l.peekChar() == '*' {
-			l.readChar() // skip the /
-			l.readChar() // skip the *
-
-			for l.ch != '*' && l.peekChar() != '/' {
-				if l.ch == 0 {
-					return l.newToken(token.Illegal, "unterminated comment", startLine, startCol)
-				}
-				l.readChar()
-			}
-
-			l.readChar() // skip the *
-			l.readChar() // skip the /
-			return l.NextToken()
-		} else if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.SlashEqual, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Slash, string(l.ch), startLine, startCol)
-		}
+		return l.handleSlash(startLine, startCol)
 
 	case '*':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.AsteriskEqual, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Asterisk, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.AsteriskEqual, token.Asterisk, startLine, startCol)
 
 	case '<':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.LE, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.LT, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.LE, token.LT, startLine, startCol)
 
 	case '>':
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.GE, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.GT, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('=', token.GE, token.GT, startLine, startCol)
 
 	case '|':
-		if l.peekChar() == '|' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.Or, string(ch)+string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('|', token.Or, token.Pipe, startLine, startCol)
 
 	case '&':
-		if l.peekChar() == '&' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.And, string(ch)+string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('&', token.And, token.Illegal, startLine, startCol)
 
 	case '(':
 		tok = l.newToken(token.LParen, string(l.ch), startLine, startCol)
@@ -279,13 +203,7 @@ func (l *Lexer) NextToken() token.Token {
 		tok = l.newToken(token.Colon, string(l.ch), startLine, startCol)
 
 	case '.':
-		if l.peekChar() == '.' {
-			ch := l.ch
-			l.readChar()
-			tok = l.newToken(token.DotDot, string(ch)+string(l.ch), startLine, startCol)
-		} else {
-			tok = l.newToken(token.Dot, string(l.ch), startLine, startCol)
-		}
+		return l.makeTwoCharToken('.', token.DotDot, token.Dot, startLine, startCol)
 
 	case '?':
 		tok = l.newToken(token.QuestionMark, string(l.ch), startLine, startCol)
@@ -333,6 +251,61 @@ func (l *Lexer) NextToken() token.Token {
 
 	l.readChar()
 	return tok
+}
+
+func (l *Lexer) makeTwoCharToken(next byte, compoundType, singleType token.TokenType, line, col int) token.Token {
+	ch := l.ch
+	if l.peekChar() == next {
+		l.readChar()
+		literal := string(ch) + string(l.ch)
+		tok := l.newToken(compoundType, literal, line, col)
+		l.readChar()
+		return tok
+	}
+
+	if singleType == token.Illegal {
+		tok := l.newToken(token.Illegal, string(ch), line, col)
+		l.readChar()
+		return tok
+	}
+
+	tok := l.newToken(singleType, string(ch), line, col)
+	l.readChar()
+	return tok
+}
+
+func (l *Lexer) handleSlash(line, col int) token.Token {
+	if l.peekChar() == '/' {
+		l.skipLineComment()
+		return l.NextToken()
+	}
+	if l.peekChar() == '*' {
+		if errTok, ok := l.skipBlockComment(line, col); !ok {
+			return errTok
+		}
+		return l.NextToken()
+	}
+	return l.makeTwoCharToken('=', token.SlashEqual, token.Slash, line, col)
+}
+
+func (l *Lexer) skipLineComment() {
+	for l.ch != '\n' && l.ch != 0 {
+		l.readChar()
+	}
+}
+
+func (l *Lexer) skipBlockComment(line, col int) (token.Token, bool) {
+	l.readChar() // skip /
+	l.readChar() // skip *
+	for l.ch != '*' || l.peekChar() != '/' {
+		if l.ch == 0 {
+			return l.newToken(token.Illegal, "unterminated comment", line, col), false
+		}
+		l.readChar()
+	}
+	l.readChar() // skip *
+	l.readChar() // skip /
+	return token.Token{}, true
 }
 
 func (l *Lexer) newToken(tokenType token.TokenType, literal string, line, col int) token.Token {
