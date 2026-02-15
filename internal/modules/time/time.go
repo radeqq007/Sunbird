@@ -1,6 +1,7 @@
 package time
 
 import (
+	"strings"
 	"sunbird/internal/errors"
 	"sunbird/internal/modules/modbuilder"
 	"sunbird/internal/object"
@@ -202,17 +203,17 @@ func convertFormat(format string) string {
 }
 
 func replaceAll(s, old, newVal string) string {
-	result := ""
+	var sb strings.Builder
 	for i := 0; i < len(s); {
 		if i+len(old) <= len(s) && s[i:i+len(old)] == old {
-			result += newVal
+			_, _ = sb.WriteString(newVal)
 			i += len(old)
 		} else {
-			result += string(s[i])
+			_ = sb.WriteByte(s[i])
 			i++
 		}
 	}
-	return result
+	return sb.String()
 }
 
 func timeToHash(t time.Time) object.Value {
