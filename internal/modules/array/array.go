@@ -23,13 +23,13 @@ func New() object.Value {
 		Build()
 }
 
-func push(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func push(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
@@ -39,20 +39,20 @@ func push(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func pop(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func pop(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
 
 	array := args[0].AsArray()
 	if len(array.Elements) == 0 {
-		return errors.NewRuntimeError(0, 0, "array is empty")
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "array is empty")
 	}
 
 	lastElement := array.Elements[len(array.Elements)-1]
@@ -61,20 +61,20 @@ func pop(args ...object.Value) object.Value {
 	return lastElement
 }
 
-func shift(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func shift(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
 
 	array := args[0].AsArray()
 	if len(array.Elements) == 0 {
-		return errors.NewRuntimeError(0, 0, "array is empty")
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "array is empty")
 	}
 
 	firstElement := array.Elements[0]
@@ -83,13 +83,13 @@ func shift(args ...object.Value) object.Value {
 	return firstElement
 }
 
-func unshift(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func unshift(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
@@ -100,13 +100,13 @@ func unshift(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func reverse(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func reverse(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
@@ -122,18 +122,18 @@ func reverse(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func join(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func join(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -152,27 +152,27 @@ func join(args ...object.Value) object.Value {
 	return object.NewString(b.String())
 }
 
-func slice(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func slice(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
-		err = errors.ExpectNumberOfArguments(0, 0, 3, args)
+		err = errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 3, args)
 		if err.IsError() {
 			return err
 		}
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.IntKind)
 	if err.IsError() {
 		return err
 	}
 
 	if len(args) == 3 {
-		err = errors.ExpectType(0, 0, args[2], object.IntKind)
+		err = errors.ExpectType(ctx.Line, ctx.Col, args[2], object.IntKind)
 		if err.IsError() {
 			return err
 		}
@@ -187,15 +187,15 @@ func slice(args ...object.Value) object.Value {
 	}
 
 	if start < 0 {
-		return errors.NewIndexOutOfBoundsError(0, 0, args[0])
+		return errors.NewIndexOutOfBoundsError(ctx.Line, ctx.Col, args[0])
 	}
 
 	if end < 0 {
-		return errors.NewIndexOutOfBoundsError(0, 0, args[0])
+		return errors.NewIndexOutOfBoundsError(ctx.Line, ctx.Col, args[0])
 	}
 
 	if start > end {
-		return errors.NewRuntimeError(0, 0, "start index is greater than end index")
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "start index is greater than end index")
 	}
 
 	result := make([]object.Value, end-start)
@@ -204,18 +204,18 @@ func slice(args ...object.Value) object.Value {
 	return object.NewArray(result)
 }
 
-func indexOf(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func indexOf(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -232,13 +232,13 @@ func indexOf(args ...object.Value) object.Value {
 	return object.NewInt(-1)
 }
 
-func contains(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func contains(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
@@ -255,18 +255,18 @@ func contains(args ...object.Value) object.Value {
 	return object.NewBool(false)
 }
 
-func concat(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func concat(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
@@ -281,13 +281,13 @@ func concat(args ...object.Value) object.Value {
 	return object.NewArray(result)
 }
 
-func clearArray(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func clearArray(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
