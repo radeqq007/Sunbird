@@ -37,32 +37,32 @@ func getFullPath(requestedPath string) string {
 	return fullPath
 }
 
-func readFile(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func readFile(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
 	data, errGo := os.ReadFile(getFullPath(args[0].AsString().Value))
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+		return errors.New(errors.RuntimeError, ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 
 	return object.NewString(string(data))
 }
 
-func writeFile(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func writeFile(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -74,49 +74,49 @@ func writeFile(args ...object.Value) object.Value {
 
 	errGo := os.WriteFile(getFullPath(args[0].AsString().Value), []byte(args[1].AsString().Value), 0o644)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+		return errors.New(errors.RuntimeError, ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 
 	return object.NewNull()
 }
 
-func appendFile(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func appendFile(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 1, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
 	file, errGo := os.OpenFile(getFullPath(args[0].AsString().Value), os.O_APPEND|os.O_WRONLY, 0o644)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+		return errors.New(errors.RuntimeError, ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 	defer file.Close()
 
 	_, errGo = file.WriteString(args[1].AsString().Value)
 	if errGo != nil {
-		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
+		return errors.New(errors.RuntimeError, ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 
 	return object.NewNull()
 }
 
-func removeFile(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func removeFile(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -129,13 +129,13 @@ func removeFile(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func exists(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func exists(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -152,13 +152,13 @@ func exists(args ...object.Value) object.Value {
 	return object.NewBool(true)
 }
 
-func isDir(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func isDir(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -171,13 +171,13 @@ func isDir(args ...object.Value) object.Value {
 	return object.NewBool(info.IsDir())
 }
 
-func listDir(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func listDir(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -195,13 +195,13 @@ func listDir(args ...object.Value) object.Value {
 	return object.NewArray(result)
 }
 
-func createDir(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func createDir(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -213,13 +213,13 @@ func createDir(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func rename(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func rename(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -237,13 +237,13 @@ func rename(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func copyFile(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func copyFile(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
