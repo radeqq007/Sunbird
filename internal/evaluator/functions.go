@@ -42,7 +42,7 @@ func applyFunction(fn object.Value, args []object.Value, line, col int) object.V
 		return result
 
 	case object.BuiltinKind:
-		return fn.AsBuiltin().Fn(args...)
+		return fn.AsBuiltin().Fn(object.NewCallContext(line, col), args...)
 
 	default:
 		return errors.NewNotCallableError(line, col, fn)
