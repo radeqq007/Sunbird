@@ -22,18 +22,18 @@ func New() object.Value {
 		Build()
 }
 
-func concat(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func concat(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -44,13 +44,13 @@ func concat(args ...object.Value) object.Value {
 	return object.NewString(str1.Value + str2.Value)
 }
 
-func isEmpty(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func isEmpty(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -60,18 +60,18 @@ func isEmpty(args ...object.Value) object.Value {
 	return object.NewBool(str.Value == "")
 }
 
-func startsWith(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func startsWith(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -82,18 +82,18 @@ func startsWith(args ...object.Value) object.Value {
 	return object.NewBool(strings.HasPrefix(str.Value, startStr.Value))
 }
 
-func endsWith(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func endsWith(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -104,23 +104,23 @@ func endsWith(args ...object.Value) object.Value {
 	return object.NewBool(strings.HasSuffix(str.Value, endStr.Value))
 }
 
-func contains(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func contains(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -131,13 +131,13 @@ func contains(args ...object.Value) object.Value {
 	return object.NewBool(strings.Contains(str.Value, subStr.Value))
 }
 
-func toUpper(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func toUpper(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -147,13 +147,13 @@ func toUpper(args ...object.Value) object.Value {
 	return object.NewString(strings.ToUpper(str.Value))
 }
 
-func toLower(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func toLower(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -163,13 +163,13 @@ func toLower(args ...object.Value) object.Value {
 	return object.NewString(strings.ToLower(str.Value))
 }
 
-func trim(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func trim(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -179,18 +179,18 @@ func trim(args ...object.Value) object.Value {
 	return object.NewString(strings.TrimSpace(str.Value))
 }
 
-func split(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func split(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -207,18 +207,18 @@ func split(args ...object.Value) object.Value {
 	return object.NewArray(objects)
 }
 
-func repeat(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func repeat(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.IntKind)
 	if err.IsError() {
 		return err
 	}
