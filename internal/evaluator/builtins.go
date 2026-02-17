@@ -9,24 +9,16 @@ import (
 
 var builtins = map[string]object.Value{
 	"len": object.NewBuiltin(
-		func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectOneOfTypes(0, 0, args[0], object.StringKind, object.ArrayKind)
+			err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.StringKind, object.ArrayKind)
 			if err.IsError() {
 				return err
 			}
-
-			// switch arg := args[0].(type) {
-			// case *object.String:
-			// 	return &object.Integer{Value: int64(len(arg.Value))}
-
-			// case *object.Array:
-			// 	return &object.Integer{Value: int64(len(arg.Elements))}
-			// }
 
 			arg := args[0]
 			if arg.IsString() {
@@ -42,13 +34,13 @@ var builtins = map[string]object.Value{
 	),
 
 	"append": object.NewBuiltin(
-		func(args ...object.Value) object.Value {
-			err := errors.ExpectMinNumberOfArguments(0, 0, 2, args)
+		func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectMinNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+			err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 			if err.IsError() {
 				return err
 			}
@@ -62,8 +54,8 @@ var builtins = map[string]object.Value{
 	),
 
 	"type": object.NewBuiltin(
-		func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 			if err.IsError() {
 				return err
 			}
@@ -72,8 +64,8 @@ var builtins = map[string]object.Value{
 		},
 	),
 
-	"string": object.NewBuiltin(func(args ...object.Value) object.Value {
-		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	"string": object.NewBuiltin(func(ctx object.CallContext, args ...object.Value) object.Value {
+		err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 		if err.IsError() {
 			return err
 		}
@@ -87,8 +79,8 @@ var builtins = map[string]object.Value{
 	},
 	),
 
-	"int": object.NewBuiltin(func(args ...object.Value) object.Value {
-		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	"int": object.NewBuiltin(func(ctx object.CallContext, args ...object.Value) object.Value {
+		err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 		if err.IsError() {
 			return err
 		}
@@ -105,7 +97,7 @@ var builtins = map[string]object.Value{
 			arg := args[0].AsString().Value
 			num, err := strconv.Atoi(arg)
 			if err != nil {
-				return errors.NewTypeError(0, 0, "failed to convert string to int: %s", arg)
+				return errors.NewTypeError(ctx.Line, ctx.Col, "failed to convert string to int: %s", arg)
 			}
 			return object.NewInt(int64(num))
 
@@ -117,13 +109,13 @@ var builtins = map[string]object.Value{
 			return object.NewInt(0)
 
 		default:
-			return errors.NewTypeError(0, 0, "argument to `int` not supported, got %s", args[0].Kind().String())
+			return errors.NewTypeError(ctx.Line, ctx.Col, "argument to `int` not supported, got %s", args[0].Kind().String())
 		}
 	},
 	),
 
-	"float": object.NewBuiltin(func(args ...object.Value) object.Value {
-		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	"float": object.NewBuiltin(func(ctx object.CallContext, args ...object.Value) object.Value {
+		err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 		if err.IsError() {
 			return err
 		}
@@ -140,7 +132,7 @@ var builtins = map[string]object.Value{
 			arg := args[0].AsString().Value
 			num, err := strconv.ParseFloat(arg, 64)
 			if err != nil {
-				return errors.NewTypeError(0, 0, "failed to convert string to float: %s", arg)
+				return errors.NewTypeError(ctx.Line, ctx.Col, "failed to convert string to float: %s", arg)
 			}
 			return object.NewFloat(num)
 
@@ -152,13 +144,13 @@ var builtins = map[string]object.Value{
 			return object.NewFloat(0.0)
 
 		default:
-			return errors.NewTypeError(0, 0, "argument to `float` not supported, got %s", args[0].Kind().String())
+			return errors.NewTypeError(ctx.Line, ctx.Col, "argument to `float` not supported, got %s", args[0].Kind().String())
 		}
 	},
 	),
 
-	"bool": object.NewBuiltin(func(args ...object.Value) object.Value {
-		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	"bool": object.NewBuiltin(func(ctx object.CallContext, args ...object.Value) object.Value {
+		err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 		if err.IsError() {
 			return err
 		}
@@ -189,13 +181,13 @@ var builtins = map[string]object.Value{
 			return args[0]
 
 		default:
-			return errors.NewTypeError(0, 0, "argument to `bool` not supported, got %s", args[0].Kind().String())
+			return errors.NewTypeError(ctx.Line, ctx.Col, "argument to `bool` not supported, got %s", args[0].Kind().String())
 		}
 	},
 	),
 
-	"exit": object.NewBuiltin(func(args ...object.Value) object.Value {
-		err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+	"exit": object.NewBuiltin(func(ctx object.CallContext, args ...object.Value) object.Value {
+		err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 		if err.IsError() {
 			return err
 		}
@@ -205,13 +197,13 @@ var builtins = map[string]object.Value{
 	},
 	),
 
-	"error": object.NewBuiltin(func(args ...object.Value) object.Value {
-		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+	"error": object.NewBuiltin(func(ctx object.CallContext, args ...object.Value) object.Value {
+		err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 		if err.IsError() {
 			return err
 		}
 
-		err = errors.ExpectType(0, 0, args[0], object.StringKind)
+		err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 		if err.IsError() {
 			return err
 		}
@@ -223,7 +215,7 @@ var builtins = map[string]object.Value{
 			msg = args[0].Inspect()
 		}
 
-		return errors.New(errors.RuntimeError, 0, 0, "%s", msg)
+		return errors.New(errors.RuntimeError, ctx.Line, ctx.Col, "%s", msg)
 	},
 	),
 }
