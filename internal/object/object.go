@@ -109,7 +109,16 @@ type Function struct {
 	Env        *Environment
 }
 
-type BuiltinFunction func(args ...Value) Value
+type CallContext struct {
+    Line int
+    Col  int
+}
+
+func NewCallContext(line, col int) CallContext {
+	return CallContext{ Line: line, Col: col}
+}
+
+type BuiltinFunction func(ctx CallContext, args ...Value) Value
 
 type Builtin struct {
 	Fn BuiltinFunction
