@@ -23,13 +23,13 @@ var seed uint64 = uint64(time.Now().UnixNano())
 
 var r = rand.New(rand.NewPCG(seed, seed))
 
-func newSeed(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func newSeed(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.IntKind)
 	if err.IsError() {
 		return err
 	}
@@ -40,23 +40,23 @@ func newSeed(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func randInt(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func randInt(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.IntKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.IntKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.IntKind)
 	if err.IsError() {
 		return err
 	}
@@ -67,18 +67,18 @@ func randInt(args ...object.Value) object.Value {
 	return object.NewInt(r.Int64N(maxVal-minVal) + minVal)
 }
 
-func randFloat(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func randFloat(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.FloatKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.FloatKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[1], object.FloatKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[1], object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -89,8 +89,8 @@ func randFloat(args ...object.Value) object.Value {
 	return object.NewFloat(r.Float64()*(maxVal-minVal) + minVal)
 }
 
-func randBool(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func randBool(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
@@ -98,13 +98,13 @@ func randBool(args ...object.Value) object.Value {
 	return object.NewBool(r.Int64N(2) == 1)
 }
 
-func choice(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func choice(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
@@ -113,13 +113,13 @@ func choice(args ...object.Value) object.Value {
 	return arr.Elements[r.Int64N(int64(len(arr.Elements)))]
 }
 
-func shuffle(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func shuffle(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.ArrayKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.ArrayKind)
 	if err.IsError() {
 		return err
 	}
