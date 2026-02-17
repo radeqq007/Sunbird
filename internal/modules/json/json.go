@@ -14,7 +14,7 @@ func New() object.Value {
 		Build()
 }
 
-func parseJSON(args ...object.Value) object.Value {
+func parseJSON(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 	if err.IsError() {
 		return err
@@ -72,7 +72,7 @@ func ToObject(val any) object.Value {
 	}
 }
 
-func stringify(args ...object.Value) object.Value {
+func stringify(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 	if err.IsError() {
 		return err
