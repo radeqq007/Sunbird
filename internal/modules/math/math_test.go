@@ -67,7 +67,7 @@ func TestMathFunctions(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			fn := mod.AsModule().Exports[tt.fn].AsBuiltin().Fn
-			result := fn(tt.args...)
+			result := fn(object.NewCallContext(0, 0,), tt.args...)
 
 			switch {
 			case result.IsInt() && tt.expected.IsInt():
