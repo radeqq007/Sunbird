@@ -25,13 +25,13 @@ func newWriter(w http.ResponseWriter) object.Value {
 		Build()
 }
 
-func (rw *responseWriter) send(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (rw *responseWriter) send(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -44,13 +44,13 @@ func (rw *responseWriter) send(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func (rw *responseWriter) json(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (rw *responseWriter) json(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.HashKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.HashKind)
 	if err.IsError() {
 		return err
 	}
@@ -58,14 +58,14 @@ func (rw *responseWriter) json(args ...object.Value) object.Value {
 	data := json.FromObject(args[0])
 	bytes, errGo := gojson.Marshal(data)
 	if errGo != nil {
-		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 
 	rw.w.Header().Set("Content-Type", "application/json")
 
 	_, errGo = rw.w.Write(bytes)
 	if errGo != nil {
-		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 
 	return object.NewNull()
@@ -73,13 +73,13 @@ func (rw *responseWriter) json(args ...object.Value) object.Value {
 
 func (rw *responseWriter) newHeader() object.Value {
 	return modbuilder.NewHashBuilder().
-		AddFunction("set", func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+		AddFunction("set", func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 			if err.IsError() {
 				return err
 			}
@@ -92,13 +92,13 @@ func (rw *responseWriter) newHeader() object.Value {
 			rw.w.Header().Set(args[0].AsString().Value, args[1].AsString().Value)
 			return object.NewNull()
 		}).
-		AddFunction("del", func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		AddFunction("del", func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 			if err.IsError() {
 				return err
 			}
@@ -107,13 +107,13 @@ func (rw *responseWriter) newHeader() object.Value {
 
 			return object.NewNull()
 		}).
-		AddFunction("get", func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		AddFunction("get", func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 			if err.IsError() {
 				return err
 			}
@@ -123,13 +123,13 @@ func (rw *responseWriter) newHeader() object.Value {
 		Build()
 }
 
-func (rw *responseWriter) add(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func (rw *responseWriter) add(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -144,13 +144,13 @@ func (rw *responseWriter) add(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func (rw *responseWriter) status(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (rw *responseWriter) status(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.IntKind)
 	if err.IsError() {
 		return err
 	}
@@ -162,16 +162,16 @@ func (rw *responseWriter) status(args ...object.Value) object.Value {
 
 func cookieHash(w http.ResponseWriter) object.Value {
 	h := modbuilder.NewHashBuilder().
-		AddFunction("set", func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+		AddFunction("set", func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 			if err.IsError() {
-				err = errors.ExpectNumberOfArguments(0, 0, 3, args)
+				err = errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 3, args)
 				if err.IsError() {
 					return err
 				}
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 			if err.IsError() {
 				return err
 			}
@@ -196,13 +196,13 @@ func cookieHash(w http.ResponseWriter) object.Value {
 			http.SetCookie(w, cookie)
 			return object.NewNull()
 		}).
-		AddFunction("delete", func(args ...object.Value) object.Value {
-			err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+		AddFunction("delete", func(ctx object.CallContext, args ...object.Value) object.Value {
+			err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 			if err.IsError() {
 				return err
 			}
 
-			err = errors.ExpectType(0, 0, args[0], object.StringKind)
+			err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 			if err.IsError() {
 				return err
 			}
