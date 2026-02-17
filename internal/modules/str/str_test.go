@@ -20,7 +20,7 @@ func TestConcat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := concat(tt.args...)
+			got := concat(object.NewCallContext(0, 0), tt.args...)
 			if tt.isError {
 				if !got.IsError() {
 					t.Errorf("expected error, got %v", got.Kind())
@@ -48,7 +48,7 @@ func TestIsEmpty(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := isEmpty(tt.args...)
+			got := isEmpty(object.NewCallContext(0, 0), tt.args...)
 			if tt.isError {
 				if !got.IsError() {
 					t.Errorf("expected error")
@@ -64,14 +64,14 @@ func TestIsEmpty(t *testing.T) {
 
 func TestStartsWithAndEndsWith(t *testing.T) {
 	t.Run("starts_with", func(t *testing.T) {
-		res := startsWith(object.NewString("hello"), object.NewString("he"))
+		res := startsWith(object.NewCallContext(0, 0), object.NewString("hello"), object.NewString("he"))
 		if !res.AsBool() {
 			t.Errorf("expected true")
 		}
 	})
 
 	t.Run("ends_with", func(t *testing.T) {
-		res := endsWith(object.NewString("hello"), object.NewString("lo"))
+		res := endsWith(object.NewCallContext(0, 0), object.NewString("hello"), object.NewString("lo"))
 		if !res.AsBool() {
 			t.Errorf("expected true")
 		}
@@ -90,7 +90,7 @@ func TestContains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := contains(tt.args...)
+			got := contains(object.NewCallContext(0, 0), tt.args...)
 			if got.AsBool() != tt.expected {
 				t.Errorf("expected %v, got %v", tt.expected, got.AsBool())
 			}
@@ -100,21 +100,21 @@ func TestContains(t *testing.T) {
 
 func TestCaseAndTrim(t *testing.T) {
 	t.Run("to_upper", func(t *testing.T) {
-		res := toUpper(object.NewString("abc"))
+		res := toUpper(object.NewCallContext(0, 0), object.NewString("abc"))
 		if res.AsString().Value != "ABC" {
 			t.Errorf("got %s", res.AsString().Value)
 		}
 	})
 
 	t.Run("to_lower", func(t *testing.T) {
-		res := toLower(object.NewString("XYZ"))
+		res := toLower(object.NewCallContext(0, 0), object.NewString("XYZ"))
 		if res.AsString().Value != "xyz" {
 			t.Errorf("got %s", res.AsString().Value)
 		}
 	})
 
 	t.Run("trim", func(t *testing.T) {
-		res := trim(object.NewString("  space  "))
+		res := trim(object.NewCallContext(0, 0), object.NewString("  space  "))
 		if res.AsString().Value != "space" {
 			t.Errorf("got %q", res.AsString().Value)
 		}
@@ -124,7 +124,7 @@ func TestCaseAndTrim(t *testing.T) {
 func TestSplit(t *testing.T) {
 	input := object.NewString("a,b,c")
 	sep := object.NewString(",")
-	res := split(input, sep)
+	res := split(object.NewCallContext(0, 0), input, sep)
 
 	if !res.IsArray() {
 		t.Fatalf("expected array, got %v", res.Kind())
@@ -154,7 +154,7 @@ func TestRepeat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := repeat(tt.args...)
+			got := repeat(object.NewCallContext(0, 0), tt.args...)
 			if tt.isError {
 				if !got.IsError() {
 					t.Errorf("expected error for %s", tt.name)
