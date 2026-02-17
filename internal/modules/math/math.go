@@ -27,13 +27,13 @@ func New() object.Value {
 		Build()
 }
 
-func abs(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func abs(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -45,18 +45,18 @@ func abs(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Abs(float64(args[0].AsInt()))))
 }
 
-func maxValue(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func maxValue(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -68,18 +68,18 @@ func maxValue(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Max(getFloat64(args[0]), getFloat64(args[1]))))
 }
 
-func minValue(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func minValue(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -91,18 +91,18 @@ func minValue(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Min(getFloat64(args[0]), getFloat64(args[1]))))
 }
 
-func pow(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func pow(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -114,13 +114,13 @@ func pow(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Pow(getFloat64(args[0]), getFloat64(args[1]))))
 }
 
-func sqrt(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func sqrt(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -132,13 +132,13 @@ func sqrt(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Sqrt(getFloat64(args[0]))))
 }
 
-func floor(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func floor(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -150,13 +150,13 @@ func floor(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Floor(getFloat64(args[0]))))
 }
 
-func ceil(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func ceil(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -168,13 +168,13 @@ func ceil(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Ceil(getFloat64(args[0]))))
 }
 
-func round(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func round(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -186,23 +186,23 @@ func round(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Round(getFloat64(args[0]))))
 }
 
-func clamp(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 3, args)
+func clamp(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 3, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[1], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[2], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[2], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -220,13 +220,13 @@ func clamp(args ...object.Value) object.Value {
 	return object.NewInt(int64(res))
 }
 
-func sign(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func sign(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -254,13 +254,13 @@ func sign(args ...object.Value) object.Value {
 	}
 }
 
-func sin(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func sin(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -272,13 +272,13 @@ func sin(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Sin(getFloat64(args[0]))))
 }
 
-func cos(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func cos(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
@@ -290,13 +290,13 @@ func cos(args ...object.Value) object.Value {
 	return object.NewInt(int64(math.Cos(getFloat64(args[0]))))
 }
 
-func tan(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func tan(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectOneOfTypes(0, 0, args[0], object.IntKind, object.FloatKind)
+	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
 	if err.IsError() {
 		return err
 	}
