@@ -34,13 +34,13 @@ func newRequest(r *http.Request) object.Value {
 		Build()
 }
 
-func (req *request) pathParam(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (req *request) pathParam(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -49,13 +49,13 @@ func (req *request) pathParam(args ...object.Value) object.Value {
 	return object.NewString(val)
 }
 
-func (req *request) queryParam(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (req *request) queryParam(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -68,8 +68,8 @@ func (req *request) queryParam(args ...object.Value) object.Value {
 	return object.NewString(param)
 }
 
-func (req *request) body(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func (req *request) body(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
@@ -80,7 +80,7 @@ func (req *request) body(args ...object.Value) object.Value {
 
 	byteData, errGo := io.ReadAll(req.r.Body)
 	if errGo != nil {
-		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 	defer req.r.Body.Close()
 
@@ -89,8 +89,8 @@ func (req *request) body(args ...object.Value) object.Value {
 	return object.NewString(bodyString)
 }
 
-func (req *request) json(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func (req *request) json(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
@@ -102,7 +102,7 @@ func (req *request) json(args ...object.Value) object.Value {
 	if req.bodyCache == nil {
 		byteData, errGo := io.ReadAll(req.r.Body)
 		if errGo != nil {
-			return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+			return errors.NewRuntimeError(ctx.Line, ctx.Col, "%s", errGo.Error())
 		}
 		defer req.r.Body.Close()
 		bodyString := string(byteData)
@@ -112,15 +112,15 @@ func (req *request) json(args ...object.Value) object.Value {
 	var data any
 	errGo := gojson.Unmarshal([]byte(*req.bodyCache), &data)
 	if errGo != nil {
-		return errors.NewRuntimeError(0, 0, "%s", errGo.Error())
+		return errors.NewRuntimeError(ctx.Line, ctx.Col, "%s", errGo.Error())
 	}
 	req.bodyJSONCache = json.ToObject(data)
 
 	return req.bodyJSONCache
 }
 
-func (req *request) method(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func (req *request) method(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
@@ -128,8 +128,8 @@ func (req *request) method(args ...object.Value) object.Value {
 	return object.NewString(req.r.Method)
 }
 
-func (req *request) url(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func (req *request) url(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
@@ -137,13 +137,13 @@ func (req *request) url(args ...object.Value) object.Value {
 	return object.NewString(req.r.URL.String())
 }
 
-func (req *request) header(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (req *request) header(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -156,8 +156,8 @@ func (req *request) header(args ...object.Value) object.Value {
 	return object.NewString(header)
 }
 
-func (req *request) headers(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func (req *request) headers(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
@@ -174,12 +174,12 @@ func (req *request) headers(args ...object.Value) object.Value {
 	return object.NewHash(pairs)
 }
 
-func (req *request) cookie(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func (req *request) cookie(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -192,8 +192,8 @@ func (req *request) cookie(args ...object.Value) object.Value {
 	return object.NewString(cookie.Value)
 }
 
-func (req *request) cookies(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
+func (req *request) cookies(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args)
 	if err.IsError() {
 		return err
 	}
