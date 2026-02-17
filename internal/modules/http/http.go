@@ -16,7 +16,7 @@ func New() object.Value {
 		Build()
 }
 
-func createServer(args ...object.Value) object.Value {
+func createServer(ctx object.CallContext, args ...object.Value) object.Value {
 	server := modbuilder.NewHashBuilder().
 		AddFunction("get", getRoute).
 		AddFunction("post", postRoute).
@@ -33,13 +33,13 @@ func createServer(args ...object.Value) object.Value {
 	return server
 }
 
-func route(method string, args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
+func route(ctx object.CallContext, method string, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.StringKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind)
 	if err.IsError() {
 		return err
 	}
@@ -65,49 +65,49 @@ func route(method string, args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func getRoute(args ...object.Value) object.Value {
-	return route(http.MethodGet, args...)
+func getRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodGet, args...)
 }
 
-func postRoute(args ...object.Value) object.Value {
-	return route(http.MethodPost, args...)
+func postRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodPost, args...)
 }
 
-func putRoute(args ...object.Value) object.Value {
-	return route(http.MethodPut, args...)
+func putRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodPut, args...)
 }
 
-func deleteRoute(args ...object.Value) object.Value {
-	return route(http.MethodDelete, args...)
+func deleteRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodDelete, args...)
 }
 
-func patchRoute(args ...object.Value) object.Value {
-	return route(http.MethodPatch, args...)
+func patchRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodPatch, args...)
 }
 
-func headRoute(args ...object.Value) object.Value {
-	return route(http.MethodHead, args...)
+func headRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodHead, args...)
 }
 
-func optionsRoute(args ...object.Value) object.Value {
-	return route(http.MethodOptions, args...)
+func optionsRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodOptions, args...)
 }
 
-func connectRoute(args ...object.Value) object.Value {
-	return route(http.MethodConnect, args...)
+func connectRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodConnect, args...)
 }
 
-func traceRoute(args ...object.Value) object.Value {
-	return route(http.MethodTrace, args...)
+func traceRoute(ctx object.CallContext, args ...object.Value) object.Value {
+	return route(ctx, http.MethodTrace, args...)
 }
 
-func listen(args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
+func listen(ctx object.CallContext, args ...object.Value) object.Value {
+	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
 		return err
 	}
 
-	err = errors.ExpectType(0, 0, args[0], object.IntKind)
+	err = errors.ExpectType(ctx.Line, ctx.Col, args[0], object.IntKind)
 	if err.IsError() {
 		return err
 	}
