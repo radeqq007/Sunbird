@@ -29,7 +29,7 @@ func New() object.Value {
 }
 
 // now returns current Unix timestamp as integer
-func now(args ...object.Value) object.Value {
+func now(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
 	if err.IsError() {
 		return err
@@ -39,7 +39,7 @@ func now(args ...object.Value) object.Value {
 }
 
 // nowMs returns current Unix timestamp in milliseconds
-func nowMs(args ...object.Value) object.Value {
+func nowMs(ctx object.CallContext, args ...object.Value) object.Value {
 	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err.IsError() {
 		return err
 	}
@@ -47,14 +47,14 @@ func nowMs(args ...object.Value) object.Value {
 }
 
 // nowNs returns current Unix timestamp in nanoseconds
-func nowNs(args ...object.Value) object.Value {
+func nowNs(ctx object.CallContext, args ...object.Value) object.Value {
 	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err.IsError() {
 		return err
 	}
 	return object.NewInt(time.Now().UnixNano())
 }
 
-func sleep(args ...object.Value) object.Value {
+func sleep(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 	if err.IsError() {
 		return err
@@ -78,7 +78,7 @@ func sleep(args ...object.Value) object.Value {
 }
 
 // unix converts a Unix timestamp to a time object
-func unix(args ...object.Value) object.Value {
+func unix(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 	if err.IsError() {
 		return err
@@ -95,7 +95,7 @@ func unix(args ...object.Value) object.Value {
 	return timeToHash(t)
 }
 
-func unixMs(args ...object.Value) object.Value {
+func unixMs(ctx object.CallContext, args ...object.Value) object.Value {
 	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err.IsError() {
 		return err
 	}
@@ -109,7 +109,7 @@ func unixMs(args ...object.Value) object.Value {
 	return timeToHash(t)
 }
 
-func unixNs(args ...object.Value) object.Value {
+func unixNs(ctx object.CallContext, args ...object.Value) object.Value {
 	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err.IsError() {
 		return err
 	}
@@ -123,7 +123,7 @@ func unixNs(args ...object.Value) object.Value {
 	return timeToHash(t)
 }
 
-func formatTime(args ...object.Value) object.Value {
+func formatTime(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 	if err.IsError() {
 		return err
@@ -155,7 +155,7 @@ func formatTime(args ...object.Value) object.Value {
 	return object.NewString(t.Format(goFormat))
 }
 
-func parseTime(args ...object.Value) object.Value {
+func parseTime(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 2, args)
 	if err.IsError() {
 		return err
