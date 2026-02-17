@@ -26,98 +26,99 @@ func New() object.Value {
 }
 
 func wrapError(
+	ctx object.CallContext,
 	args []object.Value,
 	internalFunc func(int, int, string) object.Value,
 ) object.Value {
-	if err := errors.ExpectNumberOfArguments(0, 0, 1, args); err.IsError() {
+	if err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args); err.IsError() {
 		return err
 	}
-	if err := errors.ExpectType(0, 0, args[0], object.StringKind); err.IsError() {
+	if err := errors.ExpectType(ctx.Line, ctx.Col, args[0], object.StringKind); err.IsError() {
 		return err
 	}
 	msg := args[0].AsString().Value
-	return internalFunc(0, 0, msg)
+	return internalFunc(ctx.Line, ctx.Col, msg)
 }
 
-func NewTypeError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewTypeError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.NewTypeError(l, c, "%s", m)
 	})
 }
 
-func NewRuntimeError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewRuntimeError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.NewRuntimeError(l, c, "%s", m)
 	})
 }
 
-func NewImportError(args ...object.Value) object.Value {
-	return wrapError(args, errors.NewImportError)
+func NewImportError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, errors.NewImportError)
 }
 
-func NewDivisionByZeroError(args ...object.Value) object.Value {
+func NewDivisionByZeroError(ctx object.CallContext, args ...object.Value) object.Value {
 	// Division by zero doesn't need a custom message
-	if err := errors.ExpectNumberOfArguments(0, 0, 0, args); err.IsError() {
+	if err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 0, args); err.IsError() {
 		return err
 	}
 
-	return errors.NewDivisionByZeroError(0, 0)
+	return errors.NewDivisionByZeroError(ctx.Line, ctx.Col)
 }
 
-func NewConstantReassignmentError(args ...object.Value) object.Value {
-	return wrapError(args, errors.NewConstantReassignmentError)
+func NewConstantReassignmentError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, errors.NewConstantReassignmentError)
 }
 
-func NewIndexNotSupportedError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewIndexNotSupportedError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.IndexNotSupportedError, l, c, "%s", m)
 	})
 }
 
-func NewIndexOutOfBoundsError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewIndexOutOfBoundsError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.IndexOutOfBoundsError, l, c, "%s", m)
 	})
 }
 
-func NewKeyError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewKeyError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.KeyError, l, c, "%s", m)
 	})
 }
 
-func NewVariableReassignmentError(args ...object.Value) object.Value {
-	return wrapError(args, errors.NewVariableReassignmentError)
+func NewVariableReassignmentError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, errors.NewVariableReassignmentError)
 }
 
-func NewNotCallableError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewNotCallableError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.NotCallableError, l, c, "%s", m)
 	})
 }
 
-func NewInvalidAssignmentError(args ...object.Value) object.Value {
-	return wrapError(args, errors.NewInvalidAssignmentTargetError)
+func NewInvalidAssignmentError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, errors.NewInvalidAssignmentTargetError)
 }
 
-func NewArgumentError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewArgumentError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.ArgumentError, l, c, "%s", m)
 	})
 }
 
-func NewPropertyAccessError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewPropertyAccessError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.PropertyAccessOnNonObjectError, l, c, "%s", m)
 	})
 }
 
-func NewUnknownOperatorError(args ...object.Value) object.Value {
-	return wrapError(args, func(l, c int, m string) object.Value {
+func NewUnknownOperatorError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, func(l, c int, m string) object.Value {
 		return errors.New(errors.UnknownOperatorError, l, c, "%s", m)
 	})
 }
 
-func NewFeatureNotImplementedError(args ...object.Value) object.Value {
-	return wrapError(args, errors.NewFeatureNotImplementedError)
+func NewFeatureNotImplementedError(ctx object.CallContext, args ...object.Value) object.Value {
+	return wrapError(ctx, args, errors.NewFeatureNotImplementedError)
 }
