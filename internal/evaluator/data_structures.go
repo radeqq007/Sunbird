@@ -30,13 +30,13 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Valu
 
 func evalIndexExpression(left, index object.Value, line, col int) object.Value {
 	switch {
-	case left.IsArray() && index.IsInt():
+	case left.IsArray():
 		return evalArrayIndexExpression(left, index, line, col)
 
 	case left.IsHash():
 		return evalHashIndexExpression(left, index, line, col)
 
-	case left.IsString() && index.IsInt():
+	case left.IsString():
 		return evalStringIndexExpression(left, index, line, col)
 
 	default:
@@ -45,14 +45,10 @@ func evalIndexExpression(left, index object.Value, line, col int) object.Value {
 }
 
 func evalArrayIndexExpression(left, index object.Value, line, col int) object.Value {
-	if !left.IsArray() {
-		return errors.NewIndexNotSupportedError(line, col, left)
-	}
-
 	if !index.IsInt() {
-		return errors.NewIndexNotSupportedError(line, col, index)
+		return errors.NewTypeError(line, col, "index must be an integer, got %s", index.Kind())
 	}
-
+	
 	array := left.AsArray()
 	idx := index.AsInt()
 
@@ -89,8 +85,8 @@ func evalHashIndexExpression(left, index object.Value, line, col int) object.Val
 }
 
 func evalStringIndexExpression(left, index object.Value, line, col int) object.Value {
-	if !left.IsString() {
-		return errors.NewIndexNotSupportedError(line, col, left)
+	if !index.IsInt() {
+		return errors.NewTypeError(line, col, "index must be an integer, got %s", index.Kind())
 	}
 
 	// idxObj, _ := index.(*object.Integer)
