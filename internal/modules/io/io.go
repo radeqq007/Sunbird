@@ -28,7 +28,7 @@ func New() object.Value {
 
 var stdin = bufio.NewReader(os.Stdin)
 
-func printObject(args ...object.Value) object.Value {
+func printObject(ctx object.CallContext, args ...object.Value) object.Value {
 	for i, arg := range args {
 		if i > 0 {
 			fmt.Print(" ")
@@ -42,19 +42,19 @@ func printObject(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func printlnObject(args ...object.Value) object.Value {
-	printObject(args...)
+func printlnObject(ctx object.CallContext, args ...object.Value) object.Value {
+	printObject(ctx, args...)
 	fmt.Print("\n")
 	return object.NewNull()
 }
 
-func readln(args ...object.Value) object.Value {
+func readln(ctx object.CallContext, args ...object.Value) object.Value {
 	if len(args) > 0 {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 		if err.IsError() {
 			return err
 		}
-		printObject(args[0])
+		printObject(ctx, args[0])
 	}
 
 	input, err := stdin.ReadString('\n')
@@ -65,7 +65,7 @@ func readln(args ...object.Value) object.Value {
 	return object.NewString(strings.TrimRight(input, "\r\n"))
 }
 
-func read(args ...object.Value) object.Value {
+func read(ctx object.CallContext, args ...object.Value) object.Value {
 	if len(args) > 0 {
 		err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 		if err.IsError() {
@@ -76,7 +76,7 @@ func read(args ...object.Value) object.Value {
 		if err.IsError() {
 			return err
 		}
-		printObject(args[0])
+		printObject(ctx, args[0])
 	}
 
 	input, err := stdin.ReadString(' ')
@@ -87,7 +87,7 @@ func read(args ...object.Value) object.Value {
 	return object.NewString(strings.TrimSpace(input))
 }
 
-func printf(args ...object.Value) object.Value {
+func printf(ctx object.CallContext, args ...object.Value) object.Value {
 	if len(args) < 1 {
 		return errors.NewArgumentError(0, 0, "expected minimum 1 argument, got %v", len(args))
 	}
@@ -119,7 +119,7 @@ func printf(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func printfn(args ...object.Value) object.Value {
+func printfn(ctx object.CallContext, args ...object.Value) object.Value {
 	if len(args) < 1 {
 		return errors.NewArgumentError(0, 0, "expected minimum 1 argument, got %v", len(args))
 	}
@@ -151,7 +151,7 @@ func printfn(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func sprintf(args ...object.Value) object.Value {
+func sprintf(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 1, args)
 	if err.IsError() {
 		return err
@@ -181,7 +181,7 @@ func sprintf(args ...object.Value) object.Value {
 	return object.NewString(format)
 }
 
-func clearScreen(args ...object.Value) object.Value {
+func clearScreen(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
 	if err.IsError() {
 		return err
@@ -191,7 +191,7 @@ func clearScreen(args ...object.Value) object.Value {
 	return object.NewNull()
 }
 
-func beep(args ...object.Value) object.Value {
+func beep(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(0, 0, 0, args)
 	if err.IsError() {
 		return err
