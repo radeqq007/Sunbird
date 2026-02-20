@@ -1,8 +1,6 @@
 package ast
 
 import (
-	"bytes"
-	"strings"
 	"sunbird/internal/token"
 )
 
@@ -49,23 +47,7 @@ type FunctionType struct {
 func (ft *FunctionType) typeAnnotation()      {}
 func (ft *FunctionType) TokenLiteral() string { return ft.Token.Literal }
 func (ft *FunctionType) String() string {
-	var out bytes.Buffer
-
-	params := []string{}
-	for _, p := range ft.Parameters {
-		params = append(params, p.String())
-	}
-
-	out.WriteString("(")
-	out.WriteString(strings.Join(params, ", "))
-	out.WriteString(")")
-
-	if ft.ReturnType != nil {
-		out.WriteString(": ")
-		out.WriteString(ft.ReturnType.String())
-	}
-
-	return out.String()
+	return "Func"
 }
 
 // OptionalType is for optional types like int?
