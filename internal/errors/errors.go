@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"sunbird/internal/object"
 )
@@ -58,10 +59,8 @@ func ExpectOneOfTypes(
 	val object.Value,
 	expectedTypes ...object.ValueKind,
 ) object.Value {
-	for _, expectedType := range expectedTypes {
-		if val.Kind() == expectedType {
-			return object.NewNull()
-		}
+	if slices.Contains(expectedTypes, val.Kind()) {
+		return object.NewNull()
 	}
 
 	typeNames := make([]string, len(expectedTypes))
