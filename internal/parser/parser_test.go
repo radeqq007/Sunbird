@@ -1276,3 +1276,250 @@ func TestForStatementParsing(t *testing.T) {
 		}
 	}
 }
+
+func TestImportStatement(t *testing.T) {
+	tests := []struct {
+		input         string
+		expectedPath  string
+		expectedAlias string
+	}{
+		{`import "io"`, "io", ""},
+		{`import "math"`, "math", ""},
+		{`import "io" as myio`, "io", "myio"},
+		{`import "./utils"`, "./utils", ""},
+		{`import "./utils" as u`, "./utils", "u"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("expected 1 statement, got %d", len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ImportStatement)
+		if !ok {
+			t.Fatalf("statement is not *ast.ImportStatement, got=%T", program.Statements[0])
+		}
+
+		if stmt.Path.Value != tt.expectedPath {
+			t.Errorf("wrong path: expected=%q, got=%q", tt.expectedPath, stmt.Path.Value)
+		}
+
+		if tt.expectedAlias == "" {
+			if stmt.Alias != nil {
+				t.Errorf("expected no alias, but got %q", stmt.Alias.Value)
+			}
+		} else {
+			if stmt.Alias == nil {
+				t.Errorf("expected alias %q, but got nil", tt.expectedAlias)
+			} else if stmt.Alias.Value != tt.expectedAlias {
+				t.Errorf("wrong alias: expected=%q, got=%q", tt.expectedAlias, stmt.Alias.Value)
+			}
+		}
+	}
+}
+
+func TestExportStatement(t *testing.T) {
+	tests := []struct {
+		input        string
+		expectedName string
+		isConst      bool
+	}{
+		{"export let x = 5", "x", false},
+		{"export const y = 10", "y", true},
+		{`export let greeting = "hello"`, "greeting", false},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("expected 1 statement, got %d", len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExportStatement)
+		if !ok {
+			t.Fatalf("statement is not *ast.ExportStatement, got=%T", program.Statements[0])
+		}
+
+		if tt.isConst {
+			constExp, ok := stmt.Declaration.(*ast.ConstExpression)
+			if !ok {
+				t.Fatalf("declaration is not *ast.ConstExpression, got=%T", stmt.Declaration)
+			}
+			if constExp.Name.String() != tt.expectedName {
+				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, constExp.Name.String())
+			}
+		} else {
+			letExp, ok := stmt.Declaration.(*ast.LetExpression)
+			if !ok {
+				t.Fatalf("declaration is not *ast.LetExpression, got=%T", stmt.Declaration)
+			}
+			if letExp.Name.String() != tt.expectedName {
+				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, letExp.Name.String())
+			}
+		}
+	}
+}
+
+func TestExportInvalidTarget(t *testing.T) {
+	input := "export x = 5"
+	l := lexer.New(input)
+	p := parser.New(l)
+	p.ParseProgram()
+
+	if len(p.Errors()) == 0 {
+		t.Error("expected parser errors for invalid export target, got none")
+	}
+}
+
+func TestTypeAnnotationsOnLetAndConst(t *testing.T) {
+	tests := []struct {
+		input        string
+		expectedName string
+		expectedType string
+	}{
+		{"let a: Int = 1", "a", "Int"},
+		{"let b: Float = 1.0", "b", "Float"},
+		{"let c: String = \"hi\"", "c", "String"},
+		{"let d: Bool = true", "d", "Bool"},
+		{"let e: Void = null", "e", "Void"},
+		{"let f: Array = []", "f", "Array"},
+		{"let g: Hash = {}", "g", "Hash"},
+		{"let h: Func = func() {}", "h", "Func"},
+		{"const i: Int = 42", "i", "Int"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		stmt := program.Statements[0].(*ast.ExpressionStatement)
+
+		var typeAnnotation ast.TypeAnnotation
+		switch decl := stmt.Expression.(type) {
+		case *ast.LetExpression:
+			if decl.Name.String() != tt.expectedName {
+				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, decl.Name.String())
+			}
+			typeAnnotation = decl.Type
+		case *ast.ConstExpression:
+			if decl.Name.String() != tt.expectedName {
+				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, decl.Name.String())
+			}
+			typeAnnotation = decl.Type
+		default:
+			t.Fatalf("unexpected declaration type: %T", stmt.Expression)
+		}
+
+		if typeAnnotation == nil {
+			t.Fatalf("type annotation is nil for input: %s", tt.input)
+		}
+		if typeAnnotation.String() != tt.expectedType {
+			t.Errorf("wrong type: expected=%q, got=%q", tt.expectedType, typeAnnotation.String())
+		}
+	}
+}
+
+func TestNullableTypeAnnotations(t *testing.T) {
+	tests := []struct {
+		input        string
+		expectedType string
+	}{
+		{"let a: Int? = null", "Int?"},
+		{"let b: String? = null", "String?"},
+		{"let c: Bool? = null", "Bool?"},
+		{"let d: Array? = null", "Array?"},
+		{"let e: Hash? = null", "Hash?"},
+		{"let f: Func? = null", "Func?"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		stmt := program.Statements[0].(*ast.ExpressionStatement)
+		letExp := stmt.Expression.(*ast.LetExpression)
+
+		if letExp.Type == nil {
+			t.Fatalf("type annotation is nil for input: %s", tt.input)
+		}
+
+		optional, ok := letExp.Type.(*ast.OptionalType)
+		if !ok {
+			t.Fatalf("type is not OptionalType, got=%T for input: %s", letExp.Type, tt.input)
+		}
+
+		if optional.String() != tt.expectedType {
+			t.Errorf("wrong type: expected=%q, got=%q", tt.expectedType, optional.String())
+		}
+	}
+}
+
+func TestFunctionReturnTypeAnnotation(t *testing.T) {
+	tests := []struct {
+		input          string
+		expectedReturn string
+	}{
+		{"func(a: Int, b: Int): Int { a + b }", "Int"},
+		{"func(x: String): String { x }", "String"},
+		{"func(): Bool { true }", "Bool"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		stmt := program.Statements[0].(*ast.ExpressionStatement)
+		fn, ok := stmt.Expression.(*ast.FunctionLiteral)
+		if !ok {
+			t.Fatalf("expression is not *ast.FunctionLiteral, got=%T", stmt.Expression)
+		}
+
+		if fn.ReturnType == nil {
+			t.Fatalf("return type is nil for input: %s", tt.input)
+		}
+		if fn.ReturnType.String() != tt.expectedReturn {
+			t.Errorf("wrong return type: expected=%q, got=%q", tt.expectedReturn, fn.ReturnType.String())
+		}
+	}
+}
+
+func TestFunctionParameterTypeAnnotations(t *testing.T) {
+	input := "func(a: Int, b: String, c: Bool) {}"
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	fn := stmt.Expression.(*ast.FunctionLiteral)
+
+	expectedTypes := []string{"Int", "String", "Bool"}
+	if len(fn.Parameters) != len(expectedTypes) {
+		t.Fatalf("wrong number of parameters: expected=%d, got=%d", len(expectedTypes), len(fn.Parameters))
+	}
+
+	for i, param := range fn.Parameters {
+		if param.Type == nil {
+			t.Errorf("parameter %d has nil type", i)
+			continue
+		}
+		if param.Type.String() != expectedTypes[i] {
+			t.Errorf("parameter %d wrong type: expected=%q, got=%q", i, expectedTypes[i], param.Type.String())
+		}
+	}
+}
