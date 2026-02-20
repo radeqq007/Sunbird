@@ -207,7 +207,7 @@ func getArgsArray(args ...object.Value) object.Value {
 	}
 
 	var elements []object.Value
-	userScriptIndex := 2
+	userScriptIndex := 3
 	if len(os.Args) > userScriptIndex {
 		osArgs := os.Args[userScriptIndex:]
 		for _, arg := range osArgs {
