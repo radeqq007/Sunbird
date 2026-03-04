@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 	"sunbird/internal/evaluator"
 	"sunbird/internal/lexer"
 	"sunbird/internal/object"
 	"sunbird/internal/parser"
 	"sunbird/internal/pkg"
 	"sunbird/internal/repl"
+	"sunbird/internal/transpiler"
 )
 
 func main() {
@@ -37,6 +40,8 @@ func main() {
 		handleTidy()
 	case "run":
 		handleRun()
+	case "transpile":
+		handleTranspile()
 	case "help", "-h", "--help":
 		printHelp()
 	case "version", "-v", "--version":
@@ -236,4 +241,51 @@ For more information, visit: https://github.com/radeqq007/sunbird
 
 func printVersion() {
 
+}
+
+func handleTranspile() {
+    filePath, err := resolveFilePath()
+    if err != nil {
+        fmt.Println("Error: No file specified")
+        os.Exit(1)
+    }
+
+    src, err := os.ReadFile(filePath)
+    if err != nil {
+        fmt.Printf("Error: %s\n", err)
+        os.Exit(1)
+    }
+
+    l := lexer.New(string(src))
+    p := parser.New(l)
+    program := p.ParseProgram()
+
+    if len(p.Errors()) != 0 {
+        for _, msg := range p.Errors() {
+            fmt.Printf("\t%s\n", msg)
+        }
+        os.Exit(1)
+    }
+
+    t := transpiler.New()
+    output, err := t.Transpile(program)
+    if err != nil {
+        fmt.Printf("Transpile error: %s\n", err)
+        os.Exit(1)
+    }
+
+    outDir := filepath.Dir(filePath)
+    outFile := strings.TrimSuffix(filepath.Base(filePath), ".sb") + ".ts"
+
+    if err := os.WriteFile(filepath.Join(outDir, outFile), []byte(output), 0o644); err != nil {
+        fmt.Printf("Error writing output: %s\n", err)
+        os.Exit(1)
+    }
+
+    if err := transpiler.WriteRuntime(outDir); err != nil {
+        fmt.Printf("Error writing runtime: %s\n", err)
+        os.Exit(1)
+    }
+
+    fmt.Printf("✓ %s → %s\n", filePath, outFile)
 }
