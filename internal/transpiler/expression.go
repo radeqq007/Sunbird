@@ -69,6 +69,9 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 
 	case *ast.ArrayLiteral:
 		return t.transpileArray(exp)
+
+	case *ast.IfExpression:
+		return t.transpileIfExpression(exp)
 	}
 
 	return "", fmt.Errorf("Unknown expression type: %T", node)
@@ -233,3 +236,59 @@ func (t *Transpiler) transpileArray(exp *ast.ArrayLiteral) (string, error) {
 
 	return "[" + strings.Join(elements, ", ") + "]", nil
 }
+
+
+// transpileIfExpression generates an if-IIFE in order to keep ifs as expressions
+func (t *Transpiler) transpileIfExpression(exp *ast.IfExpression) (string, error) {
+	cond, err := t.transpileExpression(exp.Condition)
+	if err != nil {
+		return "", err
+	}
+
+	consequence, err := t.transpileIfBlock(exp.Consequence)
+	if err != nil {
+		return "", err
+	}
+
+	result := fmt.Sprintf("(() => { if (%s) %s", cond, consequence)
+
+	if exp.Alternative != nil {
+		alternative, err := t.transpileIfBlock(exp.Alternative)
+		if err != nil {
+			return "", err
+		}
+		result += " else " + alternative
+	}
+
+	result += " })()"
+	return result, nil
+}
+
+func (t *Transpiler) transpileIfBlock(block *ast.BlockStatement) (string, error) {
+	if len(block.Statements) == 0 {
+		return "{}", nil
+	}
+
+	var parts []string
+	for i, stmt := range block.Statements {
+		// For the last statement, if it's a bare expression, turn it into a return.
+		if i == len(block.Statements)-1 {
+			if es, ok := stmt.(*ast.ExpressionStatement); ok {
+				val, err := t.transpileExpression(es.Expression)
+				if err != nil {
+					return "", err
+				}
+				parts = append(parts, "return "+val+";")
+				continue
+			}
+		}
+		s, err := t.transpileStatement(stmt)
+		if err != nil {
+			return "", err
+		}
+		parts = append(parts, strings.TrimSpace(s))
+	}
+
+	return "{ " + strings.Join(parts, " ") + " }", nil
+}
+
