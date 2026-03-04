@@ -19,3 +19,11 @@ export const math = {
   pi: Math.PI,
   e: Math.E,
 } as const
+
+// Range helper
+export function $range(start: number, end: number, step: number = 1): number[] {
+  const result: number[] = [];
+  if (step > 0) for (let i = start; i < end; i += step) result.push(i);
+  else for (let i = start; i > end; i += step) result.push(i);
+  return result;
+}

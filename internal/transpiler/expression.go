@@ -63,6 +63,9 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 
 	case *ast.CompoundAssignExpression:
 		return t.transpileCompoundAssign(exp)
+
+	case *ast.RangeExpression:
+		return t.transpileRangeExpression(exp)
 	}
 	
 	return "", fmt.Errorf("Unknown expression type: %T", node)
@@ -188,4 +191,28 @@ func (t *Transpiler) transpileCall(exp *ast.CallExpression) (string, error) {
 	}
 
 	return fmt.Sprintf("%s(%s)", fn, strings.Join(args, ", ")), nil
+}
+
+func (t *Transpiler) transpileRangeExpression(exp *ast.RangeExpression) (string, error) {
+	t.imports["$range"] = "$range" // ensure that the $range helper is imported
+
+	start, err := t.transpileExpression(exp.Start)
+	if err != nil {
+		return "", err
+	}
+
+	end, err := t.transpileExpression(exp.End)
+	if err != nil {
+		return "", err
+	}
+
+	if exp.Step != nil {
+		step, err := t.transpileExpression(exp.Step)
+		if err != nil {
+			return "", err
+		}
+		return "$range(" + start + ", " + end + ", " + step + ")", nil
+	}
+
+	return "$range(" + start + ", " + end + ")", nil
 }
