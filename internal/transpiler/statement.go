@@ -40,6 +40,9 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 	case *ast.ForStatement:
 		return t.transpileForStatement(stmt)
 
+	case *ast.TryCatchStatement:
+		return t.transpileTryCatch(stmt)
+
 	case *ast.BreakStatement:
 		return "break;", nil
 	
@@ -124,6 +127,31 @@ func (t *Transpiler) transpileExportStatement(stmt *ast.ExportStatement) (string
 		return "", err
 	}
 	return t.indentStr() + "export " + decl + ";", nil
+}
+
+func (t *Transpiler) transpileTryCatch(stmt *ast.TryCatchStatement) (string, error) {
+	tryBlock, err := t.transpileBlock(stmt.Try)
+	if err != nil {
+		return "", err
+	}
+
+	catchBlock, err := t.transpileBlock(stmt.Catch)
+	if err != nil {
+		return "", err
+	}
+
+	result := fmt.Sprintf("%stry %s catch (%s) %s",
+		t.indentStr(), tryBlock, stmt.Param.Value, catchBlock)
+
+	if stmt.Finally != nil {
+		finallyBlock, err := t.transpileBlock(stmt.Finally)
+		if err != nil {
+			return "", err
+		}
+		result += " finally " + finallyBlock
+	}
+
+	return result, nil
 }
 
 func isBuiltinModule(name string) bool {
