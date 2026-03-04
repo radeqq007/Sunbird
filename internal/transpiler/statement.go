@@ -39,6 +39,12 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 
 	case *ast.ForStatement:
 		return t.transpileForStatement(stmt)
+
+	case *ast.BreakStatement:
+		return "break;", nil
+	
+	case *ast.ContinueStatement:
+		return "continue;", nil
 	}
 
 	return "", fmt.Errorf("unknown statement type: %T", node)
