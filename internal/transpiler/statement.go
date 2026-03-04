@@ -58,9 +58,9 @@ func (t *Transpiler) transpileBlock(node *ast.BlockStatement) (string, error) {
 		out.WriteString(s)
 		out.WriteByte('\n')
 	}
-	out.WriteString("}")
 
 	t.popIndent()
+	out.WriteString("}")
 
 	return out.String(), nil
 }
