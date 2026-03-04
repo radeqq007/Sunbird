@@ -66,6 +66,9 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 
 	case *ast.RangeExpression:
 		return t.transpileRangeExpression(exp)
+
+	case *ast.ArrayLiteral:
+		return t.transpileArray(exp)
 	}
 
 	return "", fmt.Errorf("Unknown expression type: %T", node)
@@ -215,4 +218,18 @@ func (t *Transpiler) transpileRangeExpression(exp *ast.RangeExpression) (string,
 	}
 
 	return "$range(" + start + ", " + end + ")", nil
+}
+
+func (t *Transpiler) transpileArray(exp *ast.ArrayLiteral) (string, error) {
+	elements := make([]string, len(exp.Elements))
+	for i, el := range exp.Elements {
+		s, err := t.transpileExpression(el)
+		if err != nil {
+			return "", err
+		}
+		
+		elements[i] = s
+	}
+
+	return "[" + strings.Join(elements, ", ") + "]", nil
 }
