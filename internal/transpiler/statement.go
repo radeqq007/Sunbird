@@ -30,7 +30,10 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 
 	case *ast.ImportStatement:
 		return t.transpileImportStatement(stmt)
-		}
+	
+	case *ast.WhileStatement:
+		return t.transpileWhileStatement(stmt)
+	}
 
 	return "", fmt.Errorf("unknown statement type: %T", node)
 }
@@ -54,6 +57,20 @@ func (t *Transpiler) transpileBlock(node *ast.BlockStatement) (string, error) {
 	t.popIndent()
 
 	return out.String(), nil
+}
+
+func (t *Transpiler) transpileWhileStatement(stmt *ast.WhileStatement) (string, error) {
+	cond, err := t.transpileExpression(stmt.Condition)
+	if err != nil {
+		return "", err
+	}
+
+	body, err := t.transpileStatement(stmt.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return "while (" + cond + ") " + body, nil
 }
 
 func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string, error) {
