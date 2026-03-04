@@ -31,6 +31,9 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 	case *ast.ImportStatement:
 		return t.transpileImportStatement(stmt)
 	
+	case *ast.ExportStatement:
+		return t.transpileExportStatement(stmt)
+
 	case *ast.WhileStatement:
 		return t.transpileWhileStatement(stmt)
 
@@ -107,6 +110,14 @@ func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string
 	}
 
 	return fmt.Sprintf("import * as %s from \"./%s.js\";", alias, path), nil
+}
+
+func (t *Transpiler) transpileExportStatement(stmt *ast.ExportStatement) (string, error) {
+	decl, err := t.transpileExpression(stmt.Declaration)
+	if err != nil {
+			return "", err
+	}
+	return t.indentStr() + "export " + decl + ";", nil
 }
 
 func isBuiltinModule(name string) bool {
