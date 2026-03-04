@@ -33,6 +33,9 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 	
 	case *ast.WhileStatement:
 		return t.transpileWhileStatement(stmt)
+
+	case *ast.ForStatement:
+		return t.transpileForStatement(stmt)
 	}
 
 	return "", fmt.Errorf("unknown statement type: %T", node)
@@ -71,6 +74,20 @@ func (t *Transpiler) transpileWhileStatement(stmt *ast.WhileStatement) (string, 
 	}
 
 	return "while (" + cond + ") " + body, nil
+}
+
+func (t *Transpiler) transpileForStatement(stmt *ast.ForStatement) (string, error) {
+    iterable, err := t.transpileExpression(stmt.Iterable)
+    if err != nil {
+        return "", err
+    }
+
+    body, err := t.transpileBlock(stmt.Body)
+    if err != nil {
+        return "", err
+    }
+
+    return fmt.Sprintf("%sfor (const %s of %s) %s", t.indentStr(), stmt.Variable.Value, iterable, body), nil
 }
 
 func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string, error) {
