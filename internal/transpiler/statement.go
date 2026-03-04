@@ -24,13 +24,13 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 			return "", err
 		}
 		return t.indentStr() + "return " + val + ";", nil
-	
+
 	case *ast.BlockStatement:
 		return t.transpileBlock(stmt)
 
 	case *ast.ImportStatement:
 		return t.transpileImportStatement(stmt)
-	
+
 	case *ast.ExportStatement:
 		return t.transpileExportStatement(stmt)
 
@@ -48,7 +48,7 @@ func (t *Transpiler) transpileBlock(node *ast.BlockStatement) (string, error) {
 	var out strings.Builder
 	out.WriteString("{\n")
 	t.pushIndent()
-	
+
 	for _, stmt := range node.Statements {
 		s, err := t.transpileStatement(stmt)
 		if err != nil {
@@ -80,17 +80,17 @@ func (t *Transpiler) transpileWhileStatement(stmt *ast.WhileStatement) (string, 
 }
 
 func (t *Transpiler) transpileForStatement(stmt *ast.ForStatement) (string, error) {
-    iterable, err := t.transpileExpression(stmt.Iterable)
-    if err != nil {
-        return "", err
-    }
+	iterable, err := t.transpileExpression(stmt.Iterable)
+	if err != nil {
+		return "", err
+	}
 
-    body, err := t.transpileBlock(stmt.Body)
-    if err != nil {
-        return "", err
-    }
+	body, err := t.transpileBlock(stmt.Body)
+	if err != nil {
+		return "", err
+	}
 
-    return fmt.Sprintf("%sfor (const %s of %s) %s", t.indentStr(), stmt.Variable.Value, iterable, body), nil
+	return fmt.Sprintf("%sfor (const %s of %s) %s", t.indentStr(), stmt.Variable.Value, iterable, body), nil
 }
 
 func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string, error) {
@@ -115,7 +115,7 @@ func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string
 func (t *Transpiler) transpileExportStatement(stmt *ast.ExportStatement) (string, error) {
 	decl, err := t.transpileExpression(stmt.Declaration)
 	if err != nil {
-			return "", err
+		return "", err
 	}
 	return t.indentStr() + "export " + decl + ";", nil
 }

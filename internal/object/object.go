@@ -110,12 +110,12 @@ type Function struct {
 }
 
 type CallContext struct {
-    Line int
-    Col  int
+	Line int
+	Col  int
 }
 
 func NewCallContext(line, col int) CallContext {
-	return CallContext{ Line: line, Col: col}
+	return CallContext{Line: line, Col: col}
 }
 
 type BuiltinFunction func(ctx CallContext, args ...Value) Value

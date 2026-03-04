@@ -12,10 +12,10 @@ func transpileType(t ast.TypeAnnotation) string {
 		return simpleTypeToTS(t.Name)
 	case *ast.ArrayType:
 		if t.ElementType != nil {
-			return transpileType(t.ElementType)+ "[]"
+			return transpileType(t.ElementType) + "[]"
 		}
 		return "unkown[]"
-	
+
 	case *ast.HashType:
 		return "Record<string | number, unknown>"
 

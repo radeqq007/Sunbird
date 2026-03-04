@@ -10,13 +10,13 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 	switch exp := node.(type) {
 	case *ast.IntegerLiteral:
 		return fmt.Sprintf("%d", exp.Value), nil
-	
+
 	case *ast.FloatLiteral:
 		return fmt.Sprintf("%f", exp.Value), nil
-	
+
 	case *ast.StringLiteral:
 		return "\"" + exp.Value + "\"", nil
-	
+
 	case *ast.Boolean:
 		if exp.Value {
 			return "true", nil
@@ -35,7 +35,7 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 
 	case *ast.InfixExpression:
 		return t.transpileInfix(exp)
-	
+
 	case *ast.FunctionLiteral:
 		return t.transpileFunction(exp)
 
@@ -67,7 +67,7 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 	case *ast.RangeExpression:
 		return t.transpileRangeExpression(exp)
 	}
-	
+
 	return "", fmt.Errorf("Unknown expression type: %T", node)
 }
 
@@ -104,7 +104,7 @@ func (t *Transpiler) transpileConst(exp *ast.ConstExpression) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	tsType := ""
 	if exp.Type != nil {
 		tsType = ": " + transpileType(exp.Type)
@@ -123,7 +123,7 @@ func (t *Transpiler) transpileLet(exp *ast.LetExpression) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	tsType := ""
 	if exp.Type != nil {
 		tsType = ": " + transpileType(exp.Type)
@@ -135,7 +135,7 @@ func (t *Transpiler) transpileLet(exp *ast.LetExpression) (string, error) {
 func (t *Transpiler) transpileAssign(exp *ast.AssignExpression) (string, error) {
 	name, err := t.transpileExpression(exp.Name)
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 
 	val, err := t.transpileExpression(exp.Value)
@@ -149,7 +149,7 @@ func (t *Transpiler) transpileAssign(exp *ast.AssignExpression) (string, error) 
 func (t *Transpiler) transpileCompoundAssign(exp *ast.CompoundAssignExpression) (string, error) {
 	name, err := t.transpileExpression(exp.Name)
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 
 	val, err := t.transpileExpression(exp.Value)

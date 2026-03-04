@@ -9,8 +9,8 @@ import (
 )
 
 type Transpiler struct {
-	buf bytes.Buffer
-	indent int
+	buf     bytes.Buffer
+	indent  int
 	imports map[string]string // alias => import name
 }
 
@@ -20,7 +20,7 @@ func New() *Transpiler {
 	}
 }
 
-func (t *Transpiler) Transpile(program *ast.Program) (string, error){
+func (t *Transpiler) Transpile(program *ast.Program) (string, error) {
 	var body bytes.Buffer
 	for _, stmt := range program.Statements {
 		s, err := t.transpileStatement(stmt)
@@ -40,20 +40,20 @@ func (t *Transpiler) Transpile(program *ast.Program) (string, error){
 
 func (t *Transpiler) buildImports() string {
 	if len(t.imports) == 0 {
-  	return ""
-  }
+		return ""
+	}
 
-  seen := map[string]bool{}
-  parts := []string{}
-  for alias, mod := range t.imports {
-  	if seen[mod] {
-      continue
-    }
-    seen[mod] = true
-    if alias == mod {
-    	parts = append(parts, mod)
-    } else {
-      parts = append(parts, fmt.Sprintf("%s as %s", mod, alias))
+	seen := map[string]bool{}
+	parts := []string{}
+	for alias, mod := range t.imports {
+		if seen[mod] {
+			continue
+		}
+		seen[mod] = true
+		if alias == mod {
+			parts = append(parts, mod)
+		} else {
+			parts = append(parts, fmt.Sprintf("%s as %s", mod, alias))
 		}
 	}
 

@@ -19,4 +19,3 @@ func WriteRuntime(outputDir string) error {
 
 	return os.WriteFile(dest, []byte(runtimeSrc), 0o644)
 }
-

@@ -48,7 +48,7 @@ func evalArrayIndexExpression(left, index object.Value, line, col int) object.Va
 	if !index.IsInt() {
 		return errors.NewTypeError(line, col, "index must be an integer, got %s", index.Kind())
 	}
-	
+
 	array := left.AsArray()
 	idx := index.AsInt()
 
