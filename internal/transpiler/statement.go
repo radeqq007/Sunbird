@@ -3,7 +3,8 @@ package transpiler
 import (
 	"fmt"
 	"strings"
-	"sunbird/internal/ast"
+
+	"github.com/radeqq007/sunbird/internal/ast"
 )
 
 func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
@@ -45,7 +46,7 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 
 	case *ast.BreakStatement:
 		return "break;", nil
-	
+
 	case *ast.ContinueStatement:
 		return "continue;", nil
 	}

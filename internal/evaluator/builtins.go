@@ -3,8 +3,9 @@ package evaluator
 import (
 	"os"
 	"strconv"
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
+
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 var builtins = map[string]object.Value{

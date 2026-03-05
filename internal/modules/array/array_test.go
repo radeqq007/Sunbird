@@ -1,11 +1,12 @@
 package array_test
 
 import (
-	"sunbird/internal/evaluator"
-	"sunbird/internal/lexer"
-	"sunbird/internal/object"
-	"sunbird/internal/parser"
 	"testing"
+
+	"github.com/radeqq007/sunbird/internal/evaluator"
+	"github.com/radeqq007/sunbird/internal/lexer"
+	"github.com/radeqq007/sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/parser"
 )
 
 func TestPush(t *testing.T) {

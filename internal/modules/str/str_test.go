@@ -1,8 +1,9 @@
 package str
 
 import (
-	"sunbird/internal/object"
 	"testing"
+
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func TestConcat(t *testing.T) {

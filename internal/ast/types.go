@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"sunbird/internal/token"
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 type TypeAnnotation interface {

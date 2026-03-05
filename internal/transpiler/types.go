@@ -1,6 +1,6 @@
 package transpiler
 
-import "sunbird/internal/ast"
+import "github.com/radeqq007/sunbird/internal/ast"
 
 func transpileType(t ast.TypeAnnotation) string {
 	if t == nil {

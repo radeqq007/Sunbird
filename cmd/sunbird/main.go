@@ -6,11 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sunbird/internal/lexer"
-	"sunbird/internal/parser"
-	"sunbird/internal/pkg"
-	"sunbird/internal/repl"
-	"sunbird/internal/transpiler"
+
+	"github.com/radeqq007/sunbird/internal/lexer"
+	"github.com/radeqq007/sunbird/internal/parser"
+	"github.com/radeqq007/sunbird/internal/pkg"
+	"github.com/radeqq007/sunbird/internal/repl"
+	"github.com/radeqq007/sunbird/internal/transpiler"
 )
 
 func main() {

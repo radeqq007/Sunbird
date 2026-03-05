@@ -6,12 +6,13 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"sunbird/internal/lexer"
-	"sunbird/internal/modules"
-	"sunbird/internal/object"
-	"sunbird/internal/parser"
-	"sunbird/internal/pkg"
 	"sync"
+
+	"github.com/radeqq007/sunbird/internal/lexer"
+	"github.com/radeqq007/sunbird/internal/modules"
+	"github.com/radeqq007/sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/parser"
+	"github.com/radeqq007/sunbird/internal/pkg"
 )
 
 type ModuleCache struct {

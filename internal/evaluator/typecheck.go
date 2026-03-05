@@ -3,9 +3,9 @@ package evaluator
 import (
 	"strings"
 
-	"sunbird/internal/ast"
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func checkType(expected ast.TypeAnnotation, actual object.Value, line, col int) object.Value {

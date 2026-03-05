@@ -2,9 +2,10 @@ package errors_test
 
 import (
 	"strings"
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
 	"testing"
+
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func assertError(t *testing.T, val object.Value, wantCode string) *object.Error {

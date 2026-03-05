@@ -3,9 +3,10 @@ package evaluator
 import (
 	"path/filepath"
 	"strings"
-	"sunbird/internal/ast"
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
+
+	"github.com/radeqq007/sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 var moduleCache = NewModuleCache()

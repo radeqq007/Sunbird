@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"sunbird/internal/ast"
+
+	"github.com/radeqq007/sunbird/internal/ast"
 )
 
 type Transpiler struct {

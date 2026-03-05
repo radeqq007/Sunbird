@@ -1,9 +1,10 @@
 package ast_test
 
 import (
-	"sunbird/internal/ast"
-	"sunbird/internal/token"
 	"testing"
+
+	"github.com/radeqq007/sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 func TestString(t *testing.T) {

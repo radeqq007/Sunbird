@@ -3,7 +3,8 @@ package transpiler
 import (
 	"fmt"
 	"strings"
-	"sunbird/internal/ast"
+
+	"github.com/radeqq007/sunbird/internal/ast"
 )
 
 func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
@@ -188,10 +189,10 @@ func (t *Transpiler) transpileInfix(exp *ast.InfixExpression) (string, error) {
 
 func (t *Transpiler) transpileCall(exp *ast.CallExpression) (string, error) {
 	if ident, ok := exp.Function.(*ast.Identifier); ok {
-        if isBuiltin(ident.Value) {
-            t.imports[ident.Value] = ident.Value
-        }
-    }
+		if isBuiltin(ident.Value) {
+			t.imports[ident.Value] = ident.Value
+		}
+	}
 
 	fn, err := t.transpileExpression(exp.Function)
 	if err != nil {
@@ -242,13 +243,12 @@ func (t *Transpiler) transpileArray(exp *ast.ArrayLiteral) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		
+
 		elements[i] = s
 	}
 
 	return "[" + strings.Join(elements, ", ") + "]", nil
 }
-
 
 // transpileIfExpression generates an if-IIFE in order to keep ifs as expressions
 func (t *Transpiler) transpileIfExpression(exp *ast.IfExpression) (string, error) {
@@ -290,7 +290,7 @@ func (t *Transpiler) transpileIfBlock(block *ast.BlockStatement) (string, error)
 				if err != nil {
 					return "", err
 				}
-parts = append(parts, "return "+val+";")
+				parts = append(parts, "return "+val+";")
 				continue
 			}
 		}
@@ -324,30 +324,30 @@ func (t *Transpiler) transpileHashLiteral(exp *ast.HashLiteral) (string, error) 
 	}
 
 	pairs := make([]string, 0, len(exp.Pairs))
-  for _, pair := range exp.Pairs {
-  	key, err := t.transpileExpression(pair.Key)
-    if err != nil {
+	for _, pair := range exp.Pairs {
+		key, err := t.transpileExpression(pair.Key)
+		if err != nil {
 			return "", err
-    }
+		}
 
-   val, err := t.transpileExpression(pair.Value)
-   if err != nil {
-		 return "", err
-   }
+		val, err := t.transpileExpression(pair.Value)
+		if err != nil {
+			return "", err
+		}
 
-   // String keys don't need brackets, everything else does
-   if _, ok := pair.Key.(*ast.StringLiteral); ok {
-		 pairs = append(pairs, fmt.Sprintf("%s: %s", key, val))
-   } else {
-		 pairs = append(pairs, fmt.Sprintf("[%s]: %s", key, val))
-   }
- }
+		// String keys don't need brackets, everything else does
+		if _, ok := pair.Key.(*ast.StringLiteral); ok {
+			pairs = append(pairs, fmt.Sprintf("%s: %s", key, val))
+		} else {
+			pairs = append(pairs, fmt.Sprintf("[%s]: %s", key, val))
+		}
+	}
 
-  return "{ " + strings.Join(pairs, ", ") + " }", nil
+	return "{ " + strings.Join(pairs, ", ") + " }", nil
 }
 
 func isBuiltin(name string) bool {
-	builtins := map[string]struct{} {
+	builtins := map[string]struct{}{
 		"len": {}, "append": {},
 		"type": {}, "string": {},
 		"int": {}, "float": {},
@@ -358,4 +358,3 @@ func isBuiltin(name string) bool {
 	_, ok := builtins[name]
 	return ok
 }
-

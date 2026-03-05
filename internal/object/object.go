@@ -7,8 +7,9 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"sunbird/internal/ast"
 	"unsafe"
+
+	"github.com/radeqq007/sunbird/internal/ast"
 )
 
 // ApplyFunction is a hook to allow calling functions from modules

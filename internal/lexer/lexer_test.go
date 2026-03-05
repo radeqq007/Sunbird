@@ -1,9 +1,10 @@
 package lexer_test
 
 import (
-	"sunbird/internal/lexer"
-	"sunbird/internal/token"
 	"testing"
+
+	"github.com/radeqq007/sunbird/internal/lexer"
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 func TestNextToken(t *testing.T) {

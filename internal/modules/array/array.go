@@ -2,9 +2,10 @@ package array
 
 import (
 	"strings"
-	"sunbird/internal/errors"
-	"sunbird/internal/modules/modbuilder"
-	"sunbird/internal/object"
+
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/modules/modbuilder"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func New() object.Value {

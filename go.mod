@@ -1,4 +1,4 @@
-module sunbird
+module github.com/radeqq007/sunbird
 
 go 1.24.0
 

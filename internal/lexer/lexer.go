@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"sunbird/internal/token"
+
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 type Lexer struct {

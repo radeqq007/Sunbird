@@ -2,10 +2,11 @@ package random
 
 import (
 	"math/rand/v2"
-	"sunbird/internal/errors"
-	"sunbird/internal/modules/modbuilder"
-	"sunbird/internal/object"
 	"time"
+
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/modules/modbuilder"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func New() object.Value {

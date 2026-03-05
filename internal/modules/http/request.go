@@ -5,10 +5,11 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"sunbird/internal/errors"
-	"sunbird/internal/modules/json"
-	"sunbird/internal/modules/modbuilder"
-	"sunbird/internal/object"
+
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/modules/json"
+	"github.com/radeqq007/sunbird/internal/modules/modbuilder"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 type request struct {
