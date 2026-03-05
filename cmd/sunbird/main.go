@@ -160,7 +160,8 @@ Usage:
   sunbird [command] [arguments]
 
 Commands:
-	build               Generate a transpiled .ts file
+	build [file] [--target TARGET]   Transpile to TypeScript
+                                   Targets: node (default), deno, bun, web
   init                Initialize a new Sunbird project
   install, i          Install dependencies from sunbird.toml
   get <package>       Download and install a specific package
@@ -171,9 +172,11 @@ Commands:
 
 Examples:
   sunbird init
-  sunbird get github.com/user/package@v1.0.0
-  sunbird install
   sunbird build main.sb
+  sunbird build main.sb --target deno
+  sunbird build main.sb -t bun
+  sunbird add github.com/user/package@v1.0.0
+  sunbird install
 
 For more information, visit: https://github.com/radeqq007/sunbird
 `
@@ -185,16 +188,54 @@ func printVersion() {
 
 }
 
+
 func handleBuild() {
+	target := transpiler.DefaultTarget
+	var extraArgs []string
+
+	args := os.Args[2:]
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		switch {
+		case arg == "--target" || arg == "-t":
+			if i+1 >= len(args) {
+				fmt.Fprintf(os.Stderr, "Error: %s requires a value\n", arg)
+				os.Exit(1)
+			}
+			i++
+			t, err := transpiler.ParseTarget(args[i])
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+				os.Exit(1)
+			}
+			target = t
+		case len(arg) > 9 && arg[:9] == "--target=":
+			t, err := transpiler.ParseTarget(arg[9:])
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+				os.Exit(1)
+			}
+			target = t
+		default:
+			extraArgs = append(extraArgs, arg)
+		}
+	}
+
+	// Temporarily patch os.Args so resolveFilePath works (it reads os.Args[2]).
+	// We rebuild the slice so the file path, if supplied, lands at index 2.
+	if len(extraArgs) > 0 {
+		os.Args = append(os.Args[:2], extraArgs...)
+	}
+
 	filePath, err := resolveFilePath()
 	if err != nil {
-		fmt.Println("Error: No file specified")
+		fmt.Fprintln(os.Stderr, "Error: No file specified")
 		os.Exit(1)
 	}
 
 	src, err := os.ReadFile(filePath)
 	if err != nil {
-		fmt.Printf("Error: %s\n", err)
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
 
@@ -204,7 +245,7 @@ func handleBuild() {
 
 	if len(p.Errors()) != 0 {
 		for _, msg := range p.Errors() {
-			fmt.Printf("\t%s\n", msg)
+			fmt.Fprintf(os.Stderr, "\t%s\n", msg)
 		}
 		os.Exit(1)
 	}
@@ -212,7 +253,7 @@ func handleBuild() {
 	t := transpiler.New()
 	output, err := t.Transpile(program)
 	if err != nil {
-		fmt.Printf("Transpile error: %s\n", err)
+		fmt.Fprintf(os.Stderr, "Transpile error: %s\n", err)
 		os.Exit(1)
 	}
 
@@ -220,14 +261,14 @@ func handleBuild() {
 	outFile := strings.TrimSuffix(filepath.Base(filePath), ".sb") + ".ts"
 
 	if err := os.WriteFile(filepath.Join(outDir, outFile), []byte(output), 0o644); err != nil {
-		fmt.Printf("Error writing output: %s\n", err)
+		fmt.Fprintf(os.Stderr, "Error writing output: %s\n", err)
 		os.Exit(1)
 	}
 
-	if err := transpiler.WriteRuntime(outDir); err != nil {
-		fmt.Printf("Error writing runtime: %s\n", err)
+	if err := transpiler.WriteRuntime(outDir, target); err != nil {
+		fmt.Fprintf(os.Stderr, "Error writing runtime: %s\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("✓ %s → %s\n", filePath, outFile)
+	fmt.Printf("✓ %s → %s  [target: %s]\n", filePath, outFile, target)
 }
