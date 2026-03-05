@@ -72,6 +72,9 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 
 	case *ast.IfExpression:
 		return t.transpileIfExpression(exp)
+
+	case *ast.IndexExpression:
+		return t.transpileIndexEpression(exp)
 	}
 
 	return "", fmt.Errorf("Unknown expression type: %T", node)
@@ -292,3 +295,16 @@ func (t *Transpiler) transpileIfBlock(block *ast.BlockStatement) (string, error)
 	return "{ " + strings.Join(parts, " ") + " }", nil
 }
 
+func (t *Transpiler) transpileIndexEpression(exp *ast.IndexExpression) (string, error) {
+	left, err := t.transpileExpression(exp.Left)
+	if err != nil {
+		return "", err
+	}
+
+	idx, err := t.transpileExpression(exp.Index)
+	if err != nil {
+		return "", err
+	}
+
+	return left + "[" + idx + "]", nil
+}
