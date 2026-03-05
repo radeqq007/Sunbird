@@ -27,3 +27,22 @@ export function $range(start: number, end: number, step: number = 1): number[] {
   else for (let i = start; i > end; i += step) result.push(i);
   return result;
 }
+
+// Builtins
+export function len(x: string | unknown[]): number {
+  return x.length;
+}
+
+export function append(arr: unknown[], ...items: unknown[]): unknown[] {
+  return [...arr, ...items];
+}
+
+export function type(x: unknown): string {
+  if (Array.isArray(x)) return "Array";
+  if (x === null) return "Null";
+  const t = typeof x;
+  if (t === "number") return Number.isInteger(x) ? "Integer" : "Float";
+  if (t === "string") return "String";
+  if (t === "boolean") return "Boolean";
+  return "Unknown";
+}
