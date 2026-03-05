@@ -75,6 +75,9 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 
 	case *ast.IndexExpression:
 		return t.transpileIndexEpression(exp)
+
+	case *ast.HashLiteral:
+		return t.transpileHashLiteral(exp)
 	}
 
 	return "", fmt.Errorf("Unknown expression type: %T", node)
@@ -287,7 +290,7 @@ func (t *Transpiler) transpileIfBlock(block *ast.BlockStatement) (string, error)
 				if err != nil {
 					return "", err
 				}
-				parts = append(parts, "return "+val+";")
+parts = append(parts, "return "+val+";")
 				continue
 			}
 		}
@@ -315,6 +318,34 @@ func (t *Transpiler) transpileIndexEpression(exp *ast.IndexExpression) (string, 
 	return left + "[" + idx + "]", nil
 }
 
+func (t *Transpiler) transpileHashLiteral(exp *ast.HashLiteral) (string, error) {
+	if exp.Pairs == nil {
+		return "{}", nil
+	}
+
+	pairs := make([]string, 0, len(exp.Pairs))
+  for _, pair := range exp.Pairs {
+  	key, err := t.transpileExpression(pair.Key)
+    if err != nil {
+			return "", err
+    }
+
+   val, err := t.transpileExpression(pair.Value)
+   if err != nil {
+		 return "", err
+   }
+
+   // String keys don't need brackets, everything else does
+   if _, ok := pair.Key.(*ast.StringLiteral); ok {
+		 pairs = append(pairs, fmt.Sprintf("%s: %s", key, val))
+   } else {
+		 pairs = append(pairs, fmt.Sprintf("[%s]: %s", key, val))
+   }
+ }
+
+  return "{ " + strings.Join(pairs, ", ") + " }", nil
+}
+
 func isBuiltin(name string) bool {
 	builtins := map[string]struct{} {
 		"len": {}, "append": {},
@@ -327,3 +358,4 @@ func isBuiltin(name string) bool {
 	_, ok := builtins[name]
 	return ok
 }
+
