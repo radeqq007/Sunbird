@@ -3,13 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
-	"sunbird/internal/evaluator"
 	"sunbird/internal/lexer"
-	"sunbird/internal/object"
 	"sunbird/internal/parser"
 	"sunbird/internal/pkg"
 	"sunbird/internal/repl"
@@ -38,10 +35,8 @@ func main() {
 		handleUpdate()
 	case "tidy":
 		handleTidy()
-	case "run":
-		handleRun()
-	case "transpile":
-		handleTranspile()
+	case "build":
+		handleBuild()
 	case "help", "-h", "--help":
 		printHelp()
 	case "version", "-v", "--version":
@@ -49,17 +44,6 @@ func main() {
 	}
 
 	os.Exit(0)
-}
-
-func handleRun() {
-	filePath, err := resolveFilePath()
-	if err != nil {
-		fmt.Println("Error: No file specified and no main file found")
-		fmt.Println("Usage: sunbird run [file.sb]")
-		os.Exit(1)
-	}
-
-	runFile(filePath)
 }
 
 func resolveFilePath() (string, error) {
@@ -92,44 +76,6 @@ func findMainFile() (string, error) {
 	}
 
 	return "", errors.New("no main file found")
-}
-
-func runFile(path string) {
-	src, err := os.Open(path)
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		os.Exit(1)
-	}
-
-	content, err := io.ReadAll(src)
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		os.Exit(1)
-	}
-
-	_ = src.Close()
-
-	l := lexer.New(string(content))
-	p := parser.New(l)
-
-	program := p.ParseProgram()
-
-	if len(p.Errors()) != 0 {
-		fmt.Println("Parser errors:")
-		for _, msg := range p.Errors() {
-			fmt.Printf("\t%s\n", msg)
-		}
-		os.Exit(1)
-	}
-
-	env := object.NewEnvironment()
-
-	evaluated := evaluator.Eval(program, env)
-
-	if evaluated.IsError() {
-		fmt.Println(evaluated.Inspect())
-		os.Exit(1)
-	}
 }
 
 func handleInit() {
@@ -213,25 +159,20 @@ Usage:
   sunbird [command] [arguments]
 
 Commands:
+	build               Generate a transpiled .ts file
   init                Initialize a new Sunbird project
   install, i          Install dependencies from sunbird.toml
   get <package>       Download and install a specific package
   update              Update all dependencies
   tidy                Remove unused dependencies
-  run <file>          Run a Sunbird file with package resolution
   help, -h, --help    Show this help message
   version, -v         Show version information
-
-Running files:
-  sunbird <file.sb>   Run a Sunbird file directly (without package resolution)
-  sunbird             Start interactive REPL
 
 Examples:
   sunbird init
   sunbird get github.com/user/package@v1.0.0
   sunbird install
-  sunbird run main.sb
-  sunbird main.sb
+  sunbird build main.sb
 
 For more information, visit: https://github.com/radeqq007/sunbird
 `
@@ -243,7 +184,7 @@ func printVersion() {
 
 }
 
-func handleTranspile() {
+func handleBuild() {
 	filePath, err := resolveFilePath()
 	if err != nil {
 		fmt.Println("Error: No file specified")
