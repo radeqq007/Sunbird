@@ -189,8 +189,8 @@ func (t *Transpiler) transpileInfix(exp *ast.InfixExpression) (string, error) {
 
 func (t *Transpiler) transpileCall(exp *ast.CallExpression) (string, error) {
 	if ident, ok := exp.Function.(*ast.Identifier); ok {
-		if isBuiltin(ident.Value) {
-			t.imports[ident.Value] = ident.Value
+		if name, ok := isBuiltin(ident.Value); ok {
+			t.imports[name] = name
 		}
 	}
 
@@ -346,15 +346,15 @@ func (t *Transpiler) transpileHashLiteral(exp *ast.HashLiteral) (string, error) 
 	return "{ " + strings.Join(pairs, ", ") + " }", nil
 }
 
-func isBuiltin(name string) bool {
-	builtins := map[string]struct{}{
-		"len": {}, "append": {},
-		"type": {}, "string": {},
-		"int": {}, "float": {},
-		"bool": {}, "exit": {},
-		"error": {},
+func isBuiltin(name string) (string, bool) {
+	builtins := map[string]string{
+		"len": "__len", "append": "__append",
+		"type": "type", "string": "__type",
+		"int": "__int", "float": "__float",
+		"bool": "__bool", "exit": "__exit",
+		"error": "__error",
 	}
 
-	_, ok := builtins[name]
-	return ok
+	n, ok := builtins[name]
+	return n, ok
 }
