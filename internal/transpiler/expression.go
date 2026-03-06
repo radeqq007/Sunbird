@@ -213,7 +213,7 @@ func (t *Transpiler) transpileCall(exp *ast.CallExpression) (string, error) {
 }
 
 func (t *Transpiler) transpileRangeExpression(exp *ast.RangeExpression) (string, error) {
-	t.imports["$range"] = "$range" // ensure that the $range helper is imported
+	t.imports["__range"] = "__range" // ensure that the __range helper is imported
 
 	start, err := t.transpileExpression(exp.Start)
 	if err != nil {
@@ -230,10 +230,10 @@ func (t *Transpiler) transpileRangeExpression(exp *ast.RangeExpression) (string,
 		if err != nil {
 			return "", err
 		}
-		return "$range(" + start + ", " + end + ", " + step + ")", nil
+		return "__range(" + start + ", " + end + ", " + step + ")", nil
 	}
 
-	return "$range(" + start + ", " + end + ")", nil
+	return "__range(" + start + ", " + end + ")", nil
 }
 
 func (t *Transpiler) transpileArray(exp *ast.ArrayLiteral) (string, error) {

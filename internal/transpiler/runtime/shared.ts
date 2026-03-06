@@ -18,7 +18,11 @@ export const math = {
 } as const;
 
 // Range helper
-export function $range(start: number, end: number, step: number = 1): number[] {
+export function __range(
+  start: number,
+  end: number,
+  step: number = 1,
+): number[] {
   const result: number[] = [];
   if (step > 0) for (let i = start; i < end; i += step) result.push(i);
   else for (let i = start; i > end; i += step) result.push(i);
