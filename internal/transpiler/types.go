@@ -14,7 +14,7 @@ func transpileType(t ast.TypeAnnotation) string {
 		if t.ElementType != nil {
 			return transpileType(t.ElementType) + "[]"
 		}
-		return "unkown[]"
+		return "unknown[]"
 
 	case *ast.HashType:
 		return "Record<string | number, unknown>"
