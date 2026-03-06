@@ -119,7 +119,7 @@ func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string
 		alias = stmt.Alias.Value
 	}
 
-	return fmt.Sprintf("import * as %s from \"./%s.js\";", alias, path), nil
+	return fmt.Sprintf("import * as %s from \"./%s.ts\";", alias, path), nil
 }
 
 func (t *Transpiler) transpileExportStatement(stmt *ast.ExportStatement) (string, error) {
