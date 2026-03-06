@@ -59,7 +59,7 @@ func (t *Transpiler) buildImports() string {
 	}
 
 	sort.Strings(parts)
-	return fmt.Sprintf("import { %s } from \"./sunbird-rt.js\";\n\n", strings.Join(parts, ", "))
+	return fmt.Sprintf("import { %s } from \"./sunbird-rt.ts\";\n\n", strings.Join(parts, ", "))
 }
 
 func (t *Transpiler) indentStr() string {
