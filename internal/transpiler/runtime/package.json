@@ -1,0 +1,12 @@
+{
+  "name": "runtime",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Development dependencies for Sunbird TypeScript runtime",
+  "scripts": {
+    "typecheck": "tsc --noEmit --skipLibCheck shared.ts node.ts deno.ts bun.ts web.ts"
+  },
+  "author": "Radosław Kaczmarczyk",
+  "license": "MIT",
+  "packageManager": "pnpm@10.26.2"
+}
