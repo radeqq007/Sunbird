@@ -8,5 +8,8 @@
   },
   "author": "Radosław Kaczmarczyk",
   "license": "MIT",
-  "packageManager": "pnpm@10.26.2"
+  "packageManager": "pnpm@10.26.2",
+  "devDependencies": {
+    "@types/node": "^25.3.5"
+  }
 }
