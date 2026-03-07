@@ -10,7 +10,6 @@ import (
 )
 
 type Transpiler struct {
-	buf     bytes.Buffer
 	indent  int
 	imports map[string]string // alias => import name
 }
