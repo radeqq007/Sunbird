@@ -15,3 +15,5 @@
 
 go.work
 go.work.sum
+
+internal/transpiler/runtime/node_modules
