@@ -49,6 +49,9 @@ func (t *Transpiler) transpileStatement(node ast.Statement) (string, error) {
 
 	case *ast.ContinueStatement:
 		return "continue;", nil
+
+	case *ast.PropertyAssignStatement:
+		return t.transpilePropertyAssign(stmt)
 	}
 
 	return "", fmt.Errorf("unknown statement type: %T", node)
@@ -153,6 +156,20 @@ func (t *Transpiler) transpileTryCatch(stmt *ast.TryCatchStatement) (string, err
 	}
 
 	return result, nil
+}
+
+func (t *Transpiler) transpilePropertyAssign(stmt *ast.PropertyAssignStatement) (string, error) {
+	prop, err := t.transpileExpression(stmt.Property)
+	if err != nil {
+		return "", err
+	}
+
+	val, err := t.transpileExpression(stmt.Value)
+	if err != nil {
+		return "", err
+	}
+
+	return prop + " = " + val, nil
 }
 
 func isBuiltinModule(name string) bool {
