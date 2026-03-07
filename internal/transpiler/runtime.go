@@ -5,22 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/radeqq007/sunbird/internal/runtime"
 )
-
-//go:embed runtime/shared.ts
-var sharedRuntimeSrc string
-
-//go:embed runtime/node.ts
-var nodeRuntimeSrc string
-
-//go:embed runtime/deno.ts
-var denoRuntimeSrc string
-
-//go:embed runtime/bun.ts
-var bunRuntimeSrc string
-
-//go:embed runtime/web.ts
-var webRuntimeSrc string
 
 type Target string
 
@@ -36,13 +23,13 @@ const DefaultTarget = TargetNode
 func targetSrc(t Target) string {
 	switch t {
 	case TargetDeno:
-		return denoRuntimeSrc
+		return runtime.DenoRuntimeSrc
 	case TargetBun:
-		return bunRuntimeSrc
+		return runtime.BunRuntimeSrc
 	case TargetWeb:
-		return webRuntimeSrc
+		return runtime.WebRuntimeSrc
 	default:
-		return nodeRuntimeSrc
+		return runtime.NodeRuntimeSrc
 	}
 }
 
@@ -63,7 +50,7 @@ func WriteRuntime(outputDir string, target Target) error {
 		return nil // already written this run
 	}
 
-	combined := sharedRuntimeSrc +
+	combined := runtime.SharedRuntimeSrc +
 		"\n// --- " + string(target) + " target ---\n\n" +
 		targetSrc(target)
 
@@ -73,4 +60,3 @@ func WriteRuntime(outputDir string, target Target) error {
 
 	return nil
 }
-
