@@ -17,6 +17,69 @@ export const math = {
   e: Math.E,
 } as const;
 
+export const array = {
+  push(arr: unknown[], value: unknown): null {
+    arr.push(value);
+    return null;
+  },
+
+  pop(arr: unknown[]): unknown {
+    if (arr.length === 0) throw new Error("RuntimeError: array is empty");
+    return arr.pop()!;
+  },
+
+  shift(arr: unknown[]): unknown {
+    if (arr.length === 0) throw new Error("RuntimeError: array is empty");
+    return arr.shift()!;
+  },
+
+  unshift(arr: unknown[], value: unknown): null {
+    arr.unshift(value);
+    return null;
+  },
+
+  reverse(arr: unknown[]): null {
+    arr.reverse();
+    return null;
+  },
+
+  index_of(arr: unknown[], value: unknown): number {
+    const inspect = (v: unknown): string => JSON.stringify(v) ?? String(v);
+    const needle = inspect(value);
+    for (let i = 0; i < arr.length; i++) {
+      if (inspect(arr[i]) === needle) return i;
+    }
+    return -1;
+  },
+
+  slice(arr: unknown[], start: number, end?: number): unknown[] {
+    const e = end ?? arr.length;
+    if (start < 0) throw new Error("IndexOutOfBoundsError: Array");
+    if (e < 0) throw new Error("IndexOutOfBoundsError: Array");
+    if (start > e) throw new Error("RuntimeError: start index is greater than end index");
+    return arr.slice(start, e);
+  },
+
+  join(arr: unknown[], separator: string): string {
+    return arr.map((v) => (typeof v === "string" ? v : JSON.stringify(v))).join(separator);
+  },
+
+  concat(arr1: unknown[], arr2: unknown[]): unknown[] {
+    return [...arr1, ...arr2];
+  },
+
+  contains(arr: unknown[], value: unknown): boolean {
+    const inspect = (v: unknown): string => JSON.stringify(v) ?? String(v);
+    const needle = inspect(value);
+    return arr.some((v) => inspect(v) === needle);
+  },
+
+  clear(arr: unknown[]): null {
+    arr.splice(0, arr.length);
+    return null;
+  },
+} as const;
+
 // Range helper
 export function __range(
   start: number,
