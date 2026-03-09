@@ -205,3 +205,11 @@ export function __exit(code: number = 0): never {
 export function __error(message: string): never {
   throw new Error(`RuntimeError: ${message}`);
 }
+
+export function __idx(item: unknown[] | string, index: number): unknown {
+  if (index < 0) index = item.length + index;
+  if (index < 0 || index >= item.length)
+    throw new Error("IndexOutOfBoundsError: Array");
+  return item[index];
+}
+

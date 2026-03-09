@@ -305,6 +305,8 @@ func (t *Transpiler) transpileIfBlock(block *ast.BlockStatement) (string, error)
 }
 
 func (t *Transpiler) transpileIndexEpression(exp *ast.IndexExpression) (string, error) {
+	t.imports["__idx"] = "__idx"
+
 	left, err := t.transpileExpression(exp.Left)
 	if err != nil {
 		return "", err
@@ -315,7 +317,7 @@ func (t *Transpiler) transpileIndexEpression(exp *ast.IndexExpression) (string, 
 		return "", err
 	}
 
-	return left + "[" + idx + "]", nil
+	return "__idx(" + left + ", " + idx + ")", nil
 }
 
 func (t *Transpiler) transpileHashLiteral(exp *ast.HashLiteral) (string, error) {
