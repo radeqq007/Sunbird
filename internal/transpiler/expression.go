@@ -75,7 +75,7 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 		return t.transpileIfExpression(exp)
 
 	case *ast.IndexExpression:
-		return t.transpileIndexEpression(exp)
+		return t.transpileIndexExpression(exp)
 
 	case *ast.HashLiteral:
 		return t.transpileHashLiteral(exp)
@@ -304,7 +304,7 @@ func (t *Transpiler) transpileIfBlock(block *ast.BlockStatement) (string, error)
 	return "{ " + strings.Join(parts, " ") + " }", nil
 }
 
-func (t *Transpiler) transpileIndexEpression(exp *ast.IndexExpression) (string, error) {
+func (t *Transpiler) transpileIndexExpression(exp *ast.IndexExpression) (string, error) {
 	t.imports["__idx"] = "__idx"
 
 	left, err := t.transpileExpression(exp.Left)
