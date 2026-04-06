@@ -9,7 +9,7 @@
 [![Lint](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml)
 
 
-Sunbird is dynamically-typed (with optional type annotations), interpreted programming language that focuses on **ease of use** and **clarity**.
+Sunbird is a transpiled programming language that targets TypeScript and focuses on **ease of use** and **clarity**.
 
 For detailed language reference, standard library docs, and guides, see the [`docs/`](./docs) directory.
 
