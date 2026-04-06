@@ -28,14 +28,6 @@ func main() {
 	switch command {
 	case "init":
 		handleInit()
-	case "install", "i":
-		handleInstall()
-	case "add":
-		handleAdd()
-	case "update":
-		handleUpdate()
-	case "tidy":
-		handleTidy()
 	case "build":
 		handleBuild()
 	case "help", "-h", "--help":
@@ -93,8 +85,6 @@ version = "0.1.0"
 description = "A Sunbird project"
 authors = ["Your Name <you@example.com>"]
 main = "./src/main.sb"
-
-dependencies = []
 `
 
 	err := os.WriteFile("sunbird.toml", []byte(template), 0o644)
@@ -126,33 +116,6 @@ io.println("Hello, sunbird!")
 	fmt.Println("\nProject initialized successfully!")
 }
 
-func handleInstall() {
-
-}
-
-func handleAdd() {
-	pkgManager := pkg.NewPackageManager()
-
-	if len(os.Args) < 3 {
-		fmt.Println("Provide a package url")
-		os.Exit(1)
-	}
-
-	url := os.Args[2]
-	err := pkgManager.Add(url)
-	if err != nil {
-		fmt.Printf("Error adding dependency: %s\n", err)
-	}
-}
-
-func handleUpdate() {
-
-}
-
-func handleTidy() {
-
-}
-
 func printHelp() {
 	help := `Sunbird - A dynamically-typed programming language
 
@@ -160,20 +123,14 @@ Usage:
   sunbird [command] [arguments]
 
 Commands:
-	build [file]        Transpile to TypeScript
+  build [file]        Transpile to TypeScript
   init                Initialize a new Sunbird project
-  install, i          Install dependencies from sunbird.toml
-  get <package>       Download and install a specific package
-  update              Update all dependencies
-  tidy                Remove unused dependencies
   help, -h, --help    Show this help message
   version, -v         Show version information
 
 Examples:
   sunbird init
   sunbird build main.sb
-  sunbird add github.com/user/package@v1.0.0
-  sunbird install
 
 For more information, visit: https://github.com/radeqq007/sunbird
 `
