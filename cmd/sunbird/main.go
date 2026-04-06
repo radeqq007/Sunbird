@@ -160,8 +160,7 @@ Usage:
   sunbird [command] [arguments]
 
 Commands:
-	build [file] [--target TARGET]   Transpile to TypeScript
-                                   Targets: node (default), deno, bun, web
+	build [file]        Transpile to TypeScript
   init                Initialize a new Sunbird project
   install, i          Install dependencies from sunbird.toml
   get <package>       Download and install a specific package
@@ -173,8 +172,6 @@ Commands:
 Examples:
   sunbird init
   sunbird build main.sb
-  sunbird build main.sb --target deno
-  sunbird build main.sb -t bun
   sunbird add github.com/user/package@v1.0.0
   sunbird install
 
@@ -188,45 +185,7 @@ func printVersion() {
 
 }
 
-
 func handleBuild() {
-	target := transpiler.DefaultTarget
-	var extraArgs []string
-
-	args := os.Args[2:]
-	for i := 0; i < len(args); i++ {
-		arg := args[i]
-		switch {
-		case arg == "--target" || arg == "-t":
-			if i+1 >= len(args) {
-				fmt.Fprintf(os.Stderr, "Error: %s requires a value\n", arg)
-				os.Exit(1)
-			}
-			i++
-			t, err := transpiler.ParseTarget(args[i])
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-				os.Exit(1)
-			}
-			target = t
-		case len(arg) > 9 && arg[:9] == "--target=":
-			t, err := transpiler.ParseTarget(arg[9:])
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-				os.Exit(1)
-			}
-			target = t
-		default:
-			extraArgs = append(extraArgs, arg)
-		}
-	}
-
-	// Temporarily patch os.Args so resolveFilePath works (it reads os.Args[2]).
-	// We rebuild the slice so the file path, if supplied, lands at index 2.
-	if len(extraArgs) > 0 {
-		os.Args = append(os.Args[:2], extraArgs...)
-	}
-
 	filePath, err := resolveFilePath()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error: No file specified")
@@ -265,10 +224,10 @@ func handleBuild() {
 		os.Exit(1)
 	}
 
-	if err := transpiler.WriteRuntime(outDir, target); err != nil {
+	if err := transpiler.WriteRuntime(outDir); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing runtime: %s\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("✓ %s → %s  [target: %s]\n", filePath, outFile, target)
+	fmt.Printf("✓ %s → %s\n", filePath, outFile)
 }
