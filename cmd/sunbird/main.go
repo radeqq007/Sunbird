@@ -10,17 +10,13 @@ import (
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/parser"
 	"github.com/radeqq007/sunbird/internal/pkg"
-	"github.com/radeqq007/sunbird/internal/repl"
 	"github.com/radeqq007/sunbird/internal/transpiler"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Welcome to the sunbird programming language!")
-		fmt.Printf("Type in 'exit' to exit.\n")
-		repl.Start(os.Stdin, os.Stdout)
-
-		os.Exit(0)
+		// TODO: do something
+		os.Exit(1)
 	}
 
 	command := os.Args[1]
