@@ -3,11 +3,13 @@
 </div>
 
 # Sunbird
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/radeqq007/duvet)
 [![Build](https://github.com/radeqq007/Sunbird/actions/workflows/build.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/build.yml)
 [![Tests](https://github.com/radeqq007/Sunbird/actions/workflows/tests.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/tests.yml)
-[![Coverage](https://codecov.io/gh/radeqq007/sunbird/branch/main/graph/badge.svg)](https://codecov.io/gh/radeqq007/sunbird)
 [![Lint](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml)
-
+[![Coverage](https://codecov.io/gh/radeqq007/sunbird/branch/main/graph/badge.svg)](https://codecov.io/gh/radeqq007/sunbird)
+![Last commit](https://img.shields.io/github/last-commit/radeqq007/sunbird)
+![GitHub stars](https://img.shields.io/github/stars/radeqq007/sunbird?style=social)
 
 Sunbird is a transpiled programming language that targets TypeScript and focuses on **ease of use** and **clarity**.
 
