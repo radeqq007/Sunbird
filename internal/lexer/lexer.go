@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/radeqq007/sunbird/internal/token"
@@ -89,26 +88,6 @@ func (l *Lexer) readString() (string, error) {
 	for l.ch != startingQuote {
 		if l.ch == 0 {
 			return "", errors.New("unterminated string")
-		}
-
-		if l.ch == '\\' {
-			l.readChar()
-			switch l.ch {
-			case 'n':
-				result.WriteByte('\n')
-			case 't':
-				result.WriteByte('\t')
-			case 'r':
-				result.WriteByte('\r')
-			case '\\':
-				result.WriteByte('\\')
-			case startingQuote:
-				result.WriteByte(startingQuote)
-			default:
-				return "", fmt.Errorf("invalid escape sequence: %c", l.ch)
-			}
-			l.readChar()
-			continue
 		}
 
 		result.WriteByte(l.ch)

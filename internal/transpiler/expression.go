@@ -16,6 +16,9 @@ func (t *Transpiler) transpileExpression(node ast.Expression) (string, error) {
 		return fmt.Sprintf("%f", exp.Value), nil
 
 	case *ast.StringLiteral:
+		if exp.ContainsExpression {
+			return "`" + exp.Value + "`", nil
+		}
 		return "\"" + exp.Value + "\"", nil
 
 	case *ast.Boolean:
