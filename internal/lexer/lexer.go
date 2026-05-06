@@ -17,7 +17,7 @@ type Lexer struct {
 }
 
 var keywords = map[string]token.TokenType{
-	"func":     token.Function,
+	"fn":       token.Function,
 	"let":      token.Let,
 	"const":    token.Const,
 	"true":     token.True,
@@ -42,7 +42,7 @@ var keywords = map[string]token.TokenType{
 	"Bool":     token.TypeBool,
 	"Void":     token.TypeVoid,
 	"Array":    token.TypeArray,
-	"Func":     token.TypeFunc,
+	"Fn":       token.TypeFunc,
 	"Hash":     token.TypeHash,
 	"Range":    token.TypeRange,
 	"in":       token.In,
