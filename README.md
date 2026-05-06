@@ -24,9 +24,7 @@ For detailed language reference, standard library docs, and guides, see the [`do
 
 ### Hello world in Sunbird
 ```ts
-import "io"
-
-io.println("Hello world")
+console.log("Hello, world!") // Sunbird is compatible with javascript's standard library
 ```
 
 ### Defining variables and functions
@@ -41,27 +39,34 @@ const add = func(a: Int, b: Int): Int {
 add(a, b)
 ```
 
+### String interpolation
+```ts
+const greet = func(name: String) {
+  console.log("Hello, $name")
+}
+
+greet("John")
+```
+
 ### Control flow
 ```ts
-import "io"
-
 let a = 1
 let b = 2
 
 if a > b {
-    io.println("a is greater than b")
+    console.log("a is greater than b")
 } else if a < b {
-    io.println("a is less than b")
+    console.log("a is less than b")
 } else {
-    io.println("a is equal to b")
+    console.log("a is equal to b")
 }
 
 for i in 0..10 {
-    io.println(i)
+    console.log(i)
 }
 
 while a <= b {
-    io.println(a)
+    console.log(a)
     a += 1
 
     if a == 1 {
@@ -76,9 +81,9 @@ while a <= b {
 try {
     let c = 1 / 0
 } catch e {
-    io.println(e)
+    console.log(e)
 } finally {
-    io.println("finally")
+    console.log("finally")
 }
 
 ```
