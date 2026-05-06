@@ -11,9 +11,14 @@
 ![Last commit](https://img.shields.io/github/last-commit/radeqq007/sunbird)
 ![GitHub stars](https://img.shields.io/github/stars/radeqq007/sunbird?style=social)
 
+> [!CAUTION]
+> Sunbird is currently under a big rewrite.
+> The documentation is outdated and code examples might not work.
+> 
 Sunbird is a transpiled programming language that targets TypeScript and focuses on **ease of use** and **clarity**.
 
 For detailed language reference, standard library docs, and guides, see the [`docs/`](./docs) directory.
+
 
 ## Overview
 
