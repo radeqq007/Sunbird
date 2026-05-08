@@ -108,15 +108,6 @@ func (t *Transpiler) transpileForStatement(stmt *ast.ForStatement) (string, erro
 
 func (t *Transpiler) transpileImportStatement(stmt *ast.ImportStatement) (string, error) {
 	path := stmt.Path.Value
-	if isBuiltinModule(path) {
-		alias := path
-		if stmt.Alias != nil {
-			alias = stmt.Alias.Value
-		}
-		t.imports[alias] = path
-		return "", nil
-	}
-
 	alias := stmt.Path.Value
 	if stmt.Alias != nil {
 		alias = stmt.Alias.Value
@@ -172,10 +163,3 @@ func (t *Transpiler) transpilePropertyAssign(stmt *ast.PropertyAssignStatement) 
 	return prop + " = " + val, nil
 }
 
-func isBuiltinModule(name string) bool {
-	switch name {
-	case "io", "math", "array", "string", "random", "json", "http", "fs", "time", "errors":
-		return true
-	}
-	return false
-}
