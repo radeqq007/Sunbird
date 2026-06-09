@@ -30,31 +30,31 @@ const server = http.create_server()
 They all work the same way, only the HTTP method is different.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.send("Hello World!")
 })
 
-server.post("/", func(w, r) {
+server.post("/", fn(w, r) {
     w.send("Hello World!")
 })
 
-server.put("/", func(w, r) {
+server.put("/", fn(w, r) {
     w.send("Hello World!")
 })
 
-server.delete("/", func(w, r) {
+server.delete("/", fn(w, r) {
     w.send("Hello World!")
 })
 
-server.patch("/", func(w, r) {
+server.patch("/", fn(w, r) {
     w.send("Hello World!")
 })
 
-server.options("/", func(w, r) {
+server.options("/", fn(w, r) {
     w.send("Hello World!")
 })
 
-server.head("/", func(w, r) {
+server.head("/", fn(w, r) {
     w.send("Hello World!")
 })
 ```
@@ -73,7 +73,7 @@ To see more about the writer and the request, see the [writer](#writer) and [req
 You can register a path parameter by using `{name}` in the route.
 
 ```ts
-server.get("/user/{id}", func(w, r) {
+server.get("/user/{id}", fn(w, r) {
     w.send("Hello World!")
 })
 ```
@@ -111,7 +111,7 @@ It has the following methods:
 `writer.send` is a function that sends a string to the response.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.send("Hello World!")
 })
 ```
@@ -121,7 +121,7 @@ server.get("/", func(w, r) {
 `writer.json` is a function that sends a JSON object to the response.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.json({ "message": "Hello World!" })
 })
 ```
@@ -142,13 +142,13 @@ and a third optional argument:
 - `options`: an object that can contain: `max_age`, `domain`, `path`, `secure`, `http_only`, `same_site`
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.set_cookie("name", "value")
 })
 ```
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.cookie.set("name", "value", {
         "max_age": 3600,         // Cookie expiration time in seconds
         "domain": "example.com", // Cookie domain
@@ -165,7 +165,7 @@ server.get("/", func(w, r) {
 `writer.cookie.delete` is a function that deletes a cookie.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.cookie.delete("name")
 })
 ```
@@ -175,7 +175,7 @@ server.get("/", func(w, r) {
 `writer.status` is a function that sets the status code of the response.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.status(http.status.ok)
 })
 ```
@@ -191,7 +191,7 @@ To see all the status codes, see the [status](#status) section.
 `writer.header.set` is a function that sets a header.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.header.set("Content-Type", "application/json")
 })
 ```
@@ -201,7 +201,7 @@ server.get("/", func(w, r) {
 `writer.header.add` is a function that adds a header.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.header.add("Content-Type", "application/json")
 })
 ```
@@ -211,7 +211,7 @@ server.get("/", func(w, r) {
 `writer.header.del` is a function that deletes a header.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     w.header.del("Content-Type")
 })
 ```
@@ -221,7 +221,7 @@ server.get("/", func(w, r) {
 `writer.header.get` is a function that gets a header value.
 
 ```ts
-server.get("/", func(w, r) {
+server.get("/", fn(w, r) {
     const contentType = w.header.get("Content-Type")
 })
 ```
@@ -248,7 +248,7 @@ It contains the following methods:
 `request.path_param` is a function that gets a path parameter.
 
 ```ts
-server.get("/user/{id}", func(w, r) {
+server.get("/user/{id}", fn(w, r) {
     const id = r.path_param("id")
 })
 ```
@@ -258,7 +258,7 @@ server.get("/user/{id}", func(w, r) {
 `request.query_param` is a function that gets a query parameter.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const id = r.query_param("id")
 })
 ```
@@ -270,7 +270,7 @@ When the query parameter is not found, it returns `null`.
 `request.body` is a function that gets the request body.
 
 ```ts
-server.post("/user", func(w, r) {
+server.post("/user", fn(w, r) {
     const body = r.body()
 })
 ```
@@ -280,7 +280,7 @@ server.post("/user", func(w, r) {
 `request.json` is a function that gets the request body as a JSON object.
 
 ```ts
-server.post("/user", func(w, r) {
+server.post("/user", fn(w, r) {
     const body = r.json()
 })
 ```
@@ -290,7 +290,7 @@ server.post("/user", func(w, r) {
 `request.method` is a function that gets the request method.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const method = r.method()
 })
 ```
@@ -300,7 +300,7 @@ server.get("/user", func(w, r) {
 `request.url` is a function that gets the request URL.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const url = r.url()
 })
 ```
@@ -310,7 +310,7 @@ server.get("/user", func(w, r) {
 `request.header` is a function that gets the request header value.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const contentType = r.header("Content-Type")
 })
 ```
@@ -322,7 +322,7 @@ When the header is not found, it returns `null`.
 `request.headers` is a function that gets the request headers.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const headers = r.headers()
 })
 ```
@@ -332,7 +332,7 @@ server.get("/user", func(w, r) {
 `request.cookie` is a function that gets the request cookie value.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const cookie = r.cookie("name")
 })
 ```
@@ -344,7 +344,7 @@ If the cookie is not found, it returns `null`.
 `request.cookies` is a function that gets the request cookies.
 
 ```ts
-server.get("/user", func(w, r) {
+server.get("/user", fn(w, r) {
     const cookies = r.cookies()
 })
 ```
@@ -433,5 +433,3 @@ http.methods.options // "OPTIONS"
 http.methods.trace // "TRACE"
 http.methods.connect // "CONNECT"
 ```
-
-

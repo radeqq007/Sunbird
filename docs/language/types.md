@@ -50,7 +50,7 @@ let map: Hash = {"a": 1, "b": 2, "c": 3}
 
 `Func` for functions.
 ```ts
-let add: Func = func(a: Int, b: Int): Int { return a + b }
+let add: Fn = fn(a: Int, b: Int): Int { return a + b }
 ```
 
 ## Nullable types

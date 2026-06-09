@@ -1019,7 +1019,7 @@ func TestIfElseIfExpression(t *testing.T) {
 }
 
 func TestFunctionLiteralParsing(t *testing.T) {
-	input := "func (x, y) { x + y; }"
+	input := "fn (x, y) { x + y; }"
 
 	l := lexer.New(input)
 	p := parser.New(l)
@@ -1075,9 +1075,9 @@ func TestFunctionParameterParsing(t *testing.T) {
 		input          string
 		expectedParams []string
 	}{
-		{input: "func() {};", expectedParams: []string{}},
-		{input: "func(a) {};", expectedParams: []string{"a"}},
-		{input: "func(a, b, c) {};", expectedParams: []string{"a", "b", "c"}},
+		{input: "fn() {};", expectedParams: []string{}},
+		{input: "fn(a) {};", expectedParams: []string{"a"}},
+		{input: "fn(a, b, c) {};", expectedParams: []string{"a", "b", "c"}},
 	}
 
 	for _, tt := range tests {
@@ -1393,7 +1393,7 @@ func TestTypeAnnotationsOnLetAndConst(t *testing.T) {
 		{"let e: Void = null", "e", "Void"},
 		{"let f: Array = []", "f", "Array"},
 		{"let g: Hash = {}", "g", "Hash"},
-		{"let h: Func = func() {}", "h", "Func"},
+		{"let h: Fn = fn() {}", "h", "Fn"},
 		{"const i: Int = 42", "i", "Int"},
 	}
 
@@ -1440,7 +1440,7 @@ func TestNullableTypeAnnotations(t *testing.T) {
 		{"let c: Bool? = null", "Bool?"},
 		{"let d: Array? = null", "Array?"},
 		{"let e: Hash? = null", "Hash?"},
-		{"let f: Func? = null", "Func?"},
+		{"let f: Fn? = null", "Fn?"},
 	}
 
 	for _, tt := range tests {
@@ -1472,9 +1472,9 @@ func TestFunctionReturnTypeAnnotation(t *testing.T) {
 		input          string
 		expectedReturn string
 	}{
-		{"func(a: Int, b: Int): Int { a + b }", "Int"},
-		{"func(x: String): String { x }", "String"},
-		{"func(): Bool { true }", "Bool"},
+		{"fn(a: Int, b: Int): Int { a + b }", "Int"},
+		{"fn(x: String): String { x }", "String"},
+		{"fn(): Bool { true }", "Bool"},
 	}
 
 	for _, tt := range tests {
@@ -1499,7 +1499,7 @@ func TestFunctionReturnTypeAnnotation(t *testing.T) {
 }
 
 func TestFunctionParameterTypeAnnotations(t *testing.T) {
-	input := "func(a: Int, b: String, c: Bool) {}"
+	input := "fn(a: Int, b: String, c: Bool) {}"
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()

@@ -285,7 +285,7 @@ func TestLetStatements(t *testing.T) {
 }
 
 func TestFunctionObject(t *testing.T) {
-	input := "func(x) { x + 2; };"
+	input := "fn(x) { x + 2; };"
 
 	evaluated := testEval(input)
 
@@ -314,12 +314,12 @@ func TestFunctionApplication(t *testing.T) {
 		input    string
 		expected int64
 	}{
-		{"let identity = func(x) { x; }; identity(5);", 5},
-		{"let identity = func(x) { return x; }; identity(5);", 5},
-		{"let double = func(x) { x * 2; }; double(5);", 10},
-		{"let add = func(x, y) { x + y; }; add(5, 5);", 10},
-		{"let add = func(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
-		{"func(x) { x; }(5)", 5},
+		{"let identity = fn(x) { x; }; identity(5);", 5},
+		{"let identity = fn(x) { return x; }; identity(5);", 5},
+		{"let double = fn(x) { x * 2; }; double(5);", 10},
+		{"let add = fn(x, y) { x + y; }; add(5, 5);", 10},
+		{"let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"fn(x) { x; }(5)", 5},
 	}
 
 	for _, tt := range tests {
@@ -329,8 +329,8 @@ func TestFunctionApplication(t *testing.T) {
 
 func TestClosures(t *testing.T) {
 	input := `
-let newAdder = func(x) {
-  func(y) { x + y };
+let newAdder = fn(x) {
+  fn(y) { x + y };
 };
 let addTwo = newAdder(2);
 addTwo(2);`
@@ -541,23 +541,23 @@ func TestFunctionTypeChecking(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			"let identity = func(x: Int): Int { x; }; identity(5);",
+			"let identity = fn(x: Int): Int { x; }; identity(5);",
 			"", // Should pass
 		},
 		{
-			"let identity = func(x: String): String { x; }; identity(5);",
+			"let identity = fn(x: String): String { x; }; identity(5);",
 			"TypeError: expected String, got Integer",
 		},
 		{
-			"let add = func(a: Int, b: Int): Int { a + b; }; add(1, 2);",
+			"let add = fn(a: Int, b: Int): Int { a + b; }; add(1, 2);",
 			"", // Should pass
 		},
 		{
-			"let add = func(a: Int, b: Int) { a + b; }; add('1', '2');",
+			"let add = fn(a: Int, b: Int) { a + b; }; add('1', '2');",
 			"TypeError: expected Int, got String",
 		},
 		{
-			"let identity = func(x: Float) { x; }; identity(\"hello\");",
+			"let identity = fn(x: Float) { x; }; identity(\"hello\");",
 			"TypeError: expected Float, got String",
 		},
 	}

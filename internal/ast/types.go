@@ -47,7 +47,7 @@ type FunctionType struct {
 func (ft *FunctionType) typeAnnotation()      {}
 func (ft *FunctionType) TokenLiteral() string { return ft.Token.Literal }
 func (ft *FunctionType) String() string {
-	return "Func"
+	return "Fn"
 }
 
 // OptionalType is for optional types like int?

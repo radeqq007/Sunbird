@@ -77,7 +77,7 @@ const (
 	TypeRange  TokenType = "TYPE_RANGE"
 
 	// Keywords
-	Function TokenType = "FUNC"
+	Function TokenType = "FN"
 	Let      TokenType = "LET"
 	Const    TokenType = "CONST"
 	True     TokenType = "TRUE"

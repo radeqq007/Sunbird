@@ -14,7 +14,7 @@ Variables hold values. You can declare them with `let` (mutable) or `const` (imm
 let age = 18
 const name = "Bojack"
 
-age = 19        // ✅ mutable variable can be updated
+age = 19       // ✅ mutable variable can be updated
 
 name = "Diane" // ❌ this will throw an error
 ```
@@ -23,10 +23,10 @@ name = "Diane" // ❌ this will throw an error
 
 ## Functions
 
-Functions are reusable blocks of code. You declare them with the `func` keyword.
+Functions are reusable blocks of code. You declare them with the `fn` keyword.
 
 ```ts
-let add = func(a: Int, b: Int): Int {
+let add = fn(a: Int, b: Int): Int {
   return a + b
 }
 
@@ -36,9 +36,9 @@ io.println(result) // 8
 
 Functions can be passed around like variables:
 ```ts
-let double = func(x: Int): Int { x * 2 }
+let double = fn(x: Int): Int { x * 2 }
 
-let applyFunc = func(f: Func, value: Int): Int { f(value) }
+let applyFunc = fn(f: Func, value: Int): Int { f(value) }
 
 io.println(applyFunc(double, 10)) // 20
 ```

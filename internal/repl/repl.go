@@ -17,7 +17,7 @@ import (
 const PROMPT = "$ "
 
 var keywords = []prompt.Suggest{
-	{Text: "func", Description: "Define a function"},
+	{Text: "fn", Description: "Define a function"},
 	{Text: "let", Description: "Variable declaration"},
 	{Text: "const", Description: "Variable declaration"},
 	{Text: "true", Description: "Boolean true"},
@@ -39,7 +39,7 @@ var keywords = []prompt.Suggest{
 	{Text: "Void", Description: "Void type"},
 	{Text: "Array", Description: "Array type"},
 	{Text: "Hash", Description: "Hash type"},
-	{Text: "Func", Description: "Function type"},
+	{Text: "Fn", Description: "Function type"},
 	{Text: "try", Description: "Try block for exception handling"},
 	{Text: "catch", Description: "Catch block for exception handling"},
 	{Text: "finally", Description: "Finally block for exception handling"},
@@ -87,10 +87,6 @@ func Start(in io.Reader, out io.Writer) {
 
 		return prompt.FilterHasPrefix(keywords, d.GetWordBeforeCursor(), true)
 	}
-
-	// highlight := func(input string) []prompt. {
-	// return sunbirdLexer(input)
-	// }
 
 	p := prompt.New(
 		executor,

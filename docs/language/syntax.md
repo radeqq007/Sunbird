@@ -10,10 +10,10 @@ const y = 10
 
 ## Functions
 
-Functions are expressions and can be assigned to variables or passed as arguments to other functions and are declared using the `func` keyword.
+Functions are expressions and can be assigned to variables or passed as arguments to other functions and are declared using the `fn` keyword.
 
 ```ts
-let add = func(a, b) {
+let add = fn(a, b) {
   return a + b
 }
 ```
@@ -103,7 +103,7 @@ let x: Int? = null
 
 To declare a function with a return type you can use the `:` operator after the function name.
 ```ts
-let add = func(a: Int, b: Int): Int {
+let add = fn(a: Int, b: Int): Int {
   return a + b
 }
 ```
@@ -111,7 +111,7 @@ let add = func(a: Int, b: Int): Int {
 You can also omit the `return` keyword if the last expression is the return value.
 
 ```ts
-let add = func(a: Int, b: Int): Int {
+let add = fn(a: Int, b: Int): Int {
   a + b
 }
 ```

@@ -29,7 +29,7 @@ io.println("Hello world")
 let a = 1
 const b: Int = 2
 
-const add = func(a: Int, b: Int): Int {
+const add = fn(a: Int, b: Int): Int {
     return a + b
 }
 
@@ -86,7 +86,7 @@ let c: String = "hello"
 let d: Bool = true
 let e: Void = null
 let f: Array = [1, 2, 3]
-let g: Func = func(a: Int, b: Int): Int {
+let g: Fn = fn(a: Int, b: Int): Int {
   return a + b
 }
 let h: Hash = {1: 1, 2: 2, 3: 3}
@@ -97,7 +97,7 @@ let i: Int? = null
 let j: String? = "hello"
 let d: Bool? = true
 let e: Array? = [1, 2, 3]
-let f: Func? = func(a: Int, b: Int): Int {
+let f: Fn? = fn(a: Int, b: Int): Int {
     return a + b
 }
 let g: Hash? = {1: 1, 2: 2, 3: 3}

@@ -198,7 +198,7 @@ func (v Value) Inspect() string {
 		for _, p := range fn.Parameters {
 			params = append(params, p.String())
 		}
-		out.WriteString("func")
+		out.WriteString("fn")
 		out.WriteString("(")
 		out.WriteString(strings.Join(params, ", "))
 		out.WriteString(") {\n")
