@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/token"
 )
 
 type TypeAnnotation interface {
@@ -47,7 +47,7 @@ type FunctionType struct {
 func (ft *FunctionType) typeAnnotation()      {}
 func (ft *FunctionType) TokenLiteral() string { return ft.Token.Literal }
 func (ft *FunctionType) String() string {
-	return "Fn"
+	return "Func"
 }
 
 // OptionalType is for optional types like int?

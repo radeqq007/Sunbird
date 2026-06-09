@@ -2,10 +2,8 @@ package parser
 
 import (
 	"strconv"
-	"strings"
-
-	"github.com/radeqq007/sunbird/internal/ast"
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/ast"
+	"sunbird/internal/token"
 )
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
@@ -39,35 +37,7 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 }
 
 func (p *Parser) parseStringLiteral() ast.Expression {
-	var val strings.Builder
-	containsExpression := false
-	i := 0
-	literal := p.curToken.Literal
-	for i < len(literal) {
-		cur := string(literal[i])
-
-		if cur == "$" {
-			if i > 0 && literal[i-1] == '\\' {
-				i++
-				val.WriteString(cur)
-				continue
-			}
-
-			// TODO: this still allows for broken string interpolation (e.g. "${example")
-
-			containsExpression = true
-
-			start := i + 1 // without the $
-			for i < len(literal) && literal[i] != ' ' {
-				i++
-			}
-			val.WriteString("${" + literal[start:i] + "}")
-			continue
-		}
-		val.WriteString(cur)
-		i++
-	}
-	return &ast.StringLiteral{Token: p.curToken, Value: val.String(), ContainsExpression: containsExpression}
+	return &ast.StringLiteral{Token: p.curToken, Value: p.curToken.Literal}
 }
 
 func (p *Parser) parseBoolean() ast.Expression {

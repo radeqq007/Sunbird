@@ -1,13 +1,6 @@
 # Installation
 
-You can install sunbird by running:
-
-```sh
-go install github.com/radeqq007/sunbird/cmd/sunbird@latest
-```
-
-Or by compiling it yourself:
-
+In order to get the Sunbird interpreter up and running you need to compile it from source.
 ```sh
 git clone https://github.com/radeqq007/sunbird.git
 cd sunbird

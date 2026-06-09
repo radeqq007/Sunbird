@@ -3,8 +3,7 @@ package ast
 import (
 	"bytes"
 	"strings"
-
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/token"
 )
 
 type ExpressionStatement struct {

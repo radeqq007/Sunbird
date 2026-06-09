@@ -2,10 +2,9 @@ package parser
 
 import (
 	"fmt"
-
-	"github.com/radeqq007/sunbird/internal/ast"
-	"github.com/radeqq007/sunbird/internal/lexer"
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/ast"
+	"sunbird/internal/lexer"
+	"sunbird/internal/token"
 )
 
 type Parser struct {

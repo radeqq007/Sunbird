@@ -15,5 +15,3 @@
 
 go.work
 go.work.sum
-
-internal/runtime/node_modules

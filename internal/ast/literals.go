@@ -3,8 +3,7 @@ package ast
 import (
 	"bytes"
 	"strings"
-
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/token"
 )
 
 type ArrayLiteral struct {
@@ -49,9 +48,8 @@ func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
 type StringLiteral struct {
-	Token              token.Token
-	Value              string
-	ContainsExpression bool
+	Token token.Token
+	Value string
 }
 
 func (sl *StringLiteral) expressionNode()      {}

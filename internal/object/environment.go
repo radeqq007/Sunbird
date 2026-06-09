@@ -1,6 +1,6 @@
 package object
 
-import "github.com/radeqq007/sunbird/internal/ast"
+import "sunbird/internal/ast"
 
 type Environment struct {
 	store     map[string]Value

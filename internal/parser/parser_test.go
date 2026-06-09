@@ -3,11 +3,10 @@ package parser_test
 import (
 	"fmt"
 	"strconv"
+	"sunbird/internal/ast"
+	"sunbird/internal/lexer"
+	"sunbird/internal/parser"
 	"testing"
-
-	"github.com/radeqq007/sunbird/internal/ast"
-	"github.com/radeqq007/sunbird/internal/lexer"
-	"github.com/radeqq007/sunbird/internal/parser"
 )
 
 func TestLetStatements(t *testing.T) {
@@ -1020,7 +1019,7 @@ func TestIfElseIfExpression(t *testing.T) {
 }
 
 func TestFunctionLiteralParsing(t *testing.T) {
-	input := "fn (x, y) { x + y; }"
+	input := "func (x, y) { x + y; }"
 
 	l := lexer.New(input)
 	p := parser.New(l)
@@ -1076,9 +1075,9 @@ func TestFunctionParameterParsing(t *testing.T) {
 		input          string
 		expectedParams []string
 	}{
-		{input: "fn() {};", expectedParams: []string{}},
-		{input: "fn(a) {};", expectedParams: []string{"a"}},
-		{input: "fn(a, b, c) {};", expectedParams: []string{"a", "b", "c"}},
+		{input: "func() {};", expectedParams: []string{}},
+		{input: "func(a) {};", expectedParams: []string{"a"}},
+		{input: "func(a, b, c) {};", expectedParams: []string{"a", "b", "c"}},
 	}
 
 	for _, tt := range tests {
@@ -1394,7 +1393,7 @@ func TestTypeAnnotationsOnLetAndConst(t *testing.T) {
 		{"let e: Void = null", "e", "Void"},
 		{"let f: Array = []", "f", "Array"},
 		{"let g: Hash = {}", "g", "Hash"},
-		{"let h: Fn = fn() {}", "h", "Fn"},
+		{"let h: Func = func() {}", "h", "Func"},
 		{"const i: Int = 42", "i", "Int"},
 	}
 
@@ -1441,7 +1440,7 @@ func TestNullableTypeAnnotations(t *testing.T) {
 		{"let c: Bool? = null", "Bool?"},
 		{"let d: Array? = null", "Array?"},
 		{"let e: Hash? = null", "Hash?"},
-		{"let f: Fn? = null", "Fn?"},
+		{"let f: Func? = null", "Func?"},
 	}
 
 	for _, tt := range tests {
@@ -1473,9 +1472,9 @@ func TestFunctionReturnTypeAnnotation(t *testing.T) {
 		input          string
 		expectedReturn string
 	}{
-		{"fn(a: Int, b: Int): Int { a + b }", "Int"},
-		{"fn(x: String): String { x }", "String"},
-		{"fn(): Bool { true }", "Bool"},
+		{"func(a: Int, b: Int): Int { a + b }", "Int"},
+		{"func(x: String): String { x }", "String"},
+		{"func(): Bool { true }", "Bool"},
 	}
 
 	for _, tt := range tests {
@@ -1500,7 +1499,7 @@ func TestFunctionReturnTypeAnnotation(t *testing.T) {
 }
 
 func TestFunctionParameterTypeAnnotations(t *testing.T) {
-	input := "fn(a: Int, b: String, c: Bool) {}"
+	input := "func(a: Int, b: String, c: Bool) {}"
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()

@@ -11,11 +11,19 @@ type Config struct {
 }
 
 type PackageInfo struct {
-	Name        string   `toml:"name"`
-	Version     string   `toml:"version"`
-	Description string   `toml:"description"`
-	Authors     []string `toml:"authors"`
-	Main        string   `toml:"main"`
+	Name         string           `toml:"name"`
+	Version      string           `toml:"version"`
+	Description  string           `toml:"description"`
+	Authors      []string         `toml:"authors"`
+	Main         string           `toml:"main"`
+	Dependencies []DependencyInfo `toml:"dependencies"`
+}
+
+type DependencyInfo struct {
+	Git     string `toml:"git"`
+	Version string `toml:"version"`
+	Tag     string `toml:"tag"`
+	Path    string `toml:"path"`
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -46,4 +54,15 @@ func SaveConfig(path string, config *Config) error {
 	}
 
 	return nil
+}
+
+func AddDependency(path, name string, dependency DependencyInfo) error {
+	config, err := LoadConfig(path)
+	if err != nil {
+		return err
+	}
+
+	config.Package.Dependencies = append(config.Package.Dependencies, dependency)
+
+	return SaveConfig(path, config)
 }

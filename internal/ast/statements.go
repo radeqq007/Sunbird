@@ -2,8 +2,7 @@ package ast
 
 import (
 	"bytes"
-
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/token"
 )
 
 type BlockStatement struct {

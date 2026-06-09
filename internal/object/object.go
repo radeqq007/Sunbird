@@ -7,9 +7,8 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sunbird/internal/ast"
 	"unsafe"
-
-	"github.com/radeqq007/sunbird/internal/ast"
 )
 
 // ApplyFunction is a hook to allow calling functions from modules
@@ -111,12 +110,12 @@ type Function struct {
 }
 
 type CallContext struct {
-	Line int
-	Col  int
+    Line int
+    Col  int
 }
 
 func NewCallContext(line, col int) CallContext {
-	return CallContext{Line: line, Col: col}
+	return CallContext{ Line: line, Col: col}
 }
 
 type BuiltinFunction func(ctx CallContext, args ...Value) Value
@@ -199,7 +198,7 @@ func (v Value) Inspect() string {
 		for _, p := range fn.Parameters {
 			params = append(params, p.String())
 		}
-		out.WriteString("fn")
+		out.WriteString("func")
 		out.WriteString("(")
 		out.WriteString(strings.Join(params, ", "))
 		out.WriteString(") {\n")

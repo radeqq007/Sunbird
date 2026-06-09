@@ -2,9 +2,9 @@ package lexer
 
 import (
 	"errors"
+	"fmt"
 	"strings"
-
-	"github.com/radeqq007/sunbird/internal/token"
+	"sunbird/internal/token"
 )
 
 type Lexer struct {
@@ -17,7 +17,7 @@ type Lexer struct {
 }
 
 var keywords = map[string]token.TokenType{
-	"fn":       token.Function,
+	"func":     token.Function,
 	"let":      token.Let,
 	"const":    token.Const,
 	"true":     token.True,
@@ -42,7 +42,7 @@ var keywords = map[string]token.TokenType{
 	"Bool":     token.TypeBool,
 	"Void":     token.TypeVoid,
 	"Array":    token.TypeArray,
-	"Fn":       token.TypeFunc,
+	"Func":     token.TypeFunc,
 	"Hash":     token.TypeHash,
 	"Range":    token.TypeRange,
 	"in":       token.In,
@@ -88,6 +88,26 @@ func (l *Lexer) readString() (string, error) {
 	for l.ch != startingQuote {
 		if l.ch == 0 {
 			return "", errors.New("unterminated string")
+		}
+
+		if l.ch == '\\' {
+			l.readChar()
+			switch l.ch {
+			case 'n':
+				result.WriteByte('\n')
+			case 't':
+				result.WriteByte('\t')
+			case 'r':
+				result.WriteByte('\r')
+			case '\\':
+				result.WriteByte('\\')
+			case startingQuote:
+				result.WriteByte(startingQuote)
+			default:
+				return "", fmt.Errorf("invalid escape sequence: %c", l.ch)
+			}
+			l.readChar()
+			continue
 		}
 
 		result.WriteByte(l.ch)

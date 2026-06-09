@@ -1,17 +1,16 @@
 package lexer_test
 
 import (
+	"sunbird/internal/lexer"
+	"sunbird/internal/token"
 	"testing"
-
-	"github.com/radeqq007/sunbird/internal/lexer"
-	"github.com/radeqq007/sunbird/internal/token"
 )
 
 func TestNextToken(t *testing.T) {
 	input := `let five = 5;
 let ten = 10;
 
-let add = fn(x, y) {
+let add = func(x, y) {
   x + y;
 };
 
@@ -55,7 +54,7 @@ if (5 < 10) {
 		{token.Let, "let"},
 		{token.Ident, "add"},
 		{token.Assign, "="},
-		{token.Function, "fn"},
+		{token.Function, "func"},
 		{token.LParen, "("},
 		{token.Ident, "x"},
 		{token.Comma, ","},
