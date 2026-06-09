@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/radeqq007/sunbird/internal/ast"
 	"github.com/radeqq007/sunbird/internal/lexer"
-	"sunbird/internal/token"
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 type Parser struct {
