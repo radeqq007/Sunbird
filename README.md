@@ -3,11 +3,13 @@
 </div>
 
 # Sunbird
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/radeqq007/Sunbird)
 [![Build](https://github.com/radeqq007/Sunbird/actions/workflows/build.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/build.yml)
+[![Lint](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml)
 [![Tests](https://github.com/radeqq007/Sunbird/actions/workflows/tests.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/tests.yml)
 [![Coverage](https://codecov.io/gh/radeqq007/sunbird/branch/main/graph/badge.svg)](https://codecov.io/gh/radeqq007/sunbird)
-[![Lint](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml)
-
+![Last commit](https://img.shields.io/github/last-commit/radeqq007/Sunbird)
+![GitHub stars](https://img.shields.io/github/stars/radeqq007/sunbird?style=social)
 
 Sunbird is dynamically-typed (with optional type annotations), interpreted programming language that focuses on **ease of use** and **clarity**.
 
