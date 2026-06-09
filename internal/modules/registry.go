@@ -1,17 +1,17 @@
 package modules
 
 import (
-	"sunbird/internal/modules/array"
-	"sunbird/internal/modules/errors"
-	"sunbird/internal/modules/fs"
-	"sunbird/internal/modules/http"
-	"sunbird/internal/modules/io"
-	"sunbird/internal/modules/json"
-	"sunbird/internal/modules/math"
-	"sunbird/internal/modules/random"
-	"sunbird/internal/modules/str"
-	"sunbird/internal/modules/time"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/modules/array"
+	"github.com/radeqq007/sunbird/internal/modules/errors"
+	"github.com/radeqq007/sunbird/internal/modules/fs"
+	"github.com/radeqq007/sunbird/internal/modules/http"
+	"github.com/radeqq007/sunbird/internal/modules/io"
+	"github.com/radeqq007/sunbird/internal/modules/json"
+	"github.com/radeqq007/sunbird/internal/modules/math"
+	"github.com/radeqq007/sunbird/internal/modules/random"
+	"github.com/radeqq007/sunbird/internal/modules/str"
+	"github.com/radeqq007/sunbird/internal/modules/time"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func init() {

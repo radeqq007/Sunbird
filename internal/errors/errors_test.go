@@ -2,8 +2,8 @@ package errors_test
 
 import (
 	"strings"
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 	"testing"
 )
 

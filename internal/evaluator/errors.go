@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func isError(obj object.Value) bool {

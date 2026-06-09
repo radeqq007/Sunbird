@@ -7,7 +7,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/ast"
 	"unsafe"
 )
 

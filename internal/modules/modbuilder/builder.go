@@ -1,6 +1,6 @@
 package modbuilder
 
-import "sunbird/internal/object"
+import "github.com/radeqq007/sunbird/internal/object"
 
 type ModuleBuilder struct {
 	pairs map[string]object.Value

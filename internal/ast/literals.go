@@ -3,7 +3,7 @@ package ast
 import (
 	"bytes"
 	"strings"
-	"sunbird/internal/token"
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 type ArrayLiteral struct {

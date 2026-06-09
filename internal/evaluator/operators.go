@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func evalPrefixExpression(operator string, right object.Value, line, col int) object.Value {

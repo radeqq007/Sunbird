@@ -2,8 +2,8 @@ package math_test
 
 import (
 	m "math"
-	"sunbird/internal/modules/math"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/modules/math"
+	"github.com/radeqq007/sunbird/internal/object"
 	"testing"
 )
 

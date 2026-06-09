@@ -1,9 +1,9 @@
 package evaluator
 
 import (
-	"sunbird/internal/ast"
-	"sunbird/internal/errors"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/errors"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 func evalAssignment(name ast.Expression, val object.Value, env *object.Environment) object.Value {

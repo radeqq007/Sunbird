@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"sunbird/internal/ast"
-	"sunbird/internal/token"
+	"github.com/radeqq007/sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/token"
 )
 
 func (p *Parser) parseStatement() ast.Statement {

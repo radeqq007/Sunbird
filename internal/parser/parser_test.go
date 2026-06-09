@@ -3,9 +3,9 @@ package parser_test
 import (
 	"fmt"
 	"strconv"
-	"sunbird/internal/ast"
-	"sunbird/internal/lexer"
-	"sunbird/internal/parser"
+	"github.com/radeqq007/sunbird/internal/ast"
+	"github.com/radeqq007/sunbird/internal/lexer"
+	"github.com/radeqq007/sunbird/internal/parser"
 	"testing"
 )
 

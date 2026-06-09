@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/object"
 )
 
 type ErrorCode int

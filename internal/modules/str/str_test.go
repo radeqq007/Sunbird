@@ -1,7 +1,7 @@
 package str
 
 import (
-	"sunbird/internal/object"
+	"github.com/radeqq007/sunbird/internal/object"
 	"testing"
 )
 
