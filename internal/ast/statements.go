@@ -67,6 +67,23 @@ func (ws *WhileStatement) String() string {
 	return out.String()
 }
 
+type LoopStatement struct {
+	Token token.Token
+	Body  *BlockStatement
+}
+
+func (ls *LoopStatement) statementNode()       {}
+func (ls *LoopStatement) TokenLiteral() string { return ls.Token.Literal }
+
+func (ls *LoopStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("loop ")
+	out.WriteString(ls.Body.String())
+
+	return out.String()
+}
+
 type BreakStatement struct {
 	Token token.Token
 }

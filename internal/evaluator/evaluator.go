@@ -74,6 +74,9 @@ func evalStatement(node ast.Statement, env *object.Environment) object.Value {
 	case *ast.WhileStatement:
 		return evalWhileStatement(stmt, env)
 
+	case *ast.LoopStatement:
+		return evalLoopStatement(stmt, env)
+
 	case *ast.TryCatchStatement:
 		return evalTryCatchStatement(stmt, env)
 

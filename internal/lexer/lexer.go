@@ -29,6 +29,7 @@ var keywords = map[string]token.TokenType{
 	"null":     token.Null,
 	"for":      token.For,
 	"while":    token.While,
+	"loop":     token.Loop,
 	"import":   token.Import,
 	"export":   token.Export,
 	"as":       token.As,

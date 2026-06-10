@@ -88,6 +88,7 @@ const (
 	Null     TokenType = "NULL"
 	For      TokenType = "FOR"
 	While    TokenType = "WHILE"
+	Loop     TokenType = "LOOP"
 	Import   TokenType = "IMPORT"
 	Export   TokenType = "EXPORT"
 	As       TokenType = "AS"

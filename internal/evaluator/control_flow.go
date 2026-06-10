@@ -174,6 +174,27 @@ func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.
 	return result
 }
 
+func evalLoopStatement(ls *ast.LoopStatement, env *object.Environment) object.Value {
+	for {
+		loopEnv := object.NewEnclosedEnvironment(env)
+		result := Eval(ls.Body, loopEnv)
+		if isError(result) {
+			return result
+		}
+
+		if !result.IsNull() {
+			switch result.Kind() {
+			case object.ReturnValueKind:
+				return result
+			case object.BreakKind:
+				return NULL
+			case object.ContinueKind:
+				// Fallthrough to update
+			}
+		}
+	}
+}
+
 func evalTryCatchStatement(tcs *ast.TryCatchStatement, env *object.Environment) object.Value {
 	tryResult := Eval(tcs.Try, env)
 
