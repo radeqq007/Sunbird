@@ -68,7 +68,9 @@ func (oe *InfixExpression) String() string {
 
 	out.WriteString("(")
 	out.WriteString(oe.Left.String())
-	out.WriteString(" " + oe.Operator + " ")
+	out.WriteString(" ")
+	out.WriteString(oe.Operator)
+	out.WriteString(" ")
 	out.WriteString(oe.Right.String())
 	out.WriteString(")")
 
@@ -218,7 +220,8 @@ func (ls *LetExpression) TokenLiteral() string { return ls.Token.Literal }
 func (ls *LetExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.TokenLiteral())
+	out.WriteString(" ")
 	if !ls.IsConst {
 		out.WriteString("mut ")
 	}

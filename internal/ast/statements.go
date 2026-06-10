@@ -94,7 +94,8 @@ func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(rs.TokenLiteral() + " ")
+	out.WriteString(rs.TokenLiteral())
+	out.WriteString(" ")
 
 	if rs.ReturnValue != nil {
 		out.WriteString(rs.ReturnValue.String())
