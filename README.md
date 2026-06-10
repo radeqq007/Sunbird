@@ -25,11 +25,15 @@ io.println("Hello world")
 ```
 
 ### Defining variables and functions
-```ts
+```rs
+// `let` defines an immutable variable
 let a = 1
-const b: Int = 2
+let b: Int = 2
 
-const add = fn(a: Int, b: Int): Int {
+// to define mutable variables, use `let mut`
+let mut x = 20 
+
+let add = fn(a: Int, b: Int): Int {
     return a + b
 }
 
@@ -37,10 +41,10 @@ add(a, b)
 ```
 
 ### Control flow
-```ts
+```rs
 import "io"
 
-let a = 1
+let mut a = 1
 let b = 2
 
 if a > b {
@@ -79,7 +83,7 @@ try {
 ```
 
 ### Type annotations
-```ts
+```rs
 let a: Int = 1
 let b: Float = 2.0
 let c: String = "hello"
