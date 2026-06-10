@@ -97,10 +97,17 @@ o
 
 ## While loops
 While loops are used to execute code repeatedly while a condition is true.
-```ts
+```rs
 while x > 0 {
   io.println(x)
   x = x - 1
+}
+```
+
+## Infinite loops
+```rs
+loop {
+  io.println("This will run forever!")
 }
 ```
 
