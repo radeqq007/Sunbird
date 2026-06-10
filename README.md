@@ -8,6 +8,7 @@
 [![Lint](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/golangci-lint.yml)
 [![Tests](https://github.com/radeqq007/Sunbird/actions/workflows/tests.yml/badge.svg)](https://github.com/radeqq007/Sunbird/actions/workflows/tests.yml)
 [![Coverage](https://codecov.io/gh/radeqq007/sunbird/branch/main/graph/badge.svg)](https://codecov.io/gh/radeqq007/sunbird)
+[![Go Report Card](https://goreportcard.com/badge/github.com/radeqq007/sunbird)](https://goreportcard.com/report/github.com/radeqq007/sunbird)
 ![Last commit](https://img.shields.io/github/last-commit/radeqq007/Sunbird)
 ![GitHub stars](https://img.shields.io/github/stars/radeqq007/sunbird?style=social)
 
