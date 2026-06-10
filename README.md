@@ -73,6 +73,10 @@ while a <= b {
     }
 }
 
+loop {
+    io.println("This will run forever!")
+}
+
 try {
     let c = 1 / 0
 } catch e {
