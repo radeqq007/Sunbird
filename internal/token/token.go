@@ -79,7 +79,7 @@ const (
 	// Keywords
 	Function TokenType = "FN"
 	Let      TokenType = "LET"
-	Const    TokenType = "CONST"
+	Mut      TokenType = "MUT"
 	True     TokenType = "TRUE"
 	False    TokenType = "FALSE"
 	If       TokenType = "IF"

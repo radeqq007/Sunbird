@@ -3,6 +3,7 @@ package ast
 import (
 	"bytes"
 	"strings"
+
 	"github.com/radeqq007/sunbird/internal/token"
 )
 
@@ -204,10 +205,11 @@ func (ie *IfExpression) String() string {
 }
 
 type LetExpression struct {
-	Token token.Token
-	Name  Expression
-	Type  TypeAnnotation
-	Value Expression
+	Token   token.Token
+	Name    Expression
+	IsConst bool
+	Type    TypeAnnotation
+	Value   Expression
 }
 
 func (ls *LetExpression) expressionNode()      {}
@@ -217,6 +219,9 @@ func (ls *LetExpression) String() string {
 	var out bytes.Buffer
 
 	out.WriteString(ls.TokenLiteral() + " ")
+	if !ls.IsConst {
+		out.WriteString("mut ")
+	}
 	out.WriteString(ls.Name.String())
 
 	if ls.Type != nil {
@@ -228,37 +233,6 @@ func (ls *LetExpression) String() string {
 
 	if ls.Value != nil {
 		out.WriteString(ls.Value.String())
-	}
-
-	out.WriteString(";")
-
-	return out.String()
-}
-
-type ConstExpression struct {
-	Token token.Token
-	Name  Expression
-	Type  TypeAnnotation
-	Value Expression
-}
-
-func (cs *ConstExpression) expressionNode()      {}
-func (cs *ConstExpression) TokenLiteral() string { return cs.Token.Literal }
-
-func (cs *ConstExpression) String() string {
-	var out bytes.Buffer
-
-	out.WriteString(cs.TokenLiteral() + " ")
-	out.WriteString(cs.Name.String())
-	if cs.Type != nil {
-		out.WriteString(": ")
-		out.WriteString(cs.Type.String())
-	}
-
-	out.WriteString(" = ")
-
-	if cs.Value != nil {
-		out.WriteString(cs.Value.String())
 	}
 
 	out.WriteString(";")

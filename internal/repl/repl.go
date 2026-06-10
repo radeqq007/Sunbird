@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strings"
+
 	"github.com/radeqq007/sunbird/internal/evaluator"
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/modules"
@@ -19,7 +20,7 @@ const PROMPT = "$ "
 var keywords = []prompt.Suggest{
 	{Text: "fn", Description: "Define a function"},
 	{Text: "let", Description: "Variable declaration"},
-	{Text: "const", Description: "Variable declaration"},
+	{Text: "mut", Description: "Mutable"},
 	{Text: "true", Description: "Boolean true"},
 	{Text: "false", Description: "Boolean false"},
 	{Text: "if", Description: "Conditional statement"},

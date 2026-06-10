@@ -118,32 +118,11 @@ func (p *Parser) parseWhileStatement() *ast.WhileStatement {
 }
 
 func (p *Parser) parseLetExpression() ast.Expression {
-	exp := &ast.LetExpression{Token: p.curToken}
-
-	if !p.expectPeek(token.Ident) {
-		return nil
-	}
-
-	exp.Name = p.parseIdentifier()
-
-	if p.peekTokenIs(token.Colon) {
+	exp := &ast.LetExpression{Token: p.curToken, IsConst: true}
+	if p.peekTokenIs(token.Mut) {
+		exp.IsConst = false
 		p.nextToken()
-		p.nextToken()
-		exp.Type = p.parseTypeAnnotation()
 	}
-
-	if !p.expectPeek(token.Assign) {
-		return nil
-	}
-
-	p.nextToken()
-	exp.Value = p.parseExpression(LOWEST)
-
-	return exp
-}
-
-func (p *Parser) parseConstExpression() ast.Expression {
-	exp := &ast.ConstExpression{Token: p.curToken}
 
 	if !p.expectPeek(token.Ident) {
 		return nil
@@ -194,20 +173,17 @@ func (p *Parser) parseImportStatement() *ast.ImportStatement {
 func (p *Parser) parseExportStatement() *ast.ExportStatement {
 	stmt := &ast.ExportStatement{Token: p.curToken}
 
-	if !p.peekTokenIs(token.Let) && !p.peekTokenIs(token.Const) {
-		p.newError("export must be followed by 'let' or 'const'")
+	if !p.peekTokenIs(token.Let) {
+		p.newError("export must be followed by a variable declaration")
 		return nil
 	}
 
 	p.nextToken()
 
-	switch p.curToken.Type {
-	case token.Let:
+	if p.curToken.Type == token.Let {
 		stmt.Declaration = p.parseLetExpression()
-	case token.Const:
-		stmt.Declaration = p.parseConstExpression()
-	default:
-		p.newError("export must be followed by 'let' or 'const'")
+	} else {
+		p.newError("export must be followed by a variable declaration")
 		return nil
 	}
 

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+
 	"github.com/radeqq007/sunbird/internal/ast"
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/token"
@@ -43,7 +44,6 @@ func New(l *lexer.Lexer) *Parser {
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.Ident, p.parseIdentifier)
 	p.registerPrefix(token.Let, p.parseLetExpression)
-	p.registerPrefix(token.Const, p.parseConstExpression)
 	p.registerPrefix(token.Int, p.parseIntegerLiteral)
 	p.registerPrefix(token.Float, p.parseFloatLiteral)
 	p.registerPrefix(token.String, p.parseStringLiteral)

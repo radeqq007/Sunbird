@@ -3,16 +3,17 @@ package parser_test
 import (
 	"fmt"
 	"strconv"
+	"testing"
+
 	"github.com/radeqq007/sunbird/internal/ast"
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/parser"
-	"testing"
 )
 
 func TestLetStatements(t *testing.T) {
 	input := `
 let x = 5;
-let y = 10;
+let mut y = 10;
 let foobar = 32.1;
   `
 
@@ -34,10 +35,11 @@ let foobar = 32.1;
 
 	tests := []struct {
 		expectedIdentifier string
+		isConst            bool
 	}{
-		{"x"},
-		{"y"},
-		{"foobar"},
+		{"x", true},
+		{"y", false},
+		{"foobar", true},
 	}
 
 	for i, tt := range tests {
@@ -49,59 +51,13 @@ let foobar = 32.1;
 				program.Statements[i],
 			)
 		}
-		if !testLetExpression(t, stmt.Expression, tt.expectedIdentifier) {
+		if !testLetExpression(t, stmt.Expression, tt.expectedIdentifier, tt.isConst) {
 			return
 		}
 	}
 }
 
-func TestConstStatements(t *testing.T) {
-	input := `
-const x = 5;
-const y = 10;
-const foobar = 32.1;
-  `
-
-	l := lexer.New(input)
-	p := parser.New(l)
-
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
-	if program == nil {
-		t.Fatalf("p.ParseProgram() returned nil")
-	}
-
-	if len(program.Statements) != 3 {
-		t.Fatalf(
-			"program.Statements does not contain 3 statements. got=%d",
-			len(program.Statements),
-		)
-	}
-
-	tests := []struct {
-		expectedIdentifier string
-	}{
-		{"x"},
-		{"y"},
-		{"foobar"},
-	}
-
-	for i, tt := range tests {
-		stmt, ok := program.Statements[i].(*ast.ExpressionStatement)
-		if !ok {
-			t.Fatalf(
-				"program.Statements[%d] is not ast.ExpressionStatement. got=%T",
-				i,
-				program.Statements[i],
-			)
-		}
-		if !testConstExpression(t, stmt.Expression, tt.expectedIdentifier) {
-			return
-		}
-	}
-}
-
-func testLetExpression(t *testing.T, s ast.Expression, name string) bool {
+func testLetExpression(t *testing.T, s ast.Expression, name string, isConst bool) bool {
 	if s.TokenLiteral() != "let" {
 		t.Errorf("s.TokenLiteral is not 'let'. got=%q", s.TokenLiteral())
 		return false
@@ -118,24 +74,8 @@ func testLetExpression(t *testing.T, s ast.Expression, name string) bool {
 		return false
 	}
 
-	return true
-}
-
-func testConstExpression(t *testing.T, s ast.Expression, name string) bool {
-	if s.TokenLiteral() != "const" {
-		t.Errorf("s.TokenLiteral is not 'const'. got=%q", s.TokenLiteral())
-		return false
-	}
-
-	letExp, ok := s.(*ast.ConstExpression)
-	if !ok {
-		t.Errorf("s not *ast.LetExpression. got=%T", s)
-		return false
-	}
-
-	if letExp.Name.String() != name {
-		t.Errorf("letExp.Name.Value not '%s'. got=%s", name, letExp.Name.String())
-		return false
+	if letExp.IsConst != isConst {
+		t.Errorf("letExp.IsConst.Value not %t. got=%t", isConst, letExp.IsConst)
 	}
 
 	return true
@@ -1329,9 +1269,9 @@ func TestExportStatement(t *testing.T) {
 		expectedName string
 		isConst      bool
 	}{
-		{"export let x = 5", "x", false},
-		{"export const y = 10", "y", true},
-		{`export let greeting = "hello"`, "greeting", false},
+		{"export let x = 5", "x", true},
+		{"export let mut y = 10", "y", false},
+		{`export let greeting = "hello"`, "greeting", true},
 	}
 
 	for _, tt := range tests {
@@ -1349,22 +1289,12 @@ func TestExportStatement(t *testing.T) {
 			t.Fatalf("statement is not *ast.ExportStatement, got=%T", program.Statements[0])
 		}
 
-		if tt.isConst {
-			constExp, ok := stmt.Declaration.(*ast.ConstExpression)
-			if !ok {
-				t.Fatalf("declaration is not *ast.ConstExpression, got=%T", stmt.Declaration)
-			}
-			if constExp.Name.String() != tt.expectedName {
-				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, constExp.Name.String())
-			}
-		} else {
-			letExp, ok := stmt.Declaration.(*ast.LetExpression)
-			if !ok {
-				t.Fatalf("declaration is not *ast.LetExpression, got=%T", stmt.Declaration)
-			}
-			if letExp.Name.String() != tt.expectedName {
-				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, letExp.Name.String())
-			}
+		letExp, ok := stmt.Declaration.(*ast.LetExpression)
+		if !ok {
+			t.Fatalf("declaration is not *ast.LetExpression, got=%T", stmt.Declaration)
+		}
+		if letExp.Name.String() != tt.expectedName {
+			t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, letExp.Name.String())
 		}
 	}
 }
@@ -1393,8 +1323,7 @@ func TestTypeAnnotationsOnLetAndConst(t *testing.T) {
 		{"let e: Void = null", "e", "Void"},
 		{"let f: Array = []", "f", "Array"},
 		{"let g: Hash = {}", "g", "Hash"},
-		{"let h: Fn = fn() {}", "h", "Fn"},
-		{"const i: Int = 42", "i", "Int"},
+		{"let mut h: Fn = fn() {}", "h", "Fn"},
 	}
 
 	for _, tt := range tests {
@@ -1408,11 +1337,6 @@ func TestTypeAnnotationsOnLetAndConst(t *testing.T) {
 		var typeAnnotation ast.TypeAnnotation
 		switch decl := stmt.Expression.(type) {
 		case *ast.LetExpression:
-			if decl.Name.String() != tt.expectedName {
-				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, decl.Name.String())
-			}
-			typeAnnotation = decl.Type
-		case *ast.ConstExpression:
 			if decl.Name.String() != tt.expectedName {
 				t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, decl.Name.String())
 			}

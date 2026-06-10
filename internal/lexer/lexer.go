@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
 	"github.com/radeqq007/sunbird/internal/token"
 )
 
@@ -17,9 +18,9 @@ type Lexer struct {
 }
 
 var keywords = map[string]token.TokenType{
-	"fn":     token.Function,
+	"fn":       token.Function,
 	"let":      token.Let,
-	"const":    token.Const,
+	"mut":      token.Mut,
 	"true":     token.True,
 	"false":    token.False,
 	"if":       token.If,
@@ -42,7 +43,7 @@ var keywords = map[string]token.TokenType{
 	"Bool":     token.TypeBool,
 	"Void":     token.TypeVoid,
 	"Array":    token.TypeArray,
-	"Fn":     token.TypeFunc,
+	"Fn":       token.TypeFunc,
 	"Hash":     token.TypeHash,
 	"Range":    token.TypeRange,
 	"in":       token.In,

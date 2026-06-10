@@ -3,6 +3,7 @@ package evaluator
 import (
 	"path/filepath"
 	"strings"
+
 	"github.com/radeqq007/sunbird/internal/ast"
 	"github.com/radeqq007/sunbird/internal/errors"
 	"github.com/radeqq007/sunbird/internal/object"
@@ -45,12 +46,8 @@ func evalExportStatement(stmt *ast.ExportStatement, env *object.Environment) obj
 	}
 
 	var name string
-	switch decl := stmt.Declaration.(type) {
-	case *ast.LetExpression:
-		name = decl.Name.String()
-	case *ast.ConstExpression:
-		name = decl.Name.String()
-	}
+	decl := stmt.Declaration.(*ast.LetExpression)
+	name = decl.Name.String()
 
 	if name != "" {
 		env.MarkAsExported(name)

@@ -1,9 +1,10 @@
 package ast_test
 
 import (
+	"testing"
+
 	"github.com/radeqq007/sunbird/internal/ast"
 	"github.com/radeqq007/sunbird/internal/token"
-	"testing"
 )
 
 func TestString(t *testing.T) {
@@ -26,7 +27,7 @@ func TestString(t *testing.T) {
 		},
 	}
 
-	if program.String() != "let myVar = anotherVar;" {
+	if program.String() != "let mut myVar = anotherVar;" {
 		t.Errorf("program.String() wrong. got=%q", program.String())
 	}
 }

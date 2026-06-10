@@ -2,6 +2,7 @@ package ast
 
 import (
 	"bytes"
+
 	"github.com/radeqq007/sunbird/internal/token"
 )
 
@@ -149,7 +150,7 @@ func (is *ImportStatement) String() string {
 
 type ExportStatement struct {
 	Token       token.Token
-	Declaration Expression // the let/const expression being exported
+	Declaration Expression // variable declaration
 }
 
 func (es *ExportStatement) statementNode()       {}
