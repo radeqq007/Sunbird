@@ -1,6 +1,6 @@
 module github.com/radeqq007/sunbird
 
-go 1.24.0
+go 1.26.4
 
 require (
 	github.com/BurntSushi/toml v1.6.0
