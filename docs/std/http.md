@@ -11,7 +11,7 @@ import "http"
 `create_server` is a function that creates a new HTTP server.
 
 ```ts
-const server = http.create_server()
+let server = http.create_server()
 ```
 `server` is an object that provides methods for handling HTTP requests.
 
@@ -81,7 +81,7 @@ server.get("/user/{id}", fn(w, r) {
 The path parameters will be available in the request object.
 
 ```ts
-const id = r.path_param("id")
+let id = r.path_param("id")
 ```
 ### listen
 
@@ -220,9 +220,9 @@ server.get("/", fn(w, r) {
 
 `writer.header.get` is a function that gets a header value.
 
-```ts
+```rs
 server.get("/", fn(w, r) {
-    const contentType = w.header.get("Content-Type")
+    let contentType = w.header.get("Content-Type")
 })
 ```
 
@@ -247,9 +247,9 @@ It contains the following methods:
 
 `request.path_param` is a function that gets a path parameter.
 
-```ts
+```rs
 server.get("/user/{id}", fn(w, r) {
-    const id = r.path_param("id")
+    let id = r.path_param("id")
 })
 ```
 
@@ -257,9 +257,9 @@ server.get("/user/{id}", fn(w, r) {
 
 `request.query_param` is a function that gets a query parameter.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const id = r.query_param("id")
+    let id = r.query_param("id")
 })
 ```
 
@@ -269,9 +269,9 @@ When the query parameter is not found, it returns `null`.
 
 `request.body` is a function that gets the request body.
 
-```ts
+```rs
 server.post("/user", fn(w, r) {
-    const body = r.body()
+    let body = r.body()
 })
 ```
 
@@ -279,9 +279,9 @@ server.post("/user", fn(w, r) {
 
 `request.json` is a function that gets the request body as a JSON object.
 
-```ts
+```rs
 server.post("/user", fn(w, r) {
-    const body = r.json()
+    let body = r.json()
 })
 ```
 
@@ -289,9 +289,9 @@ server.post("/user", fn(w, r) {
 
 `request.method` is a function that gets the request method.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const method = r.method()
+    let method = r.method()
 })
 ```
 
@@ -299,9 +299,9 @@ server.get("/user", fn(w, r) {
 
 `request.url` is a function that gets the request URL.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const url = r.url()
+    let url = r.url()
 })
 ```
 
@@ -309,9 +309,9 @@ server.get("/user", fn(w, r) {
 
 `request.header` is a function that gets the request header value.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const contentType = r.header("Content-Type")
+    let contentType = r.header("Content-Type")
 })
 ```
 
@@ -321,9 +321,9 @@ When the header is not found, it returns `null`.
 
 `request.headers` is a function that gets the request headers.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const headers = r.headers()
+    let headers = r.headers()
 })
 ```
 
@@ -331,9 +331,9 @@ server.get("/user", fn(w, r) {
 
 `request.cookie` is a function that gets the request cookie value.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const cookie = r.cookie("name")
+    let cookie = r.cookie("name")
 })
 ```
 
@@ -343,9 +343,9 @@ If the cookie is not found, it returns `null`.
 
 `request.cookies` is a function that gets the request cookies.
 
-```ts
+```rs
 server.get("/user", fn(w, r) {
-    const cookies = r.cookies()
+    let cookies = r.cookies()
 })
 ```
 

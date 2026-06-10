@@ -8,11 +8,11 @@ For more details, see the [Types](../language/types.md) and [Syntax](../language
 
 ## Variables
 
-Variables hold values. You can declare them with `let` (mutable) or `const` (immutable).
+Variables hold values. You can declare them with `let` (immutable) or `let mut` (mutable).
 
-```ts
-let age = 18
-const name = "Bojack"
+```rs
+let mut age = 18
+let name = "Bojack"
 
 age = 19       // ✅ mutable variable can be updated
 
@@ -25,7 +25,7 @@ name = "Diane" // ❌ this will throw an error
 
 Functions are reusable blocks of code. You declare them with the `fn` keyword.
 
-```ts
+```rs
 let add = fn(a: Int, b: Int): Int {
   return a + b
 }
@@ -35,7 +35,7 @@ io.println(result) // 8
 ```
 
 Functions can be passed around like variables:
-```ts
+```rs
 let double = fn(x: Int): Int { x * 2 }
 
 let applyFunc = fn(f: Func, value: Int): Int { f(value) }
@@ -48,7 +48,7 @@ io.println(applyFunc(double, 10)) // 20
 ### If Expression
 Use `if` to execute code conditionally:
 
-```ts
+```rs
 let x = -5
 
 if x > 0 {
@@ -60,8 +60,10 @@ if x > 0 {
 }
 
 ```
+
 `if` can also return a value:
-```ts
+
+```rs
 let sign = if x > 0 { 1 } else { -1 }
 io.println(sign) // -1
 ```
@@ -69,14 +71,14 @@ io.println(sign) // -1
 ### Loops
 
 For loops:
-```ts
+```rs
 for i in 1..10 {
     io.println(i)
 }
 ```
 
 While loops:
-```ts
+```rs
 let i = 0
 while i < 5 {
     io.println(i)

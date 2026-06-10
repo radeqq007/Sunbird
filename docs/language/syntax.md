@@ -1,7 +1,7 @@
 # Syntax
 
 ## Variables
-You can declare a variable using the `let` keyword or `const` for constants.
+You can declare a variable using the `let` keyword or `let` for constants.
 
 ```ts
 let x = 5
@@ -38,14 +38,14 @@ if x > 0 {
 ```
 
 For loops are used to execute code repeatedly.
-```ts
+```rs
 for i in 0..10 {
   io.println(i)
 }
 ```
 
 To define a step you can use the `:` operator after the range.
-```ts
+```rs
 for i in 0..10:2 {
   io.println(i)
 }

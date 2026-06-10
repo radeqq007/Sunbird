@@ -2,7 +2,7 @@
 
 ## If expressions
 If expressions are used to execute code conditionally.
-```ts
+```rs
 if x > 0 {
   io.println("x is positive")
 } else if x < 0 {
@@ -13,20 +13,20 @@ if x > 0 {
 ```
 
 Else if and else are optional.
-```ts
+```rs
 if x > 0 {
   io.println("x is positive")
 }
 ```
 
 If expressions can also be used to evaluate expressions.
-```ts
+```rs
 let a = if b > 0 { 1 } else { 0 }
 ```
 
 ## For loops
 For loops are used to execute code repeatedly.
-```ts
+```rs
 for i in 0..10 {
   io.println(i)
 }
@@ -47,7 +47,7 @@ Output:
 ```
 
 To define a step you can use the `:` operator after the range.
-```ts
+```rs
 for i in 0..10:2 {
   io.println(i)
 }
@@ -63,7 +63,7 @@ Output:
 ```
 
 You can also loop over arrays and strings.
-```ts
+```rs
 let array = [1, 2, 3, 4, 5]
 for i in array {
   io.println(i)
@@ -79,7 +79,7 @@ Output:
 5
 ```
 
-```ts
+```rs
 let string = "hello"
 for char in string {
   io.println(char)
