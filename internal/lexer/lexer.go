@@ -191,16 +191,7 @@ func (l *Lexer) NextToken() token.Token {
 		tok = l.newToken(token.RBracket, string(l.ch), startLine, startCol)
 
 	case ':':
-		// TODO: handle this in a better way
-		if l.peekChar() == '=' {
-			ch := l.ch
-			l.readChar()
-			literal := string(ch) + string(l.ch)
-			l.readChar()
-			return l.newToken(token.ColonAssign, literal, startLine, startCol)
-		}
-
-		return l.makeTwoCharToken(':', token.DoubleColon, token.Colon, startLine, startCol)
+		return l.handleColon(startLine, startCol)
 
 	case '.':
 		return l.makeTwoCharToken('.', token.DotDot, token.Dot, startLine, startCol)
@@ -283,6 +274,18 @@ func (l *Lexer) handleSlash(line, col int) token.Token {
 		return l.NextToken()
 	}
 	return l.makeTwoCharToken('=', token.SlashEqual, token.Slash, line, col)
+}
+
+func (l *Lexer) handleColon(line, col int) token.Token {
+	if l.peekChar() == '=' {
+		ch := l.ch
+		l.readChar()
+		literal := string(ch) + string(l.ch)
+		l.readChar()
+		return l.newToken(token.ColonAssign, literal, line, col)
+	}
+
+	return l.makeTwoCharToken(':', token.DoubleColon, token.Colon, line, col)
 }
 
 func (l *Lexer) skipLineComment() {
