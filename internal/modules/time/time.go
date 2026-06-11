@@ -1,10 +1,10 @@
 package time
 
 import (
-	"strings"
 	"github.com/radeqq007/sunbird/internal/errors"
 	"github.com/radeqq007/sunbird/internal/modules/modbuilder"
 	"github.com/radeqq007/sunbird/internal/object"
+	"strings"
 	"time"
 )
 

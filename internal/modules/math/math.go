@@ -1,10 +1,10 @@
 package math
 
 import (
-	"math"
 	"github.com/radeqq007/sunbird/internal/errors"
 	"github.com/radeqq007/sunbird/internal/modules/modbuilder"
 	"github.com/radeqq007/sunbird/internal/object"
+	"math"
 )
 
 func New() object.Value {

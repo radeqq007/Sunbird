@@ -1,11 +1,11 @@
 package fs
 
 import (
-	"os"
-	"path/filepath"
 	"github.com/radeqq007/sunbird/internal/errors"
 	"github.com/radeqq007/sunbird/internal/modules/modbuilder"
 	"github.com/radeqq007/sunbird/internal/object"
+	"os"
+	"path/filepath"
 )
 
 func New() object.Value {

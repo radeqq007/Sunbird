@@ -3,14 +3,14 @@ package evaluator
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
-	"path/filepath"
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/modules"
 	"github.com/radeqq007/sunbird/internal/object"
 	"github.com/radeqq007/sunbird/internal/parser"
 	"github.com/radeqq007/sunbird/internal/pkg"
+	"io"
+	"os"
+	"path/filepath"
 	"sync"
 )
 

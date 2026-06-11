@@ -1,9 +1,9 @@
 package parser
 
 import (
-	"strconv"
 	"github.com/radeqq007/sunbird/internal/ast"
 	"github.com/radeqq007/sunbird/internal/token"
+	"strconv"
 )
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {

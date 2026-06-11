@@ -3,14 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"github.com/radeqq007/sunbird/internal/evaluator"
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/object"
 	"github.com/radeqq007/sunbird/internal/parser"
 	"github.com/radeqq007/sunbird/internal/pkg"
 	"github.com/radeqq007/sunbird/internal/repl"
+	"io"
+	"os"
 )
 
 func main() {

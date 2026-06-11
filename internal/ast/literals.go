@@ -2,8 +2,8 @@ package ast
 
 import (
 	"bytes"
-	"strings"
 	"github.com/radeqq007/sunbird/internal/token"
+	"strings"
 )
 
 type ArrayLiteral struct {

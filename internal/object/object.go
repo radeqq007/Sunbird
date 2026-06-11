@@ -3,11 +3,11 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"github.com/radeqq007/sunbird/internal/ast"
 	"hash/fnv"
 	"math"
 	"strconv"
 	"strings"
-	"github.com/radeqq007/sunbird/internal/ast"
 	"unsafe"
 )
 
@@ -110,12 +110,12 @@ type Function struct {
 }
 
 type CallContext struct {
-    Line int
-    Col  int
+	Line int
+	Col  int
 }
 
 func NewCallContext(line, col int) CallContext {
-	return CallContext{ Line: line, Col: col}
+	return CallContext{Line: line, Col: col}
 }
 
 type BuiltinFunction func(ctx CallContext, args ...Value) Value
