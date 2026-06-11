@@ -121,8 +121,8 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 	case *ast.IfExpression:
 		return evalIfExpression(exp, env)
 
-	case *ast.LetExpression:
-		return evalLetExpression(exp, env)
+	case *ast.DeclarationExpression:
+		return evalDeclarationExpression(exp, env)
 
 	case *ast.AssignExpression:
 		val := Eval(exp.Value, env)
@@ -285,7 +285,7 @@ func evalRangeExpression(node *ast.RangeExpression, env *object.Environment) obj
 	return object.NewRange(startVal, endVal, stepVal)
 }
 
-func evalLetExpression(exp *ast.LetExpression, env *object.Environment) object.Value {
+func evalDeclarationExpression(exp *ast.DeclarationExpression, env *object.Environment) object.Value {
 	if env.Has(exp.Name.String()) {
 		return errors.NewVariableReassignmentError(exp.Token.Line, exp.Token.Col, exp.Name.String())
 	}

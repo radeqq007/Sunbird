@@ -205,30 +205,29 @@ func (ie *IfExpression) String() string {
 	return out.String()
 }
 
-type LetExpression struct {
+type DeclarationExpression struct {
 	Token   token.Token
 	Name    Expression
 	IsConst bool
 	Value   Expression
 }
 
-func (ls *LetExpression) expressionNode()      {}
-func (ls *LetExpression) TokenLiteral() string { return ls.Token.Literal }
+func (ds *DeclarationExpression) expressionNode()      {}
+func (ds *DeclarationExpression) TokenLiteral() string { return ds.Token.Literal }
 
-func (ls *LetExpression) String() string {
+func (ds *DeclarationExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(ls.TokenLiteral())
-	out.WriteString(" ")
-	if !ls.IsConst {
-		out.WriteString("mut ")
+	out.WriteString(ds.Name.String())
+
+	if ds.IsConst {
+		out.WriteString(" :: ")
+	} else {
+		out.WriteString(" := ")
 	}
-	out.WriteString(ls.Name.String())
 
-	out.WriteString(" = ")
-
-	if ls.Value != nil {
-		out.WriteString(ls.Value.String())
+	if ds.Value != nil {
+		out.WriteString(ds.Value.String())
 	}
 
 	out.WriteString(";")

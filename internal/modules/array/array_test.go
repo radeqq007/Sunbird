@@ -14,7 +14,7 @@ func TestPush(t *testing.T) {
 		want  object.Array
 	}{
 		{
-			input: "import 'array'; let a = [1, 2]; array.push(a, 3); a",
+			input: "import 'array'; a := [1, 2]; array.push(a, 3); a",
 			want: object.Array{
 				Elements: []object.Value{
 					object.NewInt(1),
@@ -24,7 +24,7 @@ func TestPush(t *testing.T) {
 			},
 		},
 		{
-			input: "import 'array'; let a = [1, 2]; array.push(a, 'abc'); a",
+			input: "import 'array'; a := [1, 2]; array.push(a, 'abc'); a",
 			want: object.Array{
 				Elements: []object.Value{
 					object.NewInt(1),
@@ -34,7 +34,7 @@ func TestPush(t *testing.T) {
 			},
 		},
 		{
-			input: "import 'array'; let a = []; array.push(a, true); a",
+			input: "import 'array'; a := []; array.push(a, true); a",
 			want:  object.Array{Elements: []object.Value{object.NewBool(true)}},
 		},
 	}
@@ -51,12 +51,12 @@ func TestPop(t *testing.T) {
 		wantArray []string
 	}{
 		{
-			input:     "import 'array'; let a = [1, 2, 3]; array.pop(a)",
+			input:     "import 'array'; a := [1, 2, 3]; array.pop(a)",
 			wantValue: "3",
 			wantArray: []string{"1", "2"},
 		},
 		{
-			input:     "import 'array'; let a = ['hi']; array.pop(a)",
+			input:     "import 'array'; a := ['hi']; array.pop(a)",
 			wantValue: "\"hi\"",
 			wantArray: []string{},
 		},
@@ -72,7 +72,7 @@ func TestPop(t *testing.T) {
 }
 
 func TestShift(t *testing.T) {
-	input := "import 'array'; let a = [1, 2, 3]; array.shift(a)"
+	input := "import 'array'; a := [1, 2, 3]; array.shift(a)"
 	val := testEval(input)
 
 	if val.Inspect() != "1" {
@@ -81,7 +81,7 @@ func TestShift(t *testing.T) {
 }
 
 func TestUnshift(t *testing.T) {
-	input := "import 'array'; let a = [2, 3]; array.unshift(a, 1); a"
+	input := "import 'array'; a := [2, 3]; array.unshift(a, 1); a"
 	want := object.Array{Elements: []object.Value{
 		object.NewInt(1),
 		object.NewInt(2),
@@ -92,7 +92,7 @@ func TestUnshift(t *testing.T) {
 }
 
 func TestReverse(t *testing.T) {
-	input := "import 'array'; let a = [1, 2, 3]; array.reverse(a); a"
+	input := "import 'array'; a := [1, 2, 3]; array.reverse(a); a"
 	want := object.Array{Elements: []object.Value{
 		object.NewInt(3),
 		object.NewInt(2),
@@ -107,8 +107,8 @@ func TestIndexOf(t *testing.T) {
 		input string
 		want  int64
 	}{
-		{"import 'array'; let a = ['a', 'b', 'c']; array.index_of(a, 'b')", 1},
-		{"import 'array'; let a = ['a', 'b', 'c']; array.index_of(a, 'z')", -1},
+		{"import 'array'; a := ['a', 'b', 'c']; array.index_of(a, 'b')", 1},
+		{"import 'array'; a := ['a', 'b', 'c']; array.index_of(a, 'z')", -1},
 	}
 
 	for _, tt := range tests {
@@ -129,8 +129,8 @@ func TestSlice(t *testing.T) {
 		input string
 		want  []string
 	}{
-		{"import 'array'; let a = [0, 1, 2, 3, 4]; array.slice(a, 1, 3)", []string{"1", "2"}},
-		{"import 'array'; let a = [0, 1, 2]; array.slice(a, 1)", []string{"1", "2"}},
+		{"import 'array'; a := [0, 1, 2, 3, 4]; array.slice(a, 1, 3)", []string{"1", "2"}},
+		{"import 'array'; a := [0, 1, 2]; array.slice(a, 1)", []string{"1", "2"}},
 	}
 
 	for _, tt := range tests {
@@ -159,7 +159,7 @@ func TestSlice(t *testing.T) {
 }
 
 func TestJoin(t *testing.T) {
-	input := "import 'array'; let a = [1, 2, 3]; array.join(a, '-')"
+	input := "import 'array'; a := [1, 2, 3]; array.join(a, '-')"
 	val := testEval(input)
 
 	if !val.IsString() {
@@ -174,7 +174,7 @@ func TestJoin(t *testing.T) {
 }
 
 func TestConcat(t *testing.T) {
-	input := "import 'array'; let a = [1]; let b = [2]; array.concat(a, b)"
+	input := "import 'array'; a := [1]; b := [2]; array.concat(a, b)"
 	want := object.Array{Elements: []object.Value{
 		object.NewInt(1),
 		object.NewInt(2),
@@ -188,8 +188,8 @@ func TestContains(t *testing.T) {
 		input string
 		want  bool
 	}{
-		{"import 'array'; let a = [1, 2, 3]; array.contains(a, 2)", true},
-		{"import 'array'; let a = [1, 2, 3]; array.contains(a, 5)", false},
+		{"import 'array'; a := [1, 2, 3]; array.contains(a, 2)", true},
+		{"import 'array'; a := [1, 2, 3]; array.contains(a, 5)", false},
 	}
 
 	for _, tt := range tests {
@@ -207,7 +207,7 @@ func TestContains(t *testing.T) {
 }
 
 func TestClear(t *testing.T) {
-	input := "import 'array'; let a = [1, 2, 3]; array.clear(a); a"
+	input := "import 'array'; a := [1, 2, 3]; array.clear(a); a"
 	val := testEval(input)
 
 	if !val.IsArray() || len(val.AsArray().Elements) != 0 {

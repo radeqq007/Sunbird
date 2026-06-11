@@ -53,6 +53,8 @@ const (
 	Comma        TokenType = "COMMA"
 	Semicolon    TokenType = "SEMICOLON"
 	Colon        TokenType = "COLON"
+	DoubleColon  TokenType = "DOUBLE_COLON"
+	ColonAssign  TokenType = "COLON_ASSIGN"
 	Dot          TokenType = "DOT"
 	DotDot       TokenType = "DOTDOT"
 	LParen   TokenType = "LPAREN"
@@ -65,8 +67,6 @@ const (
 
 	// Keywords
 	Function TokenType = "FN"
-	Let      TokenType = "LET"
-	Mut      TokenType = "MUT"
 	True     TokenType = "TRUE"
 	False    TokenType = "FALSE"
 	If       TokenType = "IF"

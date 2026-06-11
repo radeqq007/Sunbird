@@ -7,14 +7,14 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `let five = 5;
-let ten = 10;
+	input := `five := 5;
+ten :: 10;
 
-let add = fn(x, y) {
+add :: fn(x, y) {
   x + y;
 };
 
-let result = add(five, ten);
+result := add(five, ten);
 !-/ *5;
 5 <= 10 >= 5;
 2.2 > 0;
@@ -41,19 +41,16 @@ if (5 < 10) {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
-		{token.Let, "let"},
 		{token.Ident, "five"},
-		{token.Assign, "="},
+		{token.ColonAssign, ":="},
 		{token.Int, "5"},
 		{token.Semicolon, ";"},
-		{token.Let, "let"},
 		{token.Ident, "ten"},
-		{token.Assign, "="},
+		{token.DoubleColon, "::"},
 		{token.Int, "10"},
 		{token.Semicolon, ";"},
-		{token.Let, "let"},
 		{token.Ident, "add"},
-		{token.Assign, "="},
+		{token.DoubleColon, "::"},
 		{token.Function, "fn"},
 		{token.LParen, "("},
 		{token.Ident, "x"},
@@ -67,9 +64,8 @@ if (5 < 10) {
 		{token.Semicolon, ";"},
 		{token.RBrace, "}"},
 		{token.Semicolon, ";"},
-		{token.Let, "let"},
 		{token.Ident, "result"},
-		{token.Assign, "="},
+		{token.ColonAssign, ":="},
 		{token.Ident, "add"},
 		{token.LParen, "("},
 		{token.Ident, "five"},

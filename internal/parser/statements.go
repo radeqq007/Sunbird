@@ -132,25 +132,21 @@ func (p *Parser) parseLoopStatement() *ast.LoopStatement {
 	return stmt
 }
 
-func (p *Parser) parseLetExpression() ast.Expression {
-	exp := &ast.LetExpression{Token: p.curToken, IsConst: true}
-	if p.peekTokenIs(token.Mut) {
-		exp.IsConst = false
-		p.nextToken()
+func (p *Parser) parseDeclarationExpression(left ast.Expression) ast.Expression {
+	exp := &ast.DeclarationExpression{
+		Token:   p.curToken,
+		Name:    left,
+		IsConst: p.curToken.Type == token.DoubleColon,
 	}
 
-	if !p.expectPeek(token.Ident) {
+	if !p.validateAssignmentTarget(left) {
+		p.newError("invalid declaration target: " + left.String())
 		return nil
 	}
 
-	exp.Name = p.parseIdentifier()
-
-	if !p.expectPeek(token.Assign) {
-		return nil
-	}
-
+	precedence := p.curPrecedence()
 	p.nextToken()
-	exp.Value = p.parseExpression(LOWEST)
+	exp.Value = p.parseExpression(precedence)
 
 	return exp
 }
@@ -182,18 +178,20 @@ func (p *Parser) parseImportStatement() *ast.ImportStatement {
 func (p *Parser) parseExportStatement() *ast.ExportStatement {
 	stmt := &ast.ExportStatement{Token: p.curToken}
 
-	if !p.peekTokenIs(token.Let) {
+	p.nextToken()
+
+	exp := p.parseExpression(LOWEST)
+
+	declarationExp, ok := exp.(*ast.DeclarationExpression)
+	if !ok {
 		p.newError("export must be followed by a variable declaration")
 		return nil
 	}
 
-	p.nextToken()
+	stmt.Declaration = declarationExp
 
-	if p.curToken.Type == token.Let {
-		stmt.Declaration = p.parseLetExpression()
-	} else {
-		p.newError("export must be followed by a variable declaration")
-		return nil
+	if p.peekTokenIs(token.Semicolon) {
+		p.nextToken() // skip the ;
 	}
 
 	return stmt

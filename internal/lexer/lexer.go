@@ -19,8 +19,6 @@ type Lexer struct {
 
 var keywords = map[string]token.TokenType{
 	"fn":       token.Function,
-	"let":      token.Let,
-	"mut":      token.Mut,
 	"true":     token.True,
 	"false":    token.False,
 	"if":       token.If,
@@ -193,7 +191,16 @@ func (l *Lexer) NextToken() token.Token {
 		tok = l.newToken(token.RBracket, string(l.ch), startLine, startCol)
 
 	case ':':
-		tok = l.newToken(token.Colon, string(l.ch), startLine, startCol)
+		// TODO: handle this in a better way
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			l.readChar()
+			return l.newToken(token.ColonAssign, literal, startLine, startCol)
+		}
+
+		return l.makeTwoCharToken(':', token.DoubleColon, token.Colon, startLine, startCol)
 
 	case '.':
 		return l.makeTwoCharToken('.', token.DotDot, token.Dot, startLine, startCol)

@@ -22,6 +22,8 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 // Infix
 var precedences = map[token.TokenType]int{
 	token.Assign:        ASSIGN,
+	token.ColonAssign:   ASSIGN,
+	token.DoubleColon:   ASSIGN,
 	token.PlusEqual:     ASSIGN,
 	token.MinusEqual:    ASSIGN,
 	token.SlashEqual:    ASSIGN,

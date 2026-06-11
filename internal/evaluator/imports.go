@@ -46,7 +46,7 @@ func evalExportStatement(stmt *ast.ExportStatement, env *object.Environment) obj
 	}
 
 	var name string
-	decl := stmt.Declaration.(*ast.LetExpression)
+	decl := stmt.Declaration.(*ast.DeclarationExpression)
 	name = decl.Name.String()
 
 	if name != "" {

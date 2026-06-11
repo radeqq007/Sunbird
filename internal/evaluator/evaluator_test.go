@@ -269,15 +269,15 @@ func TestErrorHandling(t *testing.T) {
 	}
 }
 
-func TestLetStatements(t *testing.T) {
+func TestDeclarationStatements(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected int64
 	}{
-		{"let a = 5; a;", 5},
-		{"let a = 5 * 5; a;", 25},
-		{"let a = 5; let b = a; b;", 5},
-		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
+		{"a := 5; a;", 5},
+		{"a :: 5 * 5; a;", 25},
+		{"a := 5; b :: a; b;", 5},
+		{"a := 5; b := a; c := a + b + 5; c;", 15},
 	}
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
@@ -314,11 +314,11 @@ func TestFunctionApplication(t *testing.T) {
 		input    string
 		expected int64
 	}{
-		{"let identity = fn(x) { x; }; identity(5);", 5},
-		{"let identity = fn(x) { return x; }; identity(5);", 5},
-		{"let double = fn(x) { x * 2; }; double(5);", 10},
-		{"let add = fn(x, y) { x + y; }; add(5, 5);", 10},
-		{"let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"identity := fn(x) { x; }; identity(5);", 5},
+		{"identity := fn(x) { return x; }; identity(5);", 5},
+		{"double := fn(x) { x * 2; }; double(5);", 10},
+		{"add :: fn(x, y) { x + y; }; add(5, 5);", 10},
+		{"add :: fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
 		{"fn(x) { x; }(5)", 5},
 	}
 
@@ -329,10 +329,10 @@ func TestFunctionApplication(t *testing.T) {
 
 func TestClosures(t *testing.T) {
 	input := `
-let newAdder = fn(x) {
+newAdder :: fn(x) {
   fn(y) { x + y };
 };
-let addTwo = newAdder(2);
+addTwo :: newAdder(2);
 addTwo(2);`
 	testIntegerObject(t, testEval(input), 4)
 }
@@ -450,11 +450,11 @@ func TestArrayIndexExpressions(t *testing.T) {
 		{"[1, 2, 3][0]", 1},
 		{"[1, 2, 3][1]", 2},
 		{"[1, 2, 3][2]", 3},
-		{"let i = 0; [1][i];", 1},
+		{"i := 0; [1][i];", 1},
 		{"[1, 2, 3][1 + 1];", 3},
-		{"let myArray = [1, 2, 3]; myArray[2];", 3},
-		{"let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];", 6},
-		{"let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]", 2},
+		{"myArray := [1, 2, 3]; myArray[2];", 3},
+		{"myArray := [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];", 6},
+		{"myArray := [1, 2, 3]; i := myArray[0]; myArray[i]", 2},
 		{"[1, 2, 3][-1]", 3},
 	}
 	for _, tt := range tests {
@@ -498,7 +498,7 @@ func TestErrorLineNumbers(t *testing.T) {
 		},
 		{
 			`
-let a = 5;
+a := 5;
 a + true;
 `,
 			3, 3,
@@ -537,8 +537,8 @@ a + true;
 }
 func BenchmarkIntegerArithmetic(b *testing.B) {
 	input := `
-		let x = 10
-		let y = 20
+		x := 10
+		y := 20
 		x + y * 2 - 5
 	`
 	benchmarkEval(b, input)
@@ -546,7 +546,7 @@ func BenchmarkIntegerArithmetic(b *testing.B) {
 
 func BenchmarkFibonacci(b *testing.B) {
 	input := `
-		let fib = func(n) {
+		fib :: func(n) {
 			if n < 2 {
 				return n
 			}
@@ -559,8 +559,8 @@ func BenchmarkFibonacci(b *testing.B) {
 
 func BenchmarkArrayOperations(b *testing.B) {
 	input := `
-		let arr = [1, 2, 3, 4, 5]
-		let sum = 0
+		arr :: [1, 2, 3, 4, 5]
+		sum := 0
 		for i in arr {
 			sum = sum + i
 		}
@@ -571,7 +571,7 @@ func BenchmarkArrayOperations(b *testing.B) {
 
 func BenchmarkHashAccess(b *testing.B) {
 	input := `
-		let hash = {"a": 1, "b": 2, "c": 3}
+		hash :: {"a": 1, "b": 2, "c": 3}
 		hash["a"] + hash["b"] + hash["c"]
 	`
 	benchmarkEval(b, input)
@@ -579,7 +579,7 @@ func BenchmarkHashAccess(b *testing.B) {
 
 func BenchmarkStringConcatenation(b *testing.B) {
 	input := `
-		let result = ""
+		result := ""
 		for i in 0..10 {
 			result = result + "x"
 		}
@@ -590,10 +590,10 @@ func BenchmarkStringConcatenation(b *testing.B) {
 
 func BenchmarkFunctionCalls(b *testing.B) {
 	input := `
-		let add = func(a, b) { a + b }
-		let mul = func(a, b) { a * b }
+		add :: func(a, b) { a + b }
+		mul :: func(a, b) { a * b }
 
-		let result = 0
+		result := 0
 		for i in 0..20 {
 			result = add(mul(i, 2), 1)
 		}
@@ -604,7 +604,7 @@ func BenchmarkFunctionCalls(b *testing.B) {
 
 func BenchmarkNestedLoops(b *testing.B) {
 	input := `
-		let sum = 0
+		sum := 0
 		for i in 0..10 {
 			for j in 0..10 {
 				sum = sum + 1

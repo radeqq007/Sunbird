@@ -43,7 +43,6 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.Ident, p.parseIdentifier)
-	p.registerPrefix(token.Let, p.parseLetExpression)
 	p.registerPrefix(token.Int, p.parseIntegerLiteral)
 	p.registerPrefix(token.Float, p.parseFloatLiteral)
 	p.registerPrefix(token.String, p.parseStringLiteral)
@@ -82,6 +81,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.Dot, p.parsePropertyExpression)
 	p.registerInfix(token.Assign, p.parseAssignExpression)
 	p.registerInfix(token.DotDot, p.parseRangeExpression)
+	p.registerInfix(token.ColonAssign, p.parseDeclarationExpression)
+	p.registerInfix(token.DoubleColon, p.parseDeclarationExpression)
 
 	// Read 2 tokens so curToken and peekToken are set
 	p.nextToken()
@@ -152,5 +153,3 @@ func (p *Parser) newError(format string, a ...any) {
 	msg := fmt.Sprintf(format+" (at line %d, col %d)", append(a, p.peekToken.Line, p.peekToken.Col)...)
 	p.errors = append(p.errors, msg)
 }
-
-

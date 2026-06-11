@@ -12,10 +12,10 @@ import (
 
 func TestLetStatements(t *testing.T) {
 	input := `
-let x = 5;
-let mut y = 10;
-let foobar = 32.1;
-  `
+x :: 5;
+y := 10;
+foobar :: 32.1;
+	`
 
 	l := lexer.New(input)
 	p := parser.New(l)
@@ -51,31 +51,35 @@ let foobar = 32.1;
 				program.Statements[i],
 			)
 		}
-		if !testLetExpression(t, stmt.Expression, tt.expectedIdentifier, tt.isConst) {
+		if !testDeclarationExpression(t, stmt.Expression, tt.expectedIdentifier, tt.isConst) {
 			return
 		}
 	}
 }
 
-func testLetExpression(t *testing.T, s ast.Expression, name string, isConst bool) bool {
-	if s.TokenLiteral() != "let" {
-		t.Errorf("s.TokenLiteral is not 'let'. got=%q", s.TokenLiteral())
+func testDeclarationExpression(t *testing.T, s ast.Expression, name string, isConst bool) bool {
+	expectedLiteral := "::"
+	if !isConst {
+		expectedLiteral = ":="
+	}
+	if s.TokenLiteral() != expectedLiteral {
+		t.Errorf("s.TokenLiteral is not %q. got=%q", expectedLiteral, s.TokenLiteral())
 		return false
 	}
 
-	letExp, ok := s.(*ast.LetExpression)
+	declarationExp, ok := s.(*ast.DeclarationExpression)
 	if !ok {
-		t.Errorf("s not *ast.LetExpression. got=%T", s)
+		t.Errorf("s not *ast.DeclarationExpression. got=%T", s)
 		return false
 	}
 
-	if letExp.Name.String() != name {
-		t.Errorf("letExp.Name.Value not '%s'. got=%s", name, letExp.Name.String())
+	if declarationExp.Name.String() != name {
+		t.Errorf("declarationExp.Name.Value not '%s'. got=%s", name, declarationExp.Name.String())
 		return false
 	}
 
-	if letExp.IsConst != isConst {
-		t.Errorf("letExp.IsConst.Value not %t. got=%t", isConst, letExp.IsConst)
+	if declarationExp.IsConst != isConst {
+		t.Errorf("letExp.IsConst.Value not %t. got=%t", isConst, declarationExp.IsConst)
 	}
 
 	return true
@@ -1269,9 +1273,9 @@ func TestExportStatement(t *testing.T) {
 		expectedName string
 		isConst      bool
 	}{
-		{"export let x = 5", "x", true},
-		{"export let mut y = 10", "y", false},
-		{`export let greeting = "hello"`, "greeting", true},
+		{"export x :: 5", "x", true},
+		{"export y := 10", "y", false},
+		{`export greeting :: "hello"`, "greeting", true},
 	}
 
 	for _, tt := range tests {
@@ -1289,12 +1293,12 @@ func TestExportStatement(t *testing.T) {
 			t.Fatalf("statement is not *ast.ExportStatement, got=%T", program.Statements[0])
 		}
 
-		letExp, ok := stmt.Declaration.(*ast.LetExpression)
+		declarationExp, ok := stmt.Declaration.(*ast.DeclarationExpression)
 		if !ok {
-			t.Fatalf("declaration is not *ast.LetExpression, got=%T", stmt.Declaration)
+			t.Fatalf("declaration is not *ast.LetDeclaration, got=%T", stmt.Declaration)
 		}
-		if letExp.Name.String() != tt.expectedName {
-			t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, letExp.Name.String())
+		if declarationExp.Name.String() != tt.expectedName {
+			t.Errorf("wrong name: expected=%q, got=%q", tt.expectedName, declarationExp.Name.String())
 		}
 	}
 }
@@ -1309,5 +1313,3 @@ func TestExportInvalidTarget(t *testing.T) {
 		t.Error("expected parser errors for invalid export target, got none")
 	}
 }
-
-
