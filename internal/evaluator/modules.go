@@ -75,10 +75,8 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 		fullPath = joined
 
 		if _, err := os.Stat(fullPath); err != nil {
-			//nolint:gosec // path validated by safeJoin	
 			withExt := fullPath + ".sb"
 			if _, err2 := os.Stat(withExt); err2 == nil {
-				//nolint:gosec // path validated by safeJoin
 				fullPath = withExt
 			} else {
 				return object.NewNull(), fmt.Errorf("module not found: %s", path)
@@ -86,7 +84,7 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 		}
 	}
 
-	file, err := os.Open(fullPath) //nolint:gosec // path validated by safeJoin
+	file, err := os.Open(fullPath)
 	if err != nil {
 		return object.NewNull(), err
 	}
