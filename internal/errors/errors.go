@@ -2,9 +2,9 @@ package errors
 
 import (
 	"fmt"
+	"github.com/radeqq007/sunbird/internal/object"
 	"slices"
 	"strings"
-	"github.com/radeqq007/sunbird/internal/object"
 )
 
 type ErrorCode int
@@ -33,7 +33,7 @@ const (
 
 //go:generate stringer -type=ErrorCode
 
-func New(code ErrorCode, line, col int, format string, args ...interface{}) object.Value {
+func New(code ErrorCode, line, col int, format string, args ...any) object.Value {
 	msg := fmt.Sprintf("%s: %s", code.String(), fmt.Sprintf(format, args...))
 
 	return object.NewError(msg, line, col, true)

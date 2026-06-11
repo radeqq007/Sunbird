@@ -1,11 +1,11 @@
 package evaluator_test
 
 import (
-	"math"
 	"github.com/radeqq007/sunbird/internal/evaluator"
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/object"
 	"github.com/radeqq007/sunbird/internal/parser"
+	"math"
 	"testing"
 )
 
@@ -152,7 +152,7 @@ func TestBangOperator(t *testing.T) {
 func TestIfElseExpressions(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected interface{}
+		expected any
 	}{
 		{"if true { 10 }", 10},
 		{"if false { 10 }", nil},
@@ -372,7 +372,7 @@ func TestStringConcatenation(t *testing.T) {
 func TestBuiltinFunctions(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected interface{}
+		expected any
 	}{
 		{`len("")`, 0},
 		{`len("sunbird")`, 7},
@@ -445,7 +445,7 @@ func TestArrayLiterals(t *testing.T) {
 func TestArrayIndexExpressions(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected interface{}
+		expected any
 	}{
 		{"[1, 2, 3][0]", 1},
 		{"[1, 2, 3][1]", 2},
