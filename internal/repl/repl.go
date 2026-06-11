@@ -19,8 +19,6 @@ const PROMPT = "$ "
 
 var keywords = []prompt.Suggest{
 	{Text: "fn", Description: "Define a function"},
-	{Text: "let", Description: "Variable declaration"},
-	{Text: "mut", Description: "Mutable"},
 	{Text: "true", Description: "Boolean true"},
 	{Text: "false", Description: "Boolean false"},
 	{Text: "if", Description: "Conditional statement"},
