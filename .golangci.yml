@@ -40,7 +40,6 @@ linters:
     - nilerr
     - nilnil
     - noctx
-    - nolintlint
     - nonamedreturns
     - nosprintfhostport
     - perfsprint
@@ -114,16 +113,6 @@ linters:
 
     nakedret:
       max-func-lines: 0
-
-    nolintlint:
-      allow-no-explanation:
-        - funlen
-        - gocognit
-        - golines
-        - gochecknoglobals
-        - reassign
-      require-explanation: true
-      require-specific: true
 
     perfsprint:
       strconcat: false
