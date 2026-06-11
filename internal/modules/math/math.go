@@ -27,6 +27,32 @@ func New() object.Value {
 		Build()
 }
 
+// evalBinaryNumeric validates two numeric args, calls fn(a, b), and returns
+// Float if either arg is float, Int otherwise.
+func evalBinaryNumeric(
+	ctx object.CallContext,
+	args []object.Value,
+	fn func(a, b float64) float64,
+) object.Value {
+	if err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args); err.IsError() {
+		return err
+	}
+	if err := errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind); err.IsError() {
+		return err
+	}
+	if err := errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind); err.IsError() {
+		return err
+	}
+ 
+	result := fn(getFloat64(args[0]), getFloat64(args[1]))
+ 
+	if args[0].IsFloat() || args[1].IsFloat() {
+		return object.NewFloat(result)
+	}
+	return object.NewInt(int64(result))
+}
+
+
 func abs(ctx object.CallContext, args ...object.Value) object.Value {
 	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 1, args)
 	if err.IsError() {
@@ -46,72 +72,15 @@ func abs(ctx object.CallContext, args ...object.Value) object.Value {
 }
 
 func maxValue(ctx object.CallContext, args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
-	if err.IsError() {
-		return err
-	}
-
-	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
-	if err.IsError() {
-		return err
-	}
-
-	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
-	if err.IsError() {
-		return err
-	}
-
-	if args[0].IsFloat() || args[1].IsFloat() {
-		return object.NewFloat(math.Max(getFloat64(args[0]), getFloat64(args[1])))
-	}
-
-	return object.NewInt(int64(math.Max(getFloat64(args[0]), getFloat64(args[1]))))
+	return evalBinaryNumeric(ctx, args, math.Max)
 }
 
 func minValue(ctx object.CallContext, args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
-	if err.IsError() {
-		return err
-	}
-
-	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
-	if err.IsError() {
-		return err
-	}
-
-	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
-	if err.IsError() {
-		return err
-	}
-
-	if args[0].IsFloat() || args[1].IsFloat() {
-		return object.NewFloat(math.Min(getFloat64(args[0]), getFloat64(args[1])))
-	}
-
-	return object.NewInt(int64(math.Min(getFloat64(args[0]), getFloat64(args[1]))))
+	return evalBinaryNumeric(ctx, args, math.Min)
 }
 
 func pow(ctx object.CallContext, args ...object.Value) object.Value {
-	err := errors.ExpectNumberOfArguments(ctx.Line, ctx.Col, 2, args)
-	if err.IsError() {
-		return err
-	}
-
-	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[0], object.IntKind, object.FloatKind)
-	if err.IsError() {
-		return err
-	}
-
-	err = errors.ExpectOneOfTypes(ctx.Line, ctx.Col, args[1], object.IntKind, object.FloatKind)
-	if err.IsError() {
-		return err
-	}
-
-	if args[0].IsFloat() || args[1].IsFloat() {
-		return object.NewFloat(math.Pow(getFloat64(args[0]), getFloat64(args[1])))
-	}
-
-	return object.NewInt(int64(math.Pow(getFloat64(args[0]), getFloat64(args[1]))))
+	return evalBinaryNumeric(ctx, args, math.Pow)
 }
 
 func sqrt(ctx object.CallContext, args ...object.Value) object.Value {
