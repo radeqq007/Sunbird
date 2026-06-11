@@ -104,7 +104,6 @@ type HashPair struct {
 
 type Function struct {
 	Parameters []*ast.Identifier
-	ReturnType ast.TypeAnnotation
 	Body       *ast.BlockStatement
 	Env        *Environment
 }
@@ -379,13 +378,11 @@ func NewHashPair(key, value Value) HashPair {
 
 func NewFunction(
 	parameters []*ast.Identifier,
-	returnType ast.TypeAnnotation,
 	body *ast.BlockStatement,
 	env *Environment,
 ) Value {
 	fn := &Function{
 		Parameters: parameters,
-		ReturnType: returnType,
 		Body:       body,
 		Env:        env,
 	}

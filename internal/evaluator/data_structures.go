@@ -154,7 +154,7 @@ func evalMethodCall(
 	newEnv := object.NewEnclosedEnvironment(fn.Env)
 	newEnv.Set("this", obj)
 
-	boundFn := object.NewFunction(fn.Parameters, fn.ReturnType, fn.Body, fn.Env)
+	boundFn := object.NewFunction(fn.Parameters, fn.Body, fn.Env)
 
 	return applyFunction(boundFn, args, line, col)
 }

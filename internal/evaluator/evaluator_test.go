@@ -535,58 +535,6 @@ a + true;
 		}
 	}
 }
-func TestFunctionTypeChecking(t *testing.T) {
-	tests := []struct {
-		input           string
-		expectedMessage string
-	}{
-		{
-			"let identity = fn(x: Int): Int { x; }; identity(5);",
-			"", // Should pass
-		},
-		{
-			"let identity = fn(x: String): String { x; }; identity(5);",
-			"TypeError: expected String, got Integer",
-		},
-		{
-			"let add = fn(a: Int, b: Int): Int { a + b; }; add(1, 2);",
-			"", // Should pass
-		},
-		{
-			"let add = fn(a: Int, b: Int) { a + b; }; add('1', '2');",
-			"TypeError: expected Int, got String",
-		},
-		{
-			"let identity = fn(x: Float) { x; }; identity(\"hello\");",
-			"TypeError: expected Float, got String",
-		},
-	}
-
-	for _, tt := range tests {
-		evaluated := testEval(tt.input)
-		if tt.expectedMessage == "" {
-			if isError(evaluated) {
-				t.Errorf("expected no error, got=%q", evaluated.AsError().Message)
-			}
-		} else {
-			if !evaluated.IsError() {
-				t.Errorf("no error object returned. got=%T(%+v)",
-					evaluated, evaluated)
-				continue
-			}
-			err := evaluated.AsError()
-			if err.Message != tt.expectedMessage {
-				t.Errorf("wrong error message. expected=%q, got=%q",
-					tt.expectedMessage, err.Message)
-			}
-		}
-	}
-}
-
-func isError(obj object.Value) bool {
-	return obj.IsError()
-}
-
 func BenchmarkIntegerArithmetic(b *testing.B) {
 	input := `
 		let x = 10

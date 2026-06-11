@@ -103,7 +103,6 @@ func (hl *HashLiteral) String() string {
 type FunctionLiteral struct {
 	Token      token.Token
 	Parameters []*Identifier
-	ReturnType TypeAnnotation
 	Body       *BlockStatement
 }
 
@@ -121,10 +120,6 @@ func (fl *FunctionLiteral) String() string {
 	out.WriteString("(")
 	out.WriteString(strings.Join(params, ", "))
 	out.WriteString(") ")
-	if fl.ReturnType != nil {
-		out.WriteString(": ")
-		out.WriteString(fl.ReturnType.String())
-	}
 	out.WriteString(fl.Body.String())
 
 	return out.String()

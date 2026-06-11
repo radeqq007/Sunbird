@@ -1,11 +1,8 @@
 package object
 
-import "github.com/radeqq007/sunbird/internal/ast"
-
 type Environment struct {
 	store     map[string]Value
 	constants map[string]bool
-	types     map[string]ast.TypeAnnotation
 	exports   map[string]bool
 	outer     *Environment
 }
@@ -13,9 +10,8 @@ type Environment struct {
 func NewEnvironment() *Environment {
 	s := make(map[string]Value)
 	c := make(map[string]bool)
-	t := make(map[string]ast.TypeAnnotation)
 	e := make(map[string]bool)
-	return &Environment{store: s, constants: c, types: t, exports: e}
+	return &Environment{store: s, constants: c, exports: e}
 }
 
 func (e *Environment) Get(name string) (Value, bool) {
@@ -27,24 +23,10 @@ func (e *Environment) Get(name string) (Value, bool) {
 	return obj, ok
 }
 
-func (e *Environment) GetType(name string) (ast.TypeAnnotation, bool) {
-	t, ok := e.types[name]
-	if !ok && e.outer != nil {
-		t, ok = e.outer.GetType(name)
-	}
-
-	return t, ok
-}
-
-func (e *Environment) SetConstWithType(name string, val Value, t ast.TypeAnnotation) Value {
+func (e *Environment) SetConst(name string, val Value) Value {
 	e.store[name] = val
 	e.constants[name] = true
-	e.types[name] = t
 	return val
-}
-
-func (e *Environment) SetConst(name string, val Value) Value {
-	return e.SetConstWithType(name, val, nil)
 }
 
 func (e *Environment) IsConst(name string) bool {
@@ -67,14 +49,9 @@ func (e *Environment) Has(name string) bool {
 	return ok
 }
 
-func (e *Environment) SetWithType(name string, val Value, t ast.TypeAnnotation) Value {
-	e.store[name] = val
-	e.types[name] = t
-	return val
-}
-
 func (e *Environment) Set(name string, val Value) Value {
-	return e.SetWithType(name, val, nil)
+	e.store[name] = val
+	return val
 }
 
 func (e *Environment) Update(name string, val Value) bool {

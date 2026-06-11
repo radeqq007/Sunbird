@@ -55,8 +55,6 @@ const (
 	Colon        TokenType = "COLON"
 	Dot          TokenType = "DOT"
 	DotDot       TokenType = "DOTDOT"
-	QuestionMark TokenType = "QUESTION_MARK"
-
 	LParen   TokenType = "LPAREN"
 	RParen   TokenType = "RPAREN"
 	LBrace   TokenType = "LBRACE"
@@ -64,17 +62,6 @@ const (
 	LBracket TokenType = "LBRACKET"
 	RBracket TokenType = "RBRACKET"
 	Pipe     TokenType = "PIPE"
-
-	// Type keywords
-	TypeInt    TokenType = "TYPE_INT"
-	TypeFloat  TokenType = "TYPE_FLOAT"
-	TypeString TokenType = "TYPE_STRING"
-	TypeBool   TokenType = "TYPE_BOOL"
-	TypeVoid   TokenType = "TYPE_VOID"
-	TypeArray  TokenType = "TYPE_ARRAY"
-	TypeFunc   TokenType = "TYPE_FUNC"
-	TypeHash   TokenType = "TYPE_HASH"
-	TypeRange  TokenType = "TYPE_RANGE"
 
 	// Keywords
 	Function TokenType = "FN"

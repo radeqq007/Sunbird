@@ -183,7 +183,7 @@ func evalExpression(node ast.Expression, env *object.Environment) object.Value {
 	case *ast.FunctionLiteral:
 		params := exp.Parameters
 		body := exp.Body
-		return object.NewFunction(params, exp.ReturnType, body, env)
+		return object.NewFunction(params, body, env)
 
 	case *ast.HashLiteral:
 		return evalHashLiteral(exp, env)
@@ -295,16 +295,10 @@ func evalLetExpression(exp *ast.LetExpression, env *object.Environment) object.V
 		return val
 	}
 
-	if exp.Type != nil {
-		if err := checkType(exp.Type, val, exp.Token.Line, exp.Token.Col); err.IsError() {
-			return err
-		}
-	}
-
 	if exp.IsConst {
-		env.SetConstWithType(exp.Name.String(), val, exp.Type)
+		env.SetConst(exp.Name.String(), val)
 	} else {
-		env.SetWithType(exp.Name.String(), val, exp.Type)
+		env.Set(exp.Name.String(), val)
 	}
 	return val
 }

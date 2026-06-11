@@ -38,15 +38,6 @@ var keywords = map[string]token.TokenType{
 	"try":      token.Try,
 	"catch":    token.Catch,
 	"finally":  token.Finally,
-	"Int":      token.TypeInt,
-	"Float":    token.TypeFloat,
-	"String":   token.TypeString,
-	"Bool":     token.TypeBool,
-	"Void":     token.TypeVoid,
-	"Array":    token.TypeArray,
-	"Fn":       token.TypeFunc,
-	"Hash":     token.TypeHash,
-	"Range":    token.TypeRange,
 	"in":       token.In,
 }
 
@@ -206,9 +197,6 @@ func (l *Lexer) NextToken() token.Token {
 
 	case '.':
 		return l.makeTwoCharToken('.', token.DotDot, token.Dot, startLine, startCol)
-
-	case '?':
-		tok = l.newToken(token.QuestionMark, string(l.ch), startLine, startCol)
 
 	case '"', '\'':
 		tok.Type = token.String

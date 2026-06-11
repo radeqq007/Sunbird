@@ -30,16 +30,7 @@ func applyFunction(fn object.Value, args []object.Value, line, col int) object.V
 			return evaluated
 		}
 
-		result := unwrapReturnValue(evaluated)
-
-		// Type check return value
-		if fn.ReturnType != nil {
-			if typeErr := checkType(fn.ReturnType, result, line, col); typeErr.IsError() {
-				return typeErr
-			}
-		}
-
-		return result
+		return unwrapReturnValue(evaluated)
 
 	case object.BuiltinKind:
 		return fn.AsBuiltin().Fn(object.NewCallContext(line, col), args...)
@@ -56,12 +47,7 @@ func extendFunctionEnv(
 	env := object.NewEnclosedEnvironment(fn.Env)
 
 	for i, param := range fn.Parameters {
-		if param.Type != nil {
-			if err := checkType(param.Type, args[i], param.Token.Line, param.Token.Col); err.IsError() {
-				return nil, err
-			}
-		}
-		env.SetWithType(param.Value, args[i], param.Type)
+		env.Set(param.Value, args[i])
 	}
 
 	return env, NULL
