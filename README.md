@@ -1,5 +1,5 @@
 <div align="center">
-  <img src=".github/assets/logo.png" width="250" alt="Sunbird">
+  <img src=".github/assets/logo.svg" width="250" alt="Sunbird">
 </div>
 
 # Sunbird
