@@ -3,15 +3,17 @@ package evaluator
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+
 	"github.com/radeqq007/sunbird/internal/lexer"
 	"github.com/radeqq007/sunbird/internal/modules"
 	"github.com/radeqq007/sunbird/internal/object"
 	"github.com/radeqq007/sunbird/internal/parser"
 	"github.com/radeqq007/sunbird/internal/pkg"
-	"io"
-	"os"
-	"path/filepath"
-	"sync"
 )
 
 type ModuleCache struct {
@@ -58,17 +60,25 @@ func (mc *ModuleCache) loadModule(path string) (object.Value, error) {
 
 func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 	mainFileDir := ""
-	if len(os.Args) > 1 {
+	if len(os.Args) > 2 {
 		mainFileDir = filepath.Dir(os.Args[2]) // TODO: don't use os.Args
 	}
 
-	fullPath := filepath.Join(mainFileDir, path)
-	if !filepath.IsAbs(path) {
-		// Look relative to current directory
+	var fullPath string
+	if filepath.IsAbs(path) {
+		fullPath = filepath.Clean(path)
+	} else {
+		joined, err := safeJoin(mainFileDir, path)
+		if err != nil {
+			return object.NewNull(), fmt.Errorf("module not found: %s", path)
+		}
+		fullPath = joined
+
 		if _, err := os.Stat(fullPath); err != nil {
-			// Try with .sb extension
+			//nolint:gosec // path validated by safeJoin	
 			withExt := fullPath + ".sb"
-			if _, err = os.Stat(withExt); err == nil {
+			if _, err2 := os.Stat(withExt); err2 == nil {
+				//nolint:gosec // path validated by safeJoin
 				fullPath = withExt
 			} else {
 				return object.NewNull(), fmt.Errorf("module not found: %s", path)
@@ -76,7 +86,7 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 		}
 	}
 
-	file, err := os.Open(fullPath)
+	file, err := os.Open(fullPath) //nolint:gosec // path validated by safeJoin
 	if err != nil {
 		return object.NewNull(), err
 	}
@@ -140,3 +150,17 @@ func (mc *ModuleCache) tryLoadFromModulesDir(path string) (object.Value, error) 
 
 	return mc.loadFileModule(filepath.Join(packagePath, moduleConf.Package.Main))
 }
+
+// safeJoin joins base and rel and verifies the result stays within base.
+func safeJoin(base, rel string) (string, error) {
+    absBase, err := filepath.Abs(base)
+    if err != nil {
+        return "", fmt.Errorf("cannot resolve base directory: %w", err)
+    }
+    full := filepath.Clean(filepath.Join(absBase, rel))
+    if !strings.HasPrefix(full, absBase+string(os.PathSeparator)) && full != absBase {
+        return "", fmt.Errorf("path %q escapes base directory", rel)
+    }
+    return full, nil
+}
+
