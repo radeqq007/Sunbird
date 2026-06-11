@@ -18,7 +18,7 @@ The documentation is structured as follows:
 ```ts
 import "io"
 
-let name: String = "Sunbird"
+name := "Sunbird"
 
 io.println("Hello world with " + name)
 ```

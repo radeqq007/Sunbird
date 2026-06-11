@@ -21,7 +21,7 @@ if x > 0 {
 
 If expressions can also be used to evaluate expressions.
 ```rs
-let a = if b > 0 { 1 } else { 0 }
+a := if b > 0 { 1 } else { 0 }
 ```
 
 ## For loops
@@ -64,8 +64,8 @@ Output:
 
 You can also loop over arrays and strings.
 ```rs
-let array = [1, 2, 3, 4, 5]
-for i in array {
+arr := [1, 2, 3, 4, 5]
+for i in arr {
   io.println(i)
 }
 ```
@@ -80,7 +80,7 @@ Output:
 ```
 
 ```rs
-let string = "hello"
+string := "hello"
 for char in string {
   io.println(char)
 }

@@ -12,7 +12,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/radeqq007/Sunbird)
 ![GitHub stars](https://img.shields.io/github/stars/radeqq007/sunbird?style=social)
 
-Sunbird is dynamically-typed (with optional type annotations), interpreted programming language that focuses on **ease of use** and **clarity**.
+Sunbird is dynamically-typed, interpreted programming language that focuses on **ease of use** and **simplicity**.
 
 For detailed language reference, standard library docs, and guides, see the [`docs/`](./docs) directory.
 
@@ -27,14 +27,16 @@ io.println("Hello world")
 
 ### Defining variables and functions
 ```rs
-// `let` defines an immutable variable
-let a = 1
-let b: Int = 2
+// Use the := operator to declare a variable
+a := 1
+name := ""
 
-// to define mutable variables, use `let mut`
-let mut x = 20 
+// to define constants use the :: operator
+x :: 20
+pi :: 3.141
 
-let add = fn(a: Int, b: Int): Int {
+// Defining functions
+add :: fn(a, b) {
     return a + b
 }
 
@@ -45,8 +47,8 @@ add(a, b)
 ```rs
 import "io"
 
-let mut a = 1
-let b = 2
+a := 1
+b := 2
 
 if a > b {
     io.println("a is greater than b")
@@ -78,36 +80,10 @@ loop {
 }
 
 try {
-    let c = 1 / 0
+    c := 1 / 0
 } catch e {
     io.println(e)
 } finally {
     io.println("finally")
 }
-
-```
-
-### Type annotations
-```rs
-let a: Int = 1
-let b: Float = 2.0
-let c: String = "hello"
-let d: Bool = true
-let e: Void = null
-let f: Array = [1, 2, 3]
-let g: Fn = fn(a: Int, b: Int): Int {
-  return a + b
-}
-let h: Hash = {1: 1, 2: 2, 3: 3}
-
-
-// Nullable types
-let i: Int? = null
-let j: String? = "hello"
-let d: Bool? = true
-let e: Array? = [1, 2, 3]
-let f: Fn? = fn(a: Int, b: Int): Int {
-    return a + b
-}
-let g: Hash? = {1: 1, 2: 2, 3: 3}
 ```

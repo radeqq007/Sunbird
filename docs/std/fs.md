@@ -11,7 +11,7 @@ import "fs"
 `read` is a function that reads a file and returns its contents as a string.
 
 ```ts
-let content = null
+content := null
 try {
   content = fs.read("file.txt")
 } catch e {
@@ -60,7 +60,7 @@ try {
 `exists` is a function that checks if a file or directory exists and returns a boolean.
 
 ```ts
-let exists = false
+exists := false
 try {
   exists = fs.exists("file.txt")
 } catch e {
@@ -73,7 +73,7 @@ try {
 `is_dir` is a function that checks if a path is a directory and returns a boolean.
 
 ```ts
-let is_dir = false
+is_dir := false
 try {
   is_dir = fs.is_dir("file.txt")
 } catch e {
@@ -86,7 +86,7 @@ try {
 `list_dir` is a function that lists the contents of a directory and returns an array of strings.
 
 ```ts
-let files = []
+files := []
 try {
   files = fs.list_dir("./")
 } catch e {
@@ -129,4 +129,3 @@ try {
   io.println(e)
 }
 ```
-

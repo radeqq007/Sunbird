@@ -11,7 +11,7 @@ import "http"
 `create_server` is a function that creates a new HTTP server.
 
 ```ts
-let server = http.create_server()
+server :: http.create_server()
 ```
 `server` is an object that provides methods for handling HTTP requests.
 
@@ -81,7 +81,7 @@ server.get("/user/{id}", fn(w, r) {
 The path parameters will be available in the request object.
 
 ```ts
-let id = r.path_param("id")
+id := r.path_param("id")
 ```
 ### listen
 
@@ -222,7 +222,7 @@ server.get("/", fn(w, r) {
 
 ```rs
 server.get("/", fn(w, r) {
-    let contentType = w.header.get("Content-Type")
+    contentType := w.header.get("Content-Type")
 })
 ```
 
@@ -249,7 +249,7 @@ It contains the following methods:
 
 ```rs
 server.get("/user/{id}", fn(w, r) {
-    let id = r.path_param("id")
+    id := r.path_param("id")
 })
 ```
 
@@ -259,7 +259,7 @@ server.get("/user/{id}", fn(w, r) {
 
 ```rs
 server.get("/user", fn(w, r) {
-    let id = r.query_param("id")
+    id := r.query_param("id")
 })
 ```
 
@@ -271,7 +271,7 @@ When the query parameter is not found, it returns `null`.
 
 ```rs
 server.post("/user", fn(w, r) {
-    let body = r.body()
+    body := r.body()
 })
 ```
 
@@ -281,7 +281,7 @@ server.post("/user", fn(w, r) {
 
 ```rs
 server.post("/user", fn(w, r) {
-    let body = r.json()
+   body := r.json()
 })
 ```
 
@@ -291,7 +291,7 @@ server.post("/user", fn(w, r) {
 
 ```rs
 server.get("/user", fn(w, r) {
-    let method = r.method()
+     method = r.method()
 })
 ```
 
@@ -301,7 +301,7 @@ server.get("/user", fn(w, r) {
 
 ```rs
 server.get("/user", fn(w, r) {
-    let url = r.url()
+    url := r.url()
 })
 ```
 
@@ -311,7 +311,7 @@ server.get("/user", fn(w, r) {
 
 ```rs
 server.get("/user", fn(w, r) {
-    let contentType = r.header("Content-Type")
+    contentType := r.header("Content-Type")
 })
 ```
 
@@ -323,7 +323,7 @@ When the header is not found, it returns `null`.
 
 ```rs
 server.get("/user", fn(w, r) {
-    let headers = r.headers()
+    headers := r.headers()
 })
 ```
 
@@ -333,7 +333,7 @@ server.get("/user", fn(w, r) {
 
 ```rs
 server.get("/user", fn(w, r) {
-    let cookie = r.cookie("name")
+    cookie := r.cookie("name")
 })
 ```
 
@@ -345,7 +345,7 @@ If the cookie is not found, it returns `null`.
 
 ```rs
 server.get("/user", fn(w, r) {
-    let cookies = r.cookies()
+    cookies := r.cookies()
 })
 ```
 

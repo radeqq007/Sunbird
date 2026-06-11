@@ -1,11 +1,11 @@
 # Syntax
 
 ## Variables
-You can declare a variable using the `let` keyword or `let` for constants.
+You can declare a variable using the `:=` operator or the `::` operator for constants.
 
-```ts
-let x = 5
-const y = 10
+```rs
+x := 5
+y :: 10
 ```
 
 ## Functions
@@ -13,7 +13,7 @@ const y = 10
 Functions are expressions and can be assigned to variables or passed as arguments to other functions and are declared using the `fn` keyword.
 
 ```ts
-let add = fn(a, b) {
+add :: fn(a, b) {
   return a + b
 }
 ```
@@ -22,6 +22,14 @@ To call a function you can use the function name followed by the arguments in pa
 ```ts
 add(1, 2)
 ```
+
+> [!TIP]
+> You can also omit the `return` keyword if the last expression is the return value.
+>
+> ```rs
+> add :: fn(a, b) { a + b }
+> ```
+>
 
 ## Control flow
 If expressions are used to execute code conditionally.
@@ -62,7 +70,7 @@ Output:
 
 While loops are used to execute code repeatedly while a condition is true.
 ```ts
-let x = 10
+x := 10
 while x > 0 {
   io.println(x)
   x = x - 1
@@ -81,40 +89,8 @@ try {
 }
 ```
 
-To learn more about error handling see the [control flow](./control-flow.md) docs.
 
-## Types
-Sunbird is a dynamically typed language, but you can declare the type of a variable using the `:` operator after the variable name.
 
-```ts
-let x: Int = 5
-let y: Float = 10.5
-let z: String = "Hello"
-let a: Bool = true
-let b: Void = null
-```
-
-If you try to assign a value of a different type to a variable, you will get a runtime error.
-
-To declare a nullable variable you can use the `?` operator after the type annotation.
-```ts
-let x: Int? = null
-```
-
-To declare a function with a return type you can use the `:` operator after the function name.
-```ts
-let add = fn(a: Int, b: Int): Int {
-  return a + b
-}
-```
-
-You can also omit the `return` keyword if the last expression is the return value.
-
-```ts
-let add = fn(a: Int, b: Int): Int {
-  a + b
-}
-```
 
 To learn more about types see the [types](./types.md) docs.
 
@@ -135,5 +111,5 @@ multi line comment
 
 You can write multiple expressions or statements on the same line by separating them with a semicolon.
 ```ts
-let x = 5; let y = 10
+x := 5; y := 10
 ```

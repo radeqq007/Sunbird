@@ -122,8 +122,8 @@ io.beep()
 `args` is an array of command line arguments.
 
 ```ts
-let args_array = io.args
-let first_arg = io.args[0]
+args_array := io.args
+first_arg := io.args[0]
 ```
 
 The array is of strings.

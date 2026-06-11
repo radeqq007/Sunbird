@@ -1,44 +1,41 @@
 # Basic Concepts
 
-In this page, you’ll learn the core concepts of Sunbird, including **variables**, **functions**, **types**, and **control flow**.
+In this page, you’ll learn the core concepts of Sunbird, including **variables**, **functions**, and **control flow**.
 
-For more details, see the [Types](../language/types.md) and [Syntax](../language/syntax.md) pages.
+For more details, see the [Syntax](../language/syntax.md) page.
 
 ---
 
 ## Variables
 
-Variables hold values. You can declare them with `let` (immutable) or `let mut` (mutable).
+Variables hold values. You can declare them with the `:=` operator or the `::` operator for constants.
 
 ```rs
-let mut age = 18
-let name = "Bojack"
+age := 18
+name :: "Bojack"
 
 age = 19       // ✅ mutable variable can be updated
-
 name = "Diane" // ❌ this will throw an error
 ```
-> [!NOTE]
-> You can also add a type declaration: `let age: Int = 18`
 
 ## Functions
 
 Functions are reusable blocks of code. You declare them with the `fn` keyword.
 
 ```rs
-let add = fn(a: Int, b: Int): Int {
+add :: fn(a, b) {
   return a + b
 }
 
-let result = add(5, 3)
+result := add(5, 3)
 io.println(result) // 8
 ```
 
 Functions can be passed around like variables:
 ```rs
-let double = fn(x: Int): Int { x * 2 }
+double :: fn(x) { x * 2 }
 
-let applyFunc = fn(f: Func, value: Int): Int { f(value) }
+applyFunc :: fn(func, value) { func(value) }
 
 io.println(applyFunc(double, 10)) // 20
 ```
@@ -49,7 +46,7 @@ io.println(applyFunc(double, 10)) // 20
 Use `if` to execute code conditionally:
 
 ```rs
-let x = -5
+x := -5
 
 if x > 0 {
     io.println("x is positive")
@@ -64,7 +61,7 @@ if x > 0 {
 `if` can also return a value:
 
 ```rs
-let sign = if x > 0 { 1 } else { -1 }
+sign := if x > 0 { 1 } else { -1 }
 io.println(sign) // -1
 ```
 
@@ -79,7 +76,7 @@ for i in 1..10 {
 
 While loops:
 ```rs
-let i = 0
+i := 0
 while i < 5 {
     io.println(i)
     i += 1
