@@ -46,7 +46,11 @@ func evalExportStatement(stmt *ast.ExportStatement, env *object.Environment) obj
 	}
 
 	var name string
-	decl := stmt.Declaration.(*ast.DeclarationExpression)
+	decl, ok := stmt.Declaration.(*ast.DeclarationExpression)
+	if !ok {
+		return errors.New(errors.RuntimeError, stmt.Token.Line, stmt.Token.Col, "export declaration is not a DeclarationExpression")
+	}
+
 	name = decl.Name.String()
 
 	if name != "" {
