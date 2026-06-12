@@ -184,6 +184,9 @@ func cookieHash(w http.ResponseWriter) object.Value {
 				Name:  args[0].AsString().Value,
 				Value: args[1].AsString().Value,
 				Path:  "/",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				Secure: true,
 			}
 
 			// Parse options if provided
