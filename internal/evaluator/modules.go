@@ -59,29 +59,9 @@ func (mc *ModuleCache) loadModule(path string) (object.Value, error) {
 }
 
 func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
-	mainFileDir := ""
-	if len(os.Args) > 2 {
-		mainFileDir = filepath.Dir(os.Args[2]) // TODO: don't use os.Args
-	}
-
-	var fullPath string
-	if filepath.IsAbs(path) {
-		fullPath = filepath.Clean(path)
-	} else {
-		joined, err := safeJoin(mainFileDir, path)
-		if err != nil {
-			return object.NewNull(), fmt.Errorf("module not found: %s", path)
-		}
-		fullPath = joined
-
-		if _, err := os.Stat(fullPath); err != nil {
-			withExt := fullPath + ".sb"
-			if _, err2 := os.Stat(withExt); err2 == nil {
-				fullPath = withExt
-			} else {
-				return object.NewNull(), fmt.Errorf("module not found: %s", path)
-			}
-		}
+	fullPath, err := mc.resolveModulePath(path)
+	if err != nil {
+		return object.NewNull(), err
 	}
 
 	file, err := os.Open(fullPath)
@@ -127,6 +107,33 @@ func (mc *ModuleCache) loadFileModule(path string) (object.Value, error) {
 	mc.mu.Unlock()
 
 	return module, nil
+}
+
+func (mc *ModuleCache) resolveModulePath(path string) (string, error) {
+	mainFileDir := ""
+	if len(os.Args) > 2 {
+		mainFileDir = filepath.Dir(os.Args[2]) // TODO: don't use os.Args
+	}
+
+	var fullPath string
+	if filepath.IsAbs(path) {
+		fullPath = filepath.Clean(path)
+	} else {
+		joined, err := safeJoin(mainFileDir, path)
+		if err != nil {
+			return "", fmt.Errorf("module not found: %s", path)
+		}
+		fullPath = joined
+
+		if _, err := os.Stat(fullPath); err != nil {
+			withExt := fullPath + ".sb"
+			if _, err2 := os.Stat(withExt); err2 != nil {
+				return "", fmt.Errorf("module not found: %s", path)
+			}
+			fullPath = withExt
+		}
+	}
+	return fullPath, nil
 }
 
 func (mc *ModuleCache) tryLoadFromModulesDir(path string) (object.Value, error) {
