@@ -260,6 +260,8 @@ func copyFile(ctx object.CallContext, args ...object.Value) object.Value {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
 	}
 
+	//nolint:gosec // G703: path traversal — sunbird scripts run with user permissions;
+	// restricting cross-directory access would break legitimate use cases.
 	errGo = os.WriteFile(getFullPath(args[1].AsString().Value), data, 0o644)
 	if errGo != nil {
 		return errors.New(errors.RuntimeError, 0, 0, "%s", errGo.Error())
